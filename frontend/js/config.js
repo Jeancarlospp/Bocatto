@@ -1,7 +1,7 @@
 // Configuración de la API
 export const API_CONFIG = {
     // Cambia esto por tu URL de Render cuando despliegues
-    BASE_URL: 'https://bocatto.onrender.com/',
+    BASE_URL: 'https://bocatto.onrender.com',
     ENDPOINTS: {
         MENU: '/api/menu',
         ORDERS: '/api/orders',
