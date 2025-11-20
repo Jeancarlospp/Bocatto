@@ -1,0 +1,59 @@
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { connectDB } from './config/database.js';
+
+// Cargar variables de entorno
+dotenv.config();
+
+// Crear instancia de Express
+const app = express();
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Conectar a MongoDB
+connectDB();
+
+// Importar rutas
+import menuRoutes from './routes/menuRoutes.js';
+
+// Ruta de prueba
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Bienvenido a la API de Bocatto Restaurant',
+    status: 'Server is running',
+    version: '1.0.0'
+  });
+});
+
+// Rutas de la API
+app.use('/api/menu', menuRoutes);
+
+// Manejo de rutas no encontradas
+app.use((req, res) => {
+  res.status(404).json({ 
+    error: 'Route not found',
+    message: 'La ruta solicitada no existe'
+  });
+});
+
+// Manejo de errores global
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ 
+    error: 'Internal server error',
+    message: err.message 
+  });
+});
+
+// Puerto del servidor
+const PORT = process.env.PORT || 5000;
+
+// Iniciar servidor
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+  console.log(`🌍 Entorno: ${process.env.NODE_ENV || 'development'}`);
+});

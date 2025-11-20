@@ -1,0 +1,2 @@
+# Esta carpeta contendrá los modelos de MongoDB (Mongoose schemas)
+# Ejemplo: Menu.js, Order.js, Reservation.js, User.js

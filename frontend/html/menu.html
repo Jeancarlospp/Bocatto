@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Menú del Restaurante Bocatto">
+    <title>Menú - Bocatto Restaurant</title>
+    
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a href="../index.html" class="logo">
+                        <h1>Bocatto</h1>
+                    </a>
+                </div>
+                
+                <button class="navbar-toggler" id="navToggler">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <ul class="navbar-menu" id="navMenu">
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li><a href="menu.html" class="active">Menú</a></li>
+                    <li><a href="reservations.html">Reservas</a></li>
+                    <li><a href="about.html">Nosotros</a></li>
+                    <li><a href="contact.html">Contacto</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section class="page-header">
+            <div class="container">
+                <h2>Nuestro Menú</h2>
+                <p>Descubre nuestros deliciosos platos</p>
+            </div>
+        </section>
+
+        <section class="menu-section">
+            <div class="container">
+                <div id="menuContainer">
+                    <p>Cargando menú...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module">
+        import apiService from '../js/api.js';
+
+        async function loadMenu() {
+            const container = document.getElementById('menuContainer');
+            
+            try {
+                const response = await apiService.get('/api/menu');
+                
+                if (response.data && response.data.length > 0) {
+                    container.innerHTML = '<h3>Productos:</h3>';
+                    response.data.forEach(item => {
+                        container.innerHTML += `
+                            <div style="margin: 10px 0; padding: 10px; border: 1px solid #ccc;">
+                                <p><strong>Nombre:</strong> ${item.name}</p>
+                                <p><strong>Descripción:</strong> ${item.description || 'N/A'}</p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = '<p>No hay productos. La base de datos está vacía.</p>';
+                }
+            } catch (error) {
+                container.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                console.error('Error al cargar menú:', error);
+            }
+        }
+
+        loadMenu();
+    </script>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Bocatto Restaurant</h3>
+                    <p>Deliciosa comida para todos los gustos</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="../index.html">Inicio</a></li>
+                        <li><a href="menu.html">Menú</a></li>
+                        <li><a href="reservations.html">Reservas</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <p>📧 info@bocatto.com</p>
+                    <p>📱 +593 99 999 9999</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Bocatto Restaurant. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="../js/main.js"></script>
+</body>
+</html>
