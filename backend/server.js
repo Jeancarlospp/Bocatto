@@ -10,7 +10,17 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://bocatto-kappa.vercel.app',
+    'https://bocatto-git-main-jeancarlos-projects-8f89f917.vercel.app',
+    'https://bocatto-cus3equsp-jeancarlos-projects-8f89f917.vercel.app',
+    'http://localhost:3000',
+    'http://127.0.0.1:5500'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
