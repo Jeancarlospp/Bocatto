@@ -1,13 +1,13 @@
 # 🍽️ Bocatto Restaurant - Aplicación Web
 
-Aplicación web completa para un restaurante con frontend en HTML/CSS/JavaScript y backend en Node.js/Express con MongoDB Atlas.
+Aplicación web completa para un restaurante con frontend en **Next.js + React + Tailwind CSS** y backend en **Node.js/Express** con **MongoDB Atlas**.
 
 ## 📋 Tecnologías
 
 ### Frontend
-- **HTML5** - Estructura semántica
-- **CSS3** - Variables CSS, Flexbox, Grid, Responsive
-- **JavaScript ES6+** - Módulos, async/await
+- **Next.js 16** - Framework React con App Router
+- **React 19** - Biblioteca UI
+- **Tailwind CSS 4** - Framework CSS utility-first
 - **Vercel** - Hosting del frontend
 
 ### Backend
@@ -32,27 +32,32 @@ Aplicación web completa para un restaurante con frontend en HTML/CSS/JavaScript
 
 ```
 Bocatto/
-├── backend/
-│   ├── config/          # Configuración de DB
-│   ├── controllers/     # Lógica de negocio
-│   ├── models/          # Modelos de MongoDB
-│   ├── routes/          # Rutas de la API
-│   ├── middleware/      # Middlewares
-│   ├── .env            # Variables de entorno (NO subir a git)
-│   ├── .env.example    # Ejemplo de variables
-│   ├── .gitignore      # Archivos ignorados
-│   ├── server.js       # Punto de entrada
-│   ├── package.json    # Dependencias
-│   └── README.md       # Documentación del backend
+├── backend/                    # API REST - Puerto 5000
+│   ├── config/                 # Configuración de DB
+│   ├── controllers/            # Lógica de negocio
+│   ├── models/                 # Modelos de MongoDB
+│   ├── routes/                 # Rutas de la API
+│   ├── middleware/             # Middlewares
+│   ├── .env                    # Variables de entorno (NO subir a git)
+│   ├── server.js               # Punto de entrada
+│   ├── package.json            # Dependencias
+│   └── README.md               # Documentación del backend
 │
-└── frontend/
-    ├── assets/         # Imágenes, iconos
-    ├── css/           # Estilos
-    ├── html/          # Páginas adicionales
-    ├── js/            # JavaScript modular
-    ├── index.html     # Página principal
-    ├── vercel.json    # Configuración de Vercel
-    └── README.md      # Documentación del frontend
+└── frontend/                   # Next.js App - Puerto 3000
+    ├── app/                    # App Router de Next.js
+    │   ├── layout.js           # Layout principal
+    │   ├── page.js             # Página inicio
+    │   └── menu/               # Página menú
+    ├── components/             # Componentes React
+    │   ├── Header.jsx
+    │   ├── Footer.jsx
+    │   ├── Hero.jsx
+    │   └── Features.jsx
+    ├── lib/                    # Utilidades
+    │   └── api.js              # Cliente API
+    ├── .env.local              # Variables de entorno
+    ├── package.json            # Dependencias
+    └── README.md               # Documentación del frontend
 ```
 
 ## 🔧 Configuración Inicial
@@ -77,17 +82,19 @@ El servidor estará corriendo en: `http://localhost:5000`
 
 ### 2️⃣ Configurar Frontend
 
-Abre otra terminal y ejecuta:
-
 ```bash
-# Opción 1: Python
-python -m http.server 3000
+cd frontend
+npm install
+```
 
-# Opción 2: Node.js
-npx http-server frontend -p 3000
+**Crea el archivo `.env.local`**:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
 
-# Opción 3: VS Code Live Server
-# Instala extensión "Live Server" y ábrelo desde el editor
+**Inicia el servidor de desarrollo:**
+```bash
+npm run dev
 ```
 
 El frontend estará corriendo en: `http://localhost:3000`
@@ -119,7 +126,7 @@ Ver instrucciones en: `frontend/DEPLOY_VERCEL.md`
 2. Configura Root Directory: `frontend`
 3. Deploy automático
 
-**Importante:** Actualiza `frontend/js/config.js` con la URL de producción del backend.
+**Importante:** En Vercel, configura la variable de entorno `NEXT_PUBLIC_API_URL` con la URL de producción del backend.
 
 ## 🔐 Seguridad
 
@@ -145,6 +152,14 @@ Ver instrucciones en: `frontend/DEPLOY_VERCEL.md`
 cd backend
 npm run dev          # Desarrollo con auto-reload
 npm start            # Producción
+```
+
+### Frontend
+```bash
+cd frontend
+npm run dev          # Desarrollo
+npm run build        # Build de producción
+npm start            # Ejecutar build
 ```
 
 ### Verificar Node.js

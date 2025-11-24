@@ -1,54 +1,52 @@
 # Instrucciones para desplegar en Vercel
 
-## Pasos para el despliegue del Frontend:
+## Pasos para el despliegue:
 
-1. Asegúrate de tener tu código subido a GitHub
+1. **Sube tu código a GitHub**
+   ```bash
+   git add .
+   git commit -m "Migración a Next.js completada"
+   git push origin main
+   ```
 
-2. Ve a https://vercel.com y crea una cuenta (puedes usar GitHub)
+2. **Ve a https://vercel.com** y crea una cuenta con GitHub
 
-3. Click en "Add New..." y selecciona "Project"
+3. **Click en "Add New Project"**
 
-4. Importa tu repositorio de GitHub "Bocatto"
+4. **Selecciona el repositorio "Bocatto"**
 
-5. Configura el proyecto:
-   - **Project Name:** bocatto-frontend (o el nombre que prefieras)
-   - **Framework Preset:** Other
-   - **Root Directory:** frontend
-   - **Build Command:** (dejar vacío o "echo 'No build required'")
-   - **Output Directory:** . (punto, indica la carpeta actual)
-   - **Install Command:** (dejar vacío)
+5. **Configura el proyecto:**
+   - **Root Directory:** `frontend`
+   - **Framework Preset:** Next.js (detectado automáticamente)
+   - **Build Command:** `npm run build` (por defecto)
+   - **Output Directory:** `.next` (por defecto)
 
-6. **IMPORTANTE:** En "Environment Variables" agrega:
-   - No necesitas variables de entorno por ahora, pero puedes agregar:
-   - `API_URL` = URL de tu backend en Render (cuando lo despliegues)
+6. **Agregar Variable de Entorno:**
+   - `NEXT_PUBLIC_API_URL` = `https://bocatto.onrender.com`
 
-7. Click en "Deploy"
+7. **Click en "Deploy"**
 
-8. Espera a que se despliegue (toma menos de 1 minuto)
+8. Espera a que termine (1-2 minutos)
 
-9. Una vez desplegado, obtendrás una URL como:
-   https://bocatto-frontend.vercel.app
+9. Obtendrás una URL como:
+   ```
+   https://bocatto-tu-usuario.vercel.app
+   ```
 
-## Actualizaciones Automáticas:
+## Deploy Automático:
 
-- Cada vez que hagas push a la rama `main`, Vercel desplegará automáticamente
-- Las pull requests también obtienen previews automáticos
+- Cada vez que hagas `git push`, Vercel despliega automáticamente
+- No necesitas hacer nada más después del setup inicial
 
-## Configuración del Backend en el Frontend:
+## Notas importantes:
 
-Una vez tengas la URL del backend en Render, actualiza el archivo:
-`frontend/js/config.js`
+- Vercel es GRATIS para Next.js
+- Deploy instantáneo (no duerme como Render)
+- SSL/HTTPS automático
+- CDN global incluido
 
-Cambia:
-```javascript
-BASE_URL: 'http://localhost:5000'
-```
+## Verificar funcionamiento:
 
-Por:
-```javascript
-BASE_URL: 'https://tu-backend.onrender.com'
-```
-
-## Dominios Personalizados (Opcional):
-
-En Vercel puedes agregar tu propio dominio personalizado desde la configuración del proyecto.
+1. Abre tu URL de Vercel
+2. Navega a `/menu`
+3. Debe cargar los datos del backend en Render
