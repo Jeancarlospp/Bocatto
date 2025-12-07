@@ -1,3 +1,7 @@
+'use client';
+
+import Link from 'next/link';
+
 export default function AdminDashboard() {
   return (
     <div>
@@ -62,23 +66,32 @@ export default function AdminDashboard() {
           Acciones Rápidas
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-600 hover:bg-orange-50 transition text-left">
+          <Link 
+            href="/admin/products/create"
+            className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-600 hover:bg-orange-50 transition text-left block"
+          >
             <div className="text-2xl mb-2">➕</div>
             <p className="font-medium text-gray-800">Agregar Producto</p>
             <p className="text-sm text-gray-500">Crear nuevo producto</p>
-          </button>
+          </Link>
 
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-600 hover:bg-orange-50 transition text-left">
+          <Link 
+            href="/admin/reservations"
+            className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-600 hover:bg-orange-50 transition text-left block"
+          >
             <div className="text-2xl mb-2">📋</div>
             <p className="font-medium text-gray-800">Ver Reservaciones</p>
             <p className="text-sm text-gray-500">Gestionar reservas</p>
-          </button>
+          </Link>
 
-          <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-600 hover:bg-orange-50 transition text-left">
+          <Link 
+            href="/admin/offers"
+            className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-600 hover:bg-orange-50 transition text-left block"
+          >
             <div className="text-2xl mb-2">🎁</div>
             <p className="font-medium text-gray-800">Crear Oferta</p>
             <p className="text-sm text-gray-500">Nueva promoción</p>
-          </button>
+          </Link>
         </div>
       </div>
     </div>
