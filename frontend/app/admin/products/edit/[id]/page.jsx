@@ -1,0 +1,422 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { fetchProductById, updateProduct } from '@/lib/api';
+
+export default function EditProductPage() {
+  const router = useRouter();
+  const params = useParams();
+  const productId = params.id;
+
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    category: '',
+    subcategory: '',
+    currentStock: '0',
+    available: true,
+    ingredients: ''
+  });
+  
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [currentImage, setCurrentImage] = useState('');
+
+  const categories = [
+    'Entradas y Snacks',
+    'Platos Fuertes',
+    'Postres',
+    'Bebidas',
+    'Ensaladas',
+    'Hamburguesas',
+    'Pizzas',
+    'Pastas'
+  ];
+
+  useEffect(() => {
+    const loadProductData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchProductById(productId);
+        
+        if (response.success) {
+          const product = response.data;
+          setFormData({
+            name: product.name || '',
+            description: product.description || '',
+            price: product.price?.toString() || '',
+            category: product.category || '',
+            subcategory: product.subcategory || '',
+            currentStock: product.currentStock?.toString() || '0',
+            available: product.available !== undefined ? product.available : true,
+            ingredients: product.ingredients ? product.ingredients.join(', ') : ''
+          });
+          setCurrentImage(product.img || '');
+        }
+      } catch (err) {
+        console.error('Error loading product:', err);
+        setError('Error al cargar el producto');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProductData();
+  }, [productId]);
+
+
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+    setError('');
+    setSuccess(false);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        setError('Solo se permiten imágenes (JPEG, PNG, WEBP)');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        setError('La imagen no debe superar 5MB');
+        return;
+      }
+
+      setImageFile(file);
+      setError('');
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError('');
+    setSuccess(false);
+
+    // Validations
+    if (!formData.name.trim()) {
+      setError('Product name is required');
+      setSubmitting(false);
+      return;
+    }
+
+    if (!formData.description.trim()) {
+      setError('Description is required');
+      setSubmitting(false);
+      return;
+    }
+
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      setError('Price must be greater than 0');
+      setSubmitting(false);
+      return;
+    }
+
+    if (!formData.category) {
+      setError('Category is required');
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      const formDataToSend = new FormData();
+      
+      // Add image only if new one was selected
+      if (imageFile) {
+        formDataToSend.append('image', imageFile);
+      }
+      
+      formDataToSend.append('name', formData.name.trim());
+      formDataToSend.append('description', formData.description.trim());
+      formDataToSend.append('price', parseFloat(formData.price));
+      formDataToSend.append('category', formData.category);
+      formDataToSend.append('subcategory', formData.subcategory.trim());
+      formDataToSend.append('currentStock', parseInt(formData.currentStock) || 0);
+      formDataToSend.append('available', formData.available);
+      
+      if (formData.ingredients.trim()) {
+        formDataToSend.append('ingredients', formData.ingredients.trim());
+      }
+
+      const response = await updateProduct(productId, formDataToSend);
+
+      if (response.success) {
+        setSuccess(true);
+        setTimeout(() => {
+          router.push('/admin/products');
+        }, 1500);
+      }
+    } catch (err) {
+      console.error('Error updating product:', err);
+      setError(err.message || 'Error al actualizar el producto');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    router.back();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <div className="mb-6">
+        <h2 className="text-3xl font-bold text-gray-800">Editar Producto</h2>
+        <p className="text-gray-600 mt-2">Actualiza la información del producto</p>
+      </div>
+
+      {success && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+          Producto actualizado correctamente. Redirigiendo...
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="bg-white shadow-sm border border-gray-200 rounded-lg p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Product Name */}
+          <div className="md:col-span-2">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              Nombre del Producto <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="Ej: Alitas BBQ Clásicas"
+              required
+            />
+          </div>
+
+          {/* Description */}
+          <div className="md:col-span-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+              Descripción <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows="3"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="Descripción detallada del producto"
+              required
+            />
+          </div>
+
+          {/* Price */}
+          <div>
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
+              Precio ($) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              step="0.01"
+              min="0"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="0.00"
+              required
+            />
+          </div>
+
+          {/* Stock */}
+          <div>
+            <label htmlFor="currentStock" className="block text-sm font-medium text-gray-700 mb-2">
+              Stock Disponible
+            </label>
+            <input
+              type="number"
+              id="currentStock"
+              name="currentStock"
+              value={formData.currentStock}
+              onChange={handleChange}
+              min="0"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="0"
+            />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+              Categoría <span className="text-red-500">*</span>
+            </label>
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              required
+            >
+              <option value="">Seleccionar categoría</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Subcategory */}
+          <div>
+            <label htmlFor="subcategory" className="block text-sm font-medium text-gray-700 mb-2">
+              Subcategoría
+            </label>
+            <input
+              type="text"
+              id="subcategory"
+              name="subcategory"
+              value={formData.subcategory}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="Ej: Alitas, Nachos, etc."
+            />
+          </div>
+
+          {/* Image Upload */}
+          <div className="md:col-span-2">
+            <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
+              Imagen del Producto {imageFile ? '' : '(Actual se mantiene si no subes una nueva)'}
+            </label>
+            <div className="flex items-center gap-4">
+              <label className="flex-1 cursor-pointer">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-orange-500 transition">
+                  <div className="flex flex-col items-center">
+                    <svg className="w-12 h-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <p className="text-sm text-gray-600">
+                      {imageFile ? imageFile.name : 'Haz clic para cambiar la imagen'}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      PNG, JPG, WEBP hasta 5MB
+                    </p>
+                  </div>
+                </div>
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+
+              {/* Image Preview */}
+              <div className="w-32 h-32 border-2 border-gray-200 rounded-lg overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imagePreview || currentImage || '/placeholder.png'}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = '/placeholder.png';
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Ingredients */}
+          <div className="md:col-span-2">
+            <label htmlFor="ingredients" className="block text-sm font-medium text-gray-700 mb-2">
+              Ingredientes
+            </label>
+            <input
+              type="text"
+              id="ingredients"
+              name="ingredients"
+              value={formData.ingredients}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              placeholder="Separados por comas: pollo, salsa BBQ, especias"
+            />
+            <p className="text-sm text-gray-500 mt-1">Ingrese los ingredientes separados por comas</p>
+          </div>
+
+          {/* Available */}
+          <div className="md:col-span-2">
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                name="available"
+                checked={formData.available}
+                onChange={handleChange}
+                className="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+              />
+              <span className="ml-2 text-sm font-medium text-gray-700">
+                Producto disponible para venta
+              </span>
+            </label>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-4 mt-8 pt-6 border-t border-gray-200">
+          <button
+            type="submit"
+            disabled={submitting || success}
+            className="px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed font-medium"
+          >
+            {submitting ? 'Actualizando...' : success ? 'Actualizado ✓' : 'Actualizar Producto'}
+          </button>
+          <button
+            type="button"
+            onClick={handleCancel}
+            disabled={submitting}
+            className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition disabled:bg-gray-100 disabled:cursor-not-allowed font-medium"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}

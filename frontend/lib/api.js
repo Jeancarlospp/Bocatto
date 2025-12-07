@@ -72,3 +72,31 @@ export async function fetchProductById(id) {
     throw error;
   }
 }
+
+/**
+ * Update an existing product
+ * @param {string} id - Product ID
+ * @param {FormData} formData - Product data with optional image
+ * @returns {Promise<Object>} Updated product data
+ */
+export async function updateProduct(id, formData) {
+  try {
+    const response = await fetch(`${API_URL}/api/menu/${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      body: formData
+      // Don't set Content-Type header - browser will set it automatically with boundary
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error updating product');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Update Product Error:', error);
+    throw error;
+  }
+}

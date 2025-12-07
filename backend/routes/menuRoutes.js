@@ -4,7 +4,8 @@ import { uploadProductImage } from '../middleware/upload.js';
 import {
   getAllMenu,
   createProduct,
-  getProductById
+  getProductById,
+  updateProduct
 } from '../controllers/menuController.js';
 
 const router = express.Router();
@@ -16,5 +17,6 @@ router.get('/:id', getProductById);
 // Protected routes (admin only)
 // uploadProductImage handles the image upload to Cloudinary
 router.post('/', authenticateToken, isAdmin, uploadProductImage, createProduct);
+router.put('/:id', authenticateToken, isAdmin, uploadProductImage, updateProduct);
 
 export default router;

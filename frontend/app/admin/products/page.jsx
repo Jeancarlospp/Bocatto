@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { fetchMenu } from '@/lib/api';
 
 export default function ProductsPage() {
+  const router = useRouter();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -154,13 +156,14 @@ export default function ProductsPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex gap-2">
                         <button
-                          className="text-blue-600 hover:text-blue-900"
+                          onClick={() => router.push(`/admin/products/edit/${product._id}`)}
+                          className="text-blue-600 hover:text-blue-900 hover:scale-110 transition"
                           title="Editar"
                         >
                           ✏️
                         </button>
                         <button
-                          className="text-red-600 hover:text-red-900"
+                          className="text-red-600 hover:text-red-900 hover:scale-110 transition"
                           title="Eliminar"
                         >
                           🗑️

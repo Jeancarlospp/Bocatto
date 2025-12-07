@@ -140,3 +140,88 @@ export const getProductById = async (req, res) => {
     });
   }
 };
+
+/**
+ * PUT /api/menu/:id
+ * Update existing product
+ * Requires admin authentication
+ * Optionally handles new image upload
+ */
+export const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find existing product
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // Update fields from request body
+    const { name, description, price, category, subcategory, currentStock, available, ingredients } = req.body;
+
+    if (name) product.name = name.trim();
+    if (description) product.description = description.trim();
+    if (price) product.price = parseFloat(price);
+    if (category) product.category = category;
+    if (subcategory !== undefined) product.subcategory = subcategory.trim();
+    if (currentStock !== undefined) product.currentStock = parseInt(currentStock);
+    if (available !== undefined) product.available = available === 'true' || available === true;
+
+    // Parse ingredients if sent as string
+    if (ingredients) {
+      if (typeof ingredients === 'string') {
+        product.ingredients = ingredients
+          .split(',')
+          .map(i => i.trim())
+          .filter(i => i);
+      } else {
+        product.ingredients = ingredients;
+      }
+    }
+
+    // Handle image update if new file was uploaded
+    if (req.file) {
+      // Note: Old image in Cloudinary could be deleted here if needed
+      // For now, we just update the URL
+      product.img = req.file.path;
+    }
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Product updated successfully',
+      data: product
+    });
+
+  } catch (error) {
+    console.error('Error updating product:', error);
+
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        errors: messages
+      });
+    }
+
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Error updating product',
+      error: error.message
+    });
+  }
+};
