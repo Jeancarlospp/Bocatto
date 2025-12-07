@@ -163,3 +163,278 @@ export const verifySession = async (req, res) => {
     });
   }
 };
+
+/**
+ * ========================================
+ * CLIENT AUTHENTICATION CONTROLLERS
+ * ========================================
+ */
+
+/**
+ * Client registration controller
+ * POST /api/auth/client/register
+ * Body: { firstName, lastName, email, password, phone?, address? }
+ */
+export const clientRegister = async (req, res) => {
+  try {
+    const { firstName, lastName, email, password, phone, address } = req.body;
+
+    // Validate required fields
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nombre, apellido, correo electrónico y contraseña son requeridos.'
+      });
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'La contraseña debe tener al menos 6 caracteres.'
+      });
+    }
+
+    // Check if email already exists
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: 'Este correo electrónico ya está registrado.'
+      });
+    }
+
+    // Create new client user
+    const newUser = await User.create({
+      firstName,
+      lastName,
+      email: email.toLowerCase(),
+      password,
+      role: 'client',
+      phone: phone || undefined,
+      address: address || undefined,
+      isActive: true,
+      loyaltyPoints: 0
+    });
+
+    // Update last login
+    newUser.lastLogin = new Date();
+    await newUser.save();
+
+    // Generate JWT token (auto-login after registration)
+    const token = jwt.sign(
+      {
+        userId: newUser._id,
+        email: newUser.email,
+        role: newUser.role
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '24h'
+      }
+    );
+
+    // Set HTTP-only cookie (same config as admin)
+    res.cookie('authToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
+    // Return success response
+    return res.status(201).json({
+      success: true,
+      message: 'Registro exitoso.',
+      user: {
+        id: newUser._id,
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        role: newUser.role,
+        loyaltyPoints: newUser.loyaltyPoints
+      }
+    });
+
+  } catch (error) {
+    console.error('Client registration error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error del servidor durante el registro. Intenta nuevamente.'
+    });
+  }
+};
+
+/**
+ * Client login controller
+ * POST /api/auth/client/login
+ * Body: { email, password }
+ */
+export const clientLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Correo electrónico y contraseña son requeridos.'
+      });
+    }
+
+    // Find user by email
+    const user = await User.findOne({ email: email.toLowerCase() });
+
+    // Check if user exists
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Correo electrónico o contraseña incorrectos.'
+      });
+    }
+
+    // Check if user is client
+    if (user.role !== 'client') {
+      return res.status(403).json({
+        success: false,
+        message: 'Acceso denegado. Use el login de administrador.'
+      });
+    }
+
+    // Check if account is active
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        message: 'Cuenta inactiva. Contacta con soporte.'
+      });
+    }
+
+    // Verify password
+    const isPasswordValid = await user.comparePassword(password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Correo electrónico o contraseña incorrectos.'
+      });
+    }
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+
+    // Generate JWT token (same as admin)
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+        role: user.role
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '24h'
+      }
+    );
+
+    // Set HTTP-only cookie (same config as admin)
+    res.cookie('authToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
+    // Return success response
+    return res.status(200).json({
+      success: true,
+      message: 'Inicio de sesión exitoso.',
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        loyaltyPoints: user.loyaltyPoints
+      }
+    });
+
+  } catch (error) {
+    console.error('Client login error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error del servidor durante el inicio de sesión. Intenta nuevamente.'
+    });
+  }
+};
+
+/**
+ * Client logout controller
+ * POST /api/auth/client/logout
+ */
+export const clientLogout = async (req, res) => {
+  try {
+    // Clear the auth cookie (same as admin)
+    res.clearCookie('authToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    });
+
+    // Prevent caching to avoid back button issues
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
+    return res.status(200).json({
+      success: true,
+      message: 'Sesión cerrada exitosamente.'
+    });
+
+  } catch (error) {
+    console.error('Client logout error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error del servidor al cerrar sesión.'
+    });
+  }
+};
+
+/**
+ * Verify client session
+ * GET /api/auth/client/verify
+ * Requires authenticateToken middleware
+ */
+export const verifyClientSession = async (req, res) => {
+  try {
+    // User is already attached to req by authenticateToken middleware
+    // Verify it's a client
+    if (req.user.role !== 'client') {
+      return res.status(403).json({
+        success: false,
+        message: 'Acceso denegado.'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: req.user._id,
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
+        email: req.user.email,
+        role: req.user.role,
+        loyaltyPoints: req.user.loyaltyPoints,
+        phone: req.user.phone,
+        address: req.user.address
+      }
+    });
+
+  } catch (error) {
+    console.error('Client session verification error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al verificar la sesión.'
+    });
+  }
+};
