@@ -74,7 +74,6 @@ export async function fetchProductById(id) {
 }
 
 /**
-<<<<<<< HEAD
  * Update an existing product
  * @param {string} id - Product ID
  * @param {FormData} formData - Product data with optional image
@@ -98,7 +97,11 @@ export async function updateProduct(id, formData) {
     return data;
   } catch (error) {
     console.error('Update Product Error:', error);
-=======
+    throw error;
+  }
+}
+
+/**
  * Fetch all active areas (for public reservations page)
  * @returns {Promise<Object>} Areas data
  */
@@ -116,7 +119,6 @@ export async function fetchActiveAreas() {
     return data;
   } catch (error) {
     console.error('Fetch Areas Error:', error);
->>>>>>> 1a70faae1c1986d2087e5d86ee8a1e8a561f5566
     throw error;
   }
 }
