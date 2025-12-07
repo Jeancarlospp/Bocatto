@@ -72,3 +72,25 @@ export async function fetchProductById(id) {
     throw error;
   }
 }
+
+/**
+ * Fetch all active areas (for public reservations page)
+ * @returns {Promise<Object>} Areas data
+ */
+export async function fetchActiveAreas() {
+  try {
+    const response = await fetch(`${API_URL}/areas?activeOnly=true`, {
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP Error! Status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Fetch Areas Error:', error);
+    throw error;
+  }
+}
