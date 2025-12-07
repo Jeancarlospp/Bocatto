@@ -23,8 +23,8 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: function() {
-      // Password is required only for admin users (not for Google OAuth clients)
-      return this.role === 'admin';
+      // Password is required for users without Google OAuth
+      return !this.googleId;
     },
     minlength: [6, 'Password must be at least 6 characters']
   },

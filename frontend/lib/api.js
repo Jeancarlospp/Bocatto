@@ -74,6 +74,7 @@ export async function fetchProductById(id) {
 }
 
 /**
+<<<<<<< HEAD
  * Update an existing product
  * @param {string} id - Product ID
  * @param {FormData} formData - Product data with optional image
@@ -97,6 +98,25 @@ export async function updateProduct(id, formData) {
     return data;
   } catch (error) {
     console.error('Update Product Error:', error);
+=======
+ * Fetch all active areas (for public reservations page)
+ * @returns {Promise<Object>} Areas data
+ */
+export async function fetchActiveAreas() {
+  try {
+    const response = await fetch(`${API_URL}/areas?activeOnly=true`, {
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP Error! Status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Fetch Areas Error:', error);
+>>>>>>> 1a70faae1c1986d2087e5d86ee8a1e8a561f5566
     throw error;
   }
 }
