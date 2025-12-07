@@ -32,6 +32,7 @@ connectDB();
 // Importar rutas
 import menuRoutes from './routes/menuRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import areaRoutes from './routes/areaRoutes.js';
 
 // Ruta de prueba
 app.get('/', (req, res) => {
@@ -45,6 +46,7 @@ app.get('/', (req, res) => {
 // Rutas de la API
 app.use('/api/menu', menuRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/areas', areaRoutes); // No prefix 'api/' as per requirements
 
 // Manejo de rutas no encontradas
 app.use((req, res) => {

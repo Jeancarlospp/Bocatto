@@ -27,7 +27,7 @@ export default function AdminSidebar({ onLogout }) {
       section: 'Reservaciones',
       items: [
         { label: 'Ver Reservaciones', href: '/admin/reservations'},
-        { label: 'Ambientes', href: '/admin/ambients'}
+        { label: 'Ambientes', href: '/admin/areas'}
       ]
     },
     {
