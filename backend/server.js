@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 import { connectDB } from './config/database.js';
 
 // Cargar variables de entorno
@@ -12,9 +13,9 @@ const app = express();
 // Middlewares
 app.use(cors({
   origin: [
-    "http://localhost:3000", // para desarrollo
-    "https://bocatto-git-main-jeancarlos-projects-8f89f917.vercel.app", // tu preview
-    "https://bocatto-nu.vercel.app", // 👈 el dominio del globo
+    "http://localhost:3000", 
+    "https://bocatto-git-main-jeancarlos-projects-8f89f917.vercel.app", 
+    "https://bocatto-nu.vercel.app", 
     'http://localhost:3000',
     'http://127.0.0.1:5500'
   ],
@@ -23,12 +24,14 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser()); // Parse cookies for JWT authentication
 
 // Conectar a MongoDB
 connectDB();
 
 // Importar rutas
 import menuRoutes from './routes/menuRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 // Ruta de prueba
 app.get('/', (req, res) => {
@@ -41,6 +44,7 @@ app.get('/', (req, res) => {
 
 // Rutas de la API
 app.use('/api/menu', menuRoutes);
+app.use('/api/auth', authRoutes);
 
 // Manejo de rutas no encontradas
 app.use((req, res) => {
