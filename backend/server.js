@@ -12,13 +12,24 @@ const app = express();
 
 // Middlewares
 app.use(cors({
-  origin: [
-    "http://localhost:3000", 
-    "https://bocatto-git-main-jeancarlos-projects-8f89f917.vercel.app", 
-    "https://bocatto-nu.vercel.app", 
-    'http://localhost:3000',
-    'http://127.0.0.1:5500'
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Lista de dominios permitidos
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://127.0.0.1:5500',
+      'https://bocatto-nu.vercel.app'
+    ];
+    
+    // Permitir cualquier subdominio de vercel.app
+    if (origin.includes('.vercel.app') || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));

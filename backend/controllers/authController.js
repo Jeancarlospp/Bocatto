@@ -76,7 +76,7 @@ export const adminLogin = async (req, res) => {
     res.cookie('authToken', token, {
       httpOnly: true, // Prevent XSS attacks
       secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: 'strict', // CSRF protection
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site in production
       maxAge: 24 * 60 * 60 * 1000 // 24 hours in milliseconds
     });
 
@@ -113,7 +113,7 @@ export const adminLogout = async (req, res) => {
     res.clearCookie('authToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     });
 
     // Prevent caching to avoid back button issues
