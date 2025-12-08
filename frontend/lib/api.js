@@ -372,6 +372,138 @@ export async function adminCancelReservation(id) {
 
 /**
  * ========================================
+ * OFFERS API FUNCTIONS
+ * ========================================
+ */
+
+/**
+ * Fetch all offers
+ */
+export async function fetchOffers() {
+  try {
+    const response = await fetch(`${API_URL}/offers`, {
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP Error! Status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Create a new offer
+ * @param {Object} offerData - Offer information
+ * @returns {Promise<Object>} Created offer data
+ */
+export async function createOffer(offerData) {
+  try {
+    const response = await fetch(`${API_URL}/offers`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(offerData)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error creating offer');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Create Offer Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch single offer by ID
+ * @param {string} id - Offer ID
+ * @returns {Promise<Object>} Offer data
+ */
+export async function fetchOfferById(id) {
+  try {
+    const response = await fetch(`${API_URL}/offers/${id}`, {
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP Error! Status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update an existing offer
+ * @param {string} id - Offer ID
+ * @param {FormData} formData - Offer data with optional image
+ * @returns {Promise<Object>} Updated offer data
+ */
+export async function updateOffer(id, formData) {
+  try {
+    const response = await fetch(`${API_URL}/offers/${id}`, {
+      method: 'PUT',
+      credentials: 'include',
+      body: formData
+      // Don't set Content-Type header - browser will set it automatically with boundary
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error updating offer');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Update Offer Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete an offer
+ * @param {string} id - Offer ID
+ * @returns {Promise<Object>} Deletion confirmation
+ */
+export async function deleteOffer(id) {
+  try {
+    const response = await fetch(`${API_URL}/offers/${id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error deleting offer');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Delete Offer Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * ========================================
  * AREAS API FUNCTIONS
  * ========================================
  */
