@@ -18,7 +18,6 @@ const offerSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Description is required'],
       trim: true,
-      minlength: [10, 'Description must be at least 10 characters'],
       maxlength: [500, 'Description cannot exceed 500 characters']
     },
     items: [{
@@ -61,9 +60,15 @@ const offerSchema = new mongoose.Schema(
       required: [true, 'End date is required'],
       validate: {
         validator: function(value) {
-          return value >= this.startDate;
+          // Skip validation if startDate is not available (during partial updates)
+          if (!this.startDate) return true;
+          
+          // Convert dates to same timezone for comparison
+          const startDateOnly = new Date(this.startDate.toDateString());
+          const endDateOnly = new Date(value.toDateString());
+          return endDateOnly >= startDateOnly;
         },
-        message: 'End date must be after start date'
+        message: 'End date must be after or equal to start date'
       }
     },
 

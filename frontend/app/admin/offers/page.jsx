@@ -25,7 +25,7 @@ export default function OffersManagement() {
   const [submitting, setSubmitting] = useState(false);
 
   const dayOptions = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
-  const colorOptions = ['red', 'blue', 'green', 'orange', 'purple'];
+  const colorOptions = [{ value: 'red', label: 'Rojo' }, { value: 'blue', label: 'Azul' }, { value: 'green', label: 'Verde' }, { value: 'orange', label: 'Naranja' }, { value: 'purple', label: 'Morado' }];
   const iconOptions = ['🔥', '⭐', '💥', '🎁', '💯', '🎉'];
 
   // Fetch offers on mount
@@ -286,14 +286,14 @@ export default function OffersManagement() {
 
       {/* Form Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-        <h3 className="text-xl font-semibold mb-4">
+        <h3 className="text-xl font-semibold text-gray-900 mb-4">
           {editingOffer ? 'Editar Oferta' : 'Nueva Oferta'}
         </h3>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+          <div>
+            <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Nombre de la Oferta *
               </label>
@@ -308,23 +308,46 @@ export default function OffersManagement() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Imagen
+            <div className="mb-6">
+              <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
+                Imagen de la Oferta
               </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-              />
-              {imagePreview && (
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="mt-2 w-32 h-32 object-cover rounded-lg"
-                />
-              )}
+              <div className="flex items-center gap-4">
+                <label className="flex-1 cursor-pointer">
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-orange-500 transition">
+                    <div className="flex flex-col items-center">
+                      <svg className="w-12 h-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      <p className="text-sm text-gray-600">
+                        {formData.image ? formData.image.name : 'Haz clic para seleccionar una imagen'}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        PNG, JPG, WEBP hasta 5MB
+                      </p>
+                    </div>
+                  </div>
+                  <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </label>
+
+                {/* Image Preview */}
+                {imagePreview && (
+                  <div className="w-32 h-32 border-2 border-gray-200 rounded-lg overflow-hidden">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -432,7 +455,7 @@ export default function OffersManagement() {
 
           {/* Valid Days */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-900 mb-2">
               Días Válidos *
             </label>
             <div className="flex flex-wrap gap-2">
@@ -445,7 +468,7 @@ export default function OffersManagement() {
                     checked={formData.validDays.includes(day)}
                     onChange={handleInputChange}
                   />
-                  <span className="capitalize">{day}</span>
+                  <span className="capitalize text-gray-900">{day}</span>
                 </label>
               ))}
             </div>
@@ -487,7 +510,7 @@ export default function OffersManagement() {
           {/* Badge Customization */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 Texto del Badge
               </label>
               <input
@@ -501,35 +524,35 @@ export default function OffersManagement() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 Color del Badge
               </label>
               <select
                 name="badge.color"
                 value={formData.badge.color}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
               >
                 {colorOptions.map(color => (
-                  <option key={color} value={color}>
-                    {color.charAt(0).toUpperCase() + color.slice(1)}
+                  <option key={color.value} value={color.value} className="text-gray-900">
+                    {color.label}
                   </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-900 mb-2">
                 Icono
               </label>
               <select
                 name="badge.icon"
                 value={formData.badge.icon}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
               >
                 {iconOptions.map(icon => (
-                  <option key={icon} value={icon}>
+                  <option key={icon} value={icon} className="text-gray-900">
                     {icon}
                   </option>
                 ))}
@@ -548,7 +571,7 @@ export default function OffersManagement() {
                   onChange={handleInputChange}
                   className="mr-2"
                 />
-                Destacada
+                <span className="text-gray-900">Destacada</span>
               </label>
 
               <label className="flex items-center">
@@ -559,7 +582,7 @@ export default function OffersManagement() {
                   onChange={handleInputChange}
                   className="mr-2"
                 />
-                Activa
+                <span className="text-gray-900">Activa</span>
               </label>
             </div>
           </div>
@@ -590,7 +613,7 @@ export default function OffersManagement() {
       {/* Offers List */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-6 border-b border-gray-200">
-          <h3 className="text-xl font-semibold">Lista de Ofertas</h3>
+          <h3 className="text-xl font-semibold text-gray-900">Lista de Ofertas</h3>
         </div>
 
         {loading ? (
