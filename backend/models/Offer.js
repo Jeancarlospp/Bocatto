@@ -7,6 +7,10 @@ import mongoose from 'mongoose';
  */
 const offerSchema = new mongoose.Schema(
   {
+    offerId: {
+      type: Number,
+      unique: true
+    },
     name: {
       type: String,
       required: [true, 'Offer name is required'],
@@ -109,6 +113,23 @@ const offerSchema = new mongoose.Schema(
   }
 );
 
+// Auto-generate offerId before saving (copied from products)
+offerSchema.pre('save', async function(next) {
+  if (this.isNew && !this.offerId) {
+    try {
+      const Offer = this.constructor;
+      const maxOffer = await Offer.findOne().sort({ offerId: -1 }).lean();
+      const totalOffers = await Offer.countDocuments();
+      this.offerId = Math.max(maxOffer?.offerId || 0, totalOffers) + 1;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next();
+  }
+});
+
 // Calculate discount percentage before saving
 offerSchema.pre('save', function(next) {
   if (this.originalPrice && this.offerPrice) {
@@ -127,5 +148,9 @@ offerSchema.virtual('isCurrentlyValid').get(function() {
          now <= this.endDate &&
          this.validDays.includes(today);
 });
+
+// Indexes for optimized searches (copied from products)
+offerSchema.index({ active: 1, featured: 1 });
+offerSchema.index({ name: 'text', description: 'text' });
 
 export default mongoose.model('Offer', offerSchema);

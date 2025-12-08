@@ -303,7 +303,7 @@ export default function OffersManagement() {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
                 placeholder="Ej: Combo Lunes Familiar"
               />
             </div>
@@ -361,7 +361,7 @@ export default function OffersManagement() {
               onChange={handleInputChange}
               required
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
               placeholder="Describe los productos incluidos en la oferta..."
             />
           </div>
@@ -378,14 +378,14 @@ export default function OffersManagement() {
                   min="1"
                   value={item.quantity}
                   onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
-                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
                   placeholder="Cant."
                 />
                 <input
                   type="text"
                   value={item.name}
                   onChange={(e) => handleItemChange(index, 'name', e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
                   placeholder="Nombre del producto"
                   required
                 />
@@ -422,7 +422,7 @@ export default function OffersManagement() {
                 value={formData.originalPrice}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
                 placeholder="0.00"
               />
             </div>
@@ -438,7 +438,7 @@ export default function OffersManagement() {
                 value={formData.offerPrice}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
                 placeholder="0.00"
               />
             </div>
@@ -486,7 +486,7 @@ export default function OffersManagement() {
                 value={formData.startDate}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
               />
             </div>
 
@@ -500,7 +500,7 @@ export default function OffersManagement() {
                 value={formData.endDate}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
               />
             </div>
           </div>
@@ -518,7 +518,7 @@ export default function OffersManagement() {
                 name="badge.text"
                 value={formData.badge.text}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
                 placeholder="Ej: ¡Oferta!"
               />
             </div>
@@ -630,6 +630,9 @@ export default function OffersManagement() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    ID
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Imagen
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -650,8 +653,11 @@ export default function OffersManagement() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {offers.map((offer) => (
+                {offers.map((offer, index) => (
                   <tr key={offer._id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      #{offer.offerId || 'N/A'}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {offer.imageUrl ? (
                         <img
@@ -711,7 +717,7 @@ export default function OffersManagement() {
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {offer.active ? '🟢 Activa' : '🔴 Inactiva'}
+                        {offer.active ? 'Activo' : 'Inactivo'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -116,37 +116,33 @@ export const createOffer = async (req, res) => {
  */
 export const getAllOffers = async (req, res) => {
   try {
-    const { active, featured, validToday } = req.query;
-    
-    let query = {};
-    
-    // Filter by active status
-    if (active !== undefined) {
-      query.active = active === 'true';
-    }
-    
-    // Filter by featured status
-    if (featured !== undefined) {
-      query.featured = featured === 'true';
-    }
-    
-    // Filter by valid today
-    if (validToday === 'true') {
-      const today = new Date();
-      const todayName = today.toLocaleDateString('es-ES', { weekday: 'long' });
-      
-      query.active = true;
-      query.startDate = { $lte: today };
-      query.endDate = { $gte: today };
-      query.validDays = { $in: [todayName] };
-    }
+    // Simple query like products - no filters for admin panel
+    const offers = await Offer.find().sort({ createdAt: 1 });
 
-    const offers = await Offer.find(query).sort({ createdAt: -1 });
+    // Auto-assign offerId to offers without ID (same logic as products)
+    const updates = [];
+    const offersWithId = offers.map((offer, index) => {
+      const obj = offer.toObject();
+      if (!obj.offerId || obj.offerId === 0) {
+        obj.offerId = index + 1;
+        updates.push({
+          updateOne: {
+            filter: { _id: offer._id },
+            update: { $set: { offerId: index + 1 } }
+          }
+        });
+      }
+      return obj;
+    });
+    
+    if (updates.length > 0) {
+      await Offer.bulkWrite(updates);
+    }
 
     return res.status(200).json({
       success: true,
-      count: offers.length,
-      data: offers
+      count: offersWithId.length,
+      data: offersWithId
     });
 
   } catch (error) {
