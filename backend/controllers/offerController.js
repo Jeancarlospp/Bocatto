@@ -8,8 +8,8 @@ import { deleteOfferImage } from '../middleware/upload.js';
  */
 export const createOffer = async (req, res) => {
   try {
-    console.log('📝 Creating offer - Request body:', req.body);
-    console.log('📁 File received:', req.file);
+    console.log('Creating offer - Request body:', req.body);
+    console.log('File received:', req.file);
     
     const { 
       name, 
@@ -91,14 +91,14 @@ export const createOffer = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Create offer error:', error);
+    console.error('Create offer error:', error);
     
     // Delete uploaded file if offer creation fails
     if (req.file && req.file.path) {
       try {
         await deleteOfferImage(req.file.path);
       } catch (deleteError) {
-        console.error('❌ Error deleting uploaded file:', deleteError);
+        console.error('Error deleting uploaded file:', deleteError);
       }
     }
 
@@ -146,7 +146,7 @@ export const getAllOffers = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Get offers error:', error);
+    console.error('Get offers error:', error);
     return res.status(500).json({
       success: false,
       message: 'Error fetching offers'
@@ -176,7 +176,7 @@ export const getOfferById = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Get offer by ID error:', error);
+    console.error('Get offer by ID error:', error);
     return res.status(500).json({
       success: false,
       message: 'Error fetching offer'
@@ -191,8 +191,8 @@ export const getOfferById = async (req, res) => {
  */
 export const updateOffer = async (req, res) => {
   try {
-    console.log('✏️ Updating offer - Request body:', req.body);
-    console.log('📁 File received:', req.file);
+    console.log('Updating offer - Request body:', req.body);
+    console.log('File received:', req.file);
 
     const { 
       name, 
@@ -253,7 +253,7 @@ export const updateOffer = async (req, res) => {
         try {
           await deleteOfferImage(existingOffer.imageUrl);
         } catch (deleteError) {
-          console.error('⚠️ Could not delete old image:', deleteError);
+          console.error('Could not delete old image:', deleteError);
         }
       }
       imageUrl = req.file.path;
@@ -289,7 +289,7 @@ export const updateOffer = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Update offer error:', error);
+    console.error('Update offer error:', error);
     return res.status(400).json({
       success: false,
       message: error.message || 'Error updating offer'
@@ -318,7 +318,7 @@ export const deleteOffer = async (req, res) => {
       try {
         await deleteOfferImage(offer.imageUrl);
       } catch (deleteError) {
-        console.error('⚠️ Could not delete offer image:', deleteError);
+        console.error('Could not delete offer image:', deleteError);
       }
     }
 
@@ -331,7 +331,7 @@ export const deleteOffer = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Delete offer error:', error);
+    console.error('Delete offer error:', error);
     return res.status(500).json({
       success: false,
       message: 'Error deleting offer'
