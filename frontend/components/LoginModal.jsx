@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useClientAuth } from '@/hooks/useClientAuth';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const router = useRouter();
-  const { login, register, refreshUser } = useClientAuth();
+  const { login, register } = useAuth();
   const [activeTab, setActiveTab] = useState('admin'); // 'admin' or 'client'
   const [clientView, setClientView] = useState('login'); // 'login' or 'register' for client tab
   const [formData, setFormData] = useState({
@@ -92,7 +92,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       
       if (result.success) {
         handleClose();
-        // Trigger parent component refresh
+        // Trigger parent component callback if provided
         if (onLoginSuccess) {
           onLoginSuccess();
         }
@@ -138,7 +138,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       
       if (result.success) {
         handleClose();
-        // Trigger parent component refresh
+        // Trigger parent component callback if provided
         if (onLoginSuccess) {
           onLoginSuccess();
         }
