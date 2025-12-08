@@ -5,7 +5,8 @@ import {
   getAllMenu,
   createProduct,
   getProductById,
-  updateProduct
+  updateProduct,
+  deleteProduct
 } from '../controllers/menuController.js';
 
 const router = express.Router();
@@ -18,5 +19,6 @@ router.get('/:id', getProductById);
 // uploadProductImage handles the image upload to Cloudinary
 router.post('/', authenticateToken, isAdmin, uploadProductImage, createProduct);
 router.put('/:id', authenticateToken, isAdmin, uploadProductImage, updateProduct);
+router.delete('/:id', authenticateToken, isAdmin, deleteProduct);
 
 export default router;

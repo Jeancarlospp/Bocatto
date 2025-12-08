@@ -123,6 +123,7 @@ export async function fetchActiveAreas() {
   }
 }
 
+<<<<<<< HEAD
 // ========================================
 // RESERVATION API FUNCTIONS
 // ========================================
@@ -220,6 +221,16 @@ export async function getReservationById(id) {
 export async function cancelReservation(id) {
   try {
     const response = await fetch(`${API_URL}/reservations/${id}`, {
+=======
+/**
+ * Delete a product (soft delete)
+ * @param {string} id - Product ID
+ * @returns {Promise<Object>} Response data
+ */
+export async function deleteProduct(id) {
+  try {
+    const response = await fetch(`${API_URL}/api/menu/${id}`, {
+>>>>>>> 1d7f6214a397e7b51bf6211889e094b9cbaee154
       method: 'DELETE',
       credentials: 'include'
     });
@@ -227,11 +238,16 @@ export async function cancelReservation(id) {
     const data = await response.json();
 
     if (!response.ok || !data.success) {
+<<<<<<< HEAD
       throw new Error(data.message || 'Error al cancelar la reservación');
+=======
+      throw new Error(data.message || 'Error deleting product');
+>>>>>>> 1d7f6214a397e7b51bf6211889e094b9cbaee154
     }
 
     return data;
   } catch (error) {
+<<<<<<< HEAD
     console.error('Cancel Reservation Error:', error);
     throw error;
   }
@@ -341,6 +357,9 @@ export async function adminCancelReservation(id) {
     return data;
   } catch (error) {
     console.error('Admin Cancel Reservation Error:', error);
+=======
+    console.error('Delete Product Error:', error);
+>>>>>>> 1d7f6214a397e7b51bf6211889e094b9cbaee154
     throw error;
   }
 }
