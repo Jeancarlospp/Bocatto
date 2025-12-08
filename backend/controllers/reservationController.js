@@ -130,13 +130,31 @@ export const createReservation = async (req, res) => {
     }
 
     // Check for overlapping reservations
+    const requestedStart = new Date(startTime);
+    const requestedEnd = new Date(endTime);
+    
+    console.log('🔍 Checking overlaps:', {
+      areaId,
+      requestedStart: requestedStart.toISOString(),
+      requestedEnd: requestedEnd.toISOString()
+    });
+
     const overlapping = await Reservation.findOverlapping(
       areaId,
-      new Date(startTime),
-      new Date(endTime)
+      requestedStart,
+      requestedEnd
     );
 
+    console.log('📊 Found overlapping reservations:', overlapping.length);
+    
     if (overlapping.length > 0) {
+      console.log('❌ Overlap details:', overlapping.map(r => ({
+        id: r._id.toString(),
+        startTime: r.startTime.toISOString(),
+        endTime: r.endTime.toISOString(),
+        status: r.status
+      })));
+      
       return res.status(409).json({
         success: false,
         message: 'Ya existe una reservación para este ambiente en ese rango de tiempo',
@@ -148,6 +166,8 @@ export const createReservation = async (req, res) => {
         }))
       });
     }
+    
+    console.log('✅ No overlaps found, proceeding with reservation');
 
     // Calculate total price
     const totalPrice = Reservation.calculatePrice(new Date(startTime), new Date(endTime));
