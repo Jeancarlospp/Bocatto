@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { fetchOffers, deleteOffer, createOffer, updateOffer } from '@/lib/api';
 
 export default function OffersManagement() {
   const [offers, setOffers] = useState([]);
@@ -30,18 +31,15 @@ export default function OffersManagement() {
 
   // Fetch offers on mount
   useEffect(() => {
-    fetchOffers();
+    loadOffers();
   }, []);
 
-  const fetchOffers = async () => {
+  const loadOffers = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/offers`, {
-        credentials: 'include'
-      });
-
-      const data = await response.json();
-
+      setError('');
+      const data = await fetchOffers();
+      
       if (data.success) {
         setOffers(data.data);
       } else {
@@ -175,22 +173,16 @@ export default function OffersManagement() {
         submitData.append('image', formData.image);
       }
 
-      const url = editingOffer 
-        ? `${process.env.NEXT_PUBLIC_API_URL}/offers/${editingOffer._id}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/offers`;
+      let data;
       
-      const method = editingOffer ? 'PUT' : 'POST';
-
-      const response = await fetch(url, {
-        method,
-        credentials: 'include',
-        body: submitData
-      });
-
-      const data = await response.json();
+      if (editingOffer) {
+        data = await updateOffer(editingOffer._id, submitData);
+      } else {
+        data = await createOffer(submitData);
+      }
 
       if (data.success) {
-        await fetchOffers();
+        await loadOffers();
         resetForm();
       } else {
         setError(data.message || 'Error al guardar la oferta');
@@ -230,15 +222,10 @@ export default function OffersManagement() {
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/offers/${offerId}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
-
-      const data = await response.json();
-
+      const data = await deleteOffer(offerId);
+      
       if (data.success) {
-        await fetchOffers();
+        await loadOffers();
       } else {
         setError(data.message || 'Error al eliminar la oferta');
       }

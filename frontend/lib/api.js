@@ -399,18 +399,16 @@ export async function fetchOffers() {
 
 /**
  * Create a new offer
- * @param {Object} offerData - Offer information
+ * @param {FormData} formData - Offer data with optional image
  * @returns {Promise<Object>} Created offer data
  */
-export async function createOffer(offerData) {
+export async function createOffer(formData) {
   try {
     const response = await fetch(`${API_URL}/offers`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
       credentials: 'include',
-      body: JSON.stringify(offerData)
+      body: formData
+      // Don't set Content-Type header - browser will set it automatically with boundary
     });
 
     const data = await response.json();
