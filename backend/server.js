@@ -33,7 +33,12 @@ connectDB();
 import menuRoutes from './routes/menuRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import areaRoutes from './routes/areaRoutes.js';
+<<<<<<< HEAD
 import offerRoutes from './routes/offerRoutes.js';
+=======
+import reservationRoutes from './routes/reservationRoutes.js';
+import debugRoutes from './routes/debugRoutes.js';
+>>>>>>> ca89758e8f78ad05eee93f0c90ca3a80c698d3d3
 
 // Ruta de prueba
 app.get('/', (req, res) => {
@@ -48,7 +53,12 @@ app.get('/', (req, res) => {
 app.use('/api/menu', menuRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/areas', areaRoutes); // No prefix 'api/' as per requirements
+<<<<<<< HEAD
 app.use('/offers', offerRoutes); // No prefix 'api/' as per requirements
+=======
+app.use('/reservations', reservationRoutes); // No prefix 'api/' as per requirements
+app.use('/debug', debugRoutes); // Debug endpoints (admin only)
+>>>>>>> ca89758e8f78ad05eee93f0c90ca3a80c698d3d3
 
 // Manejo de rutas no encontradas
 app.use((req, res) => {

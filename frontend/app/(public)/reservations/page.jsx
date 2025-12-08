@@ -2,11 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { fetchActiveAreas } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
+import ReservationModal from '@/components/ReservationModal';
 
 export default function ReservationsPage() {
   const [areas, setAreas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedArea, setSelectedArea] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showLoginMessage, setShowLoginMessage] = useState(false);
+
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
 
   useEffect(() => {
     loadAreas();
@@ -31,17 +38,31 @@ export default function ReservationsPage() {
     }
   };
 
-  const handleReservationClick = (areaId, areaName) => {
-    // TODO: Connect with reservation flow
-    // This will open a modal or navigate to reservation form
-    console.log(`Reservation requested for area: ${areaName} (ID: ${areaId})`);
-    // Future implementation:
-    // - Open modal with reservation form
-    // - Navigate to /reservations/new?areaId=xxx
-    // - Show date/time picker, guest count, etc.
+  const handleReservationClick = (area) => {
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      setShowLoginMessage(true);
+      setTimeout(() => {
+        setShowLoginMessage(false);
+        // Scroll to top to show login button
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 3000);
+      return;
+    }
+
+    // User is authenticated, open reservation modal
+    setSelectedArea(area);
+    setIsModalOpen(true);
   };
 
-  if (loading) {
+  const handleReservationSuccess = (reservation) => {
+    // Show success message and reload areas if needed
+    alert(`¡Reservación creada exitosamente! ID: ${reservation.id}\nEstado: Pendiente de pago\nPrecio: $${reservation.totalPrice.toFixed(2)}`);
+    // Optionally redirect to "Mis Reservas"
+    // window.location.href = '/my-reservations';
+  };
+
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-900 py-20">
         <div className="container mx-auto px-6">
@@ -77,6 +98,23 @@ export default function ReservationsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-neutral-900 via-neutral-800 to-neutral-900 py-20">
       <div className="container mx-auto px-6">
+        {/* Login Required Message */}
+        {showLoginMessage && (
+          <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+            <div className="bg-orange-500 text-white px-6 py-4 rounded-lg shadow-2xl border border-orange-400 animate-bounce">
+              <div className="flex items-center gap-3">
+                <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <div>
+                  <p className="font-semibold">¡Inicia sesión para continuar!</p>
+                  <p className="text-sm text-orange-100">Debes iniciar sesión para poder hacer una reservación</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header Section */}
         <div className="text-center mb-16">
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
@@ -165,7 +203,7 @@ export default function ReservationsPage() {
 
                   {/* Reservation Button */}
                   <button
-                    onClick={() => handleReservationClick(area._id, area.name)}
+                    onClick={() => handleReservationClick(area)}
                     className="w-full px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white font-semibold rounded-lg hover:from-orange-700 hover:to-orange-600 transition-all duration-300 shadow-lg hover:shadow-orange-500/50 transform hover:scale-105"
                   >
                     Hacer una reservación
@@ -174,6 +212,16 @@ export default function ReservationsPage() {
               </div>
             ))}
           </div>
+        )}
+
+        {/* Reservation Modal */}
+        {isModalOpen && selectedArea && (
+          <ReservationModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            area={selectedArea}
+            onSuccess={handleReservationSuccess}
+          />
         )}
 
         {/* Additional Info Section */}

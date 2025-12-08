@@ -225,3 +225,59 @@ export const updateProduct = async (req, res) => {
     });
   }
 };
+
+/**
+ * Delete product (Soft delete - sets available to false)
+ * DELETE /api/menu/:id
+ * Protected: Admin only
+ * 
+ * Note: Uses soft delete to preserve data integrity.
+ * Products are not physically deleted from database.
+ */
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ID
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Product ID is required'
+      });
+    }
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // Soft delete: mark as unavailable
+    product.available = false;
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Product deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Error deleting product:', error);
+
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting product',
+      error: error.message
+    });
+  }
+};

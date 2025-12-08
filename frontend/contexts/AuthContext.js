@@ -1,23 +1,16 @@
-import { useState, useEffect } from 'react';
+'use client';
+
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
+const AuthContext = createContext(null);
+
 /**
- * @deprecated Use useAuth from @/contexts/AuthContext instead
- * This hook is kept for backward compatibility but will be removed in future versions.
- * 
- * Custom hook for client authentication
- * Provides client authentication state and methods
- * 
- * Returns:
- * - user: Current authenticated client user or null
- * - loading: Boolean indicating if auth state is being loaded
- * - login: Function to log in a client
- * - register: Function to register a new client
- * - logout: Function to log out the current client
- * - refreshUser: Function to manually refresh user data
+ * AuthProvider Component
+ * Wraps the application to provide authentication state globally
  */
-export function useClientAuth() {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -34,7 +27,7 @@ export function useClientAuth() {
       setLoading(true);
       const response = await fetch(`${API_URL}/api/auth/client/verify`, {
         method: 'GET',
-        credentials: 'include', // Include cookies
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -57,8 +50,6 @@ export function useClientAuth() {
 
   /**
    * Register a new client
-   * @param {Object} userData - { firstName, lastName, email, password, phone?, address? }
-   * @returns {Promise<Object>} Response with success status and message
    */
   const register = async (userData) => {
     try {
@@ -74,10 +65,7 @@ export function useClientAuth() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        // Immediately update user state
         setUser(data.user);
-        // Force a re-check to ensure consistency
-        setTimeout(() => checkAuth(), 50);
         return { success: true, message: data.message };
       } else {
         return { success: false, message: data.message || 'Error en el registro' };
@@ -90,9 +78,6 @@ export function useClientAuth() {
 
   /**
    * Log in an existing client
-   * @param {string} email - Client email
-   * @param {string} password - Client password
-   * @returns {Promise<Object>} Response with success status and message
    */
   const login = async (email, password) => {
     try {
@@ -108,10 +93,7 @@ export function useClientAuth() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        // Immediately update user state
         setUser(data.user);
-        // Force a re-check to ensure consistency
-        setTimeout(() => checkAuth(), 50);
         return { success: true, message: data.message };
       } else {
         return { success: false, message: data.message || 'Error en el inicio de sesión' };
@@ -124,7 +106,6 @@ export function useClientAuth() {
 
   /**
    * Log out the current client
-   * @returns {Promise<Object>} Response with success status and message
    */
   const logout = async () => {
     try {
@@ -138,7 +119,6 @@ export function useClientAuth() {
 
       const data = await response.json();
 
-      // Clear user state regardless of response
       setUser(null);
 
       if (response.ok && data.success) {
@@ -148,7 +128,6 @@ export function useClientAuth() {
       }
     } catch (error) {
       console.error('Logout error:', error);
-      // Still clear user state on error
       setUser(null);
       return { success: false, message: 'Error de conexión al servidor' };
     }
@@ -161,7 +140,7 @@ export function useClientAuth() {
     checkAuth();
   };
 
-  return {
+  const value = {
     user,
     loading,
     isAuthenticated: !!user,
@@ -170,4 +149,18 @@ export function useClientAuth() {
     logout,
     refreshUser
   };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+/**
+ * Custom hook to use auth context
+ * Must be used within AuthProvider
+ */
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }

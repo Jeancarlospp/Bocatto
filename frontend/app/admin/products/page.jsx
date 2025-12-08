@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { fetchMenu } from '@/lib/api';
+import { fetchMenu, deleteProduct } from '@/lib/api';
 
 export default function ProductsPage() {
   const router = useRouter();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     loadProducts();
@@ -25,6 +26,31 @@ export default function ProductsPage() {
       setError('Error al cargar los productos');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id, name) => {
+    if (!confirm(`¿Estás seguro de eliminar el producto "${name}"?\n\nEsto marcará el producto como no disponible.`)) {
+      return;
+    }
+
+    try {
+      setError(null);
+      setSuccess('');
+      
+      const response = await deleteProduct(id);
+      
+      if (response.success) {
+        setSuccess('Producto eliminado correctamente');
+        // Reload products to show updated list
+        await loadProducts();
+        
+        // Clear success message after 3 seconds
+        setTimeout(() => setSuccess(''), 3000);
+      }
+    } catch (err) {
+      console.error('Error deleting product:', err);
+      setError(err.message || 'Error al eliminar el producto');
     }
   };
 
@@ -50,8 +76,17 @@ export default function ProductsPage() {
         </div>
       )}
 
+      {success && (
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+          {success}
+        </div>
+      )}
+
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
           {error}
         </div>
       )}
@@ -163,6 +198,7 @@ export default function ProductsPage() {
                           ✏️
                         </button>
                         <button
+                          onClick={() => handleDelete(product._id, product.name)}
                           className="text-red-600 hover:text-red-900 hover:scale-110 transition"
                           title="Eliminar"
                         >
