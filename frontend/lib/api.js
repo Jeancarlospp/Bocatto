@@ -344,3 +344,32 @@ export async function adminCancelReservation(id) {
     throw error;
   }
 }
+
+/**
+ * ========================================
+ * AREAS API FUNCTIONS
+ * ========================================
+ */
+
+/**
+ * Get all areas
+ * @returns {Promise<Object>} Areas data
+ */
+export async function getAreas() {
+  try {
+    const response = await fetch(`${API_URL}/areas`, {
+      cache: 'no-store'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al obtener los ambientes');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get Areas Error:', error);
+    throw error;
+  }
+}

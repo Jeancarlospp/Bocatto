@@ -126,13 +126,7 @@ reservationSchema.statics.findOverlapping = async function(areaId, startTime, en
     query._id = { $ne: excludeReservationId };
   }
 
-  console.log('🔎 Overlap query:', JSON.stringify(query, null, 2));
-  
-  const results = await this.find(query);
-  
-  console.log('🔎 Query returned:', results.length, 'reservations');
-  
-  return results;
+  return await this.find(query);
 };
 
 /**
