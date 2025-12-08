@@ -122,3 +122,28 @@ export async function fetchActiveAreas() {
     throw error;
   }
 }
+
+/**
+ * Delete a product (soft delete)
+ * @param {string} id - Product ID
+ * @returns {Promise<Object>} Response data
+ */
+export async function deleteProduct(id) {
+  try {
+    const response = await fetch(`${API_URL}/api/menu/${id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error deleting product');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Delete Product Error:', error);
+    throw error;
+  }
+}
