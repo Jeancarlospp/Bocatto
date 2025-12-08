@@ -178,5 +178,70 @@ export const deleteProductImage = async (imageUrl) => {
   }
 };
 
+/**
+ * ========================================
+ * OFFERS UPLOAD MIDDLEWARE
+ * ========================================
+ */
+
+/**
+ * Cloudinary Storage for Offers
+ * - Uploads to: bocatto/offers/ folder
+ */
+const offerStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'bocatto/offers',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [
+      { width: 800, height: 600, crop: 'limit' },
+      { quality: 'auto' },
+      { fetch_format: 'auto' }
+    ]
+  }
+});
+
+/**
+ * Multer upload middleware for Offers
+ * - Single offer image
+ * - Max 5MB
+ */
+export const uploadOfferImage = multer({
+  storage: offerStorage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB max
+  }
+}).single('image');
+
+/**
+ * Helper to delete offer image from Cloudinary
+ */
+export const deleteOfferImage = async (imageUrl) => {
+  if (!imageUrl) return;
+  
+  try {
+    let publicId;
+    
+    if (imageUrl.includes('cloudinary.com')) {
+      const parts = imageUrl.split('/');
+      const uploadIndex = parts.indexOf('upload');
+      if (uploadIndex !== -1 && uploadIndex + 2 < parts.length) {
+        const pathParts = parts.slice(uploadIndex + 2);
+        publicId = pathParts.join('/').split('.')[0];
+      }
+    } else {
+      publicId = imageUrl;
+    }
+    
+    if (publicId) {
+      await cloudinary.uploader.destroy(publicId);
+      console.log(`Offer image deleted from Cloudinary: ${publicId}`);
+    }
+  } catch (error) {
+    console.error('Error deleting offer image from Cloudinary:', error);
+  }
+};
+
 // Export cloudinary instance for direct use if needed
 export { cloudinary };
