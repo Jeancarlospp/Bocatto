@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { fetchMenu, deleteProduct } from '@/lib/api';
+import { fetchMenu, toggleProductAvailability, deleteProduct } from '@/lib/api';
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -11,6 +11,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState('');
+  const [togglingId, setTogglingId] = useState(null);
 
   useEffect(() => {
     loadProducts();
@@ -29,8 +30,33 @@ export default function ProductsPage() {
     }
   };
 
+  const handleToggleAvailability = async (id, currentStatus) => {
+    try {
+      setTogglingId(id);
+      setError(null);
+      
+      const response = await toggleProductAvailability(id);
+      
+      if (response.success) {
+        setSuccess(`Producto ${currentStatus ? 'deshabilitado' : 'habilitado'} correctamente`);
+        await loadProducts();
+        setTimeout(() => setSuccess(''), 3000);
+      }
+    } catch (err) {
+      console.error('Error toggling product:', err);
+      setError(err.message || 'Error al cambiar estado del producto');
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   const handleDelete = async (id, name) => {
-    if (!confirm(`¿Estás seguro de eliminar el producto "${name}"?\n\nEsto marcará el producto como no disponible.`)) {
+    if (!confirm(`⚠️ ¿Estás seguro de ELIMINAR PERMANENTEMENTE el producto "${name}"?\n\n❌ Esta acción NO se puede deshacer.\n✅ El producto será borrado de la base de datos.`)) {
+      return;
+    }
+
+    // Segunda confirmación para evitar eliminaciones accidentales
+    if (!confirm(`Confirma nuevamente: ¿Eliminar "${name}" de forma PERMANENTE?`)) {
       return;
     }
 
@@ -41,11 +67,8 @@ export default function ProductsPage() {
       const response = await deleteProduct(id);
       
       if (response.success) {
-        setSuccess('Producto eliminado correctamente');
-        // Reload products to show updated list
+        setSuccess('Producto eliminado permanentemente');
         await loadProducts();
-        
-        // Clear success message after 3 seconds
         setTimeout(() => setSuccess(''), 3000);
       }
     } catch (err) {
@@ -128,7 +151,7 @@ export default function ProductsPage() {
                     Stock
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estado
+                    Habilitar/Deshabilitar
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Acciones
@@ -178,31 +201,36 @@ export default function ProductsPage() {
                       {product.currentStock || 0}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {product.available ? (
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                          Disponible
-                        </span>
-                      ) : (
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                          No disponible
-                        </span>
-                      )}
+                      <button
+                        onClick={() => handleToggleAvailability(product._id, product.available)}
+                        disabled={togglingId === product._id}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                          product.available ? 'bg-green-600' : 'bg-gray-400'
+                        }`}
+                        title={product.available ? 'Deshabilitar producto' : 'Habilitar producto'}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            product.available ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex gap-2">
                         <button
                           onClick={() => router.push(`/admin/products/edit/${product._id}`)}
-                          className="text-blue-600 hover:text-blue-900 hover:scale-110 transition"
-                          title="Editar"
+                          className="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded hover:scale-105 transition"
+                          title="Editar producto"
                         >
-                          ✏️
+                          ✏️ Editar
                         </button>
                         <button
                           onClick={() => handleDelete(product._id, product.name)}
-                          className="text-red-600 hover:text-red-900 hover:scale-110 transition"
-                          title="Eliminar"
+                          className="px-3 py-1 text-red-600 hover:bg-red-50 rounded hover:scale-105 transition"
+                          title="Eliminar permanentemente"
                         >
-                          🗑️
+                          🗑️ Eliminar
                         </button>
                       </div>
                     </td>

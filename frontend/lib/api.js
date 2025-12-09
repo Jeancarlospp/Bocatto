@@ -102,7 +102,40 @@ export async function updateProduct(id, formData) {
 }
 
 /**
- * Delete a product
+ * Toggle product availability (Enable/Disable)
+ * @param {string} id - Product ID
+ * @returns {Promise<Object>} Updated product data
+ */
+export async function toggleProductAvailability(id) {
+  try {
+    const response = await fetch(`${API_URL}/api/menu/${id}/toggle`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP Error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message || 'Error toggling product availability');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Toggle Product Availability Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a product permanently
  * @param {string} id - Product ID
  * @returns {Promise<Object>} Deletion confirmation
  */

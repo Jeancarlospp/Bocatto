@@ -227,18 +227,16 @@ export const updateProduct = async (req, res) => {
 };
 
 /**
- * Delete product (Soft delete - sets available to false)
- * DELETE /api/menu/:id
+ * Toggle product availability (Enable/Disable)
+ * PATCH /api/menu/:id/toggle
  * Protected: Admin only
  * 
- * Note: Uses soft delete to preserve data integrity.
- * Products are not physically deleted from database.
+ * Toggles the 'available' field between true/false
  */
-export const deleteProduct = async (req, res) => {
+export const toggleProductAvailability = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate ID
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -255,13 +253,79 @@ export const deleteProduct = async (req, res) => {
       });
     }
 
-    // Soft delete: mark as unavailable
-    product.available = false;
+    // Toggle availability
+    product.available = !product.available;
     await product.save();
 
     res.status(200).json({
       success: true,
-      message: 'Product deleted successfully'
+      message: `Product ${product.available ? 'enabled' : 'disabled'} successfully`,
+      data: product
+    });
+
+  } catch (error) {
+    console.error('Error toggling product availability:', error);
+
+    if (error.name === 'CastError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid product ID'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Error toggling product availability',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Delete product permanently (Hard delete)
+ * DELETE /api/menu/:id
+ * Protected: Admin only
+ * 
+ * PERMANENTLY deletes the product from the database.
+ * This action cannot be undone.
+ */
+export const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Product ID is required'
+      });
+    }
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    // Delete image from Cloudinary if exists
+    if (product.img) {
+      try {
+        const { deleteProductImage } = await import('../middleware/upload.js');
+        await deleteProductImage(product.img);
+      } catch (imgError) {
+        console.error('Error deleting product image:', imgError);
+        // Continue with product deletion even if image deletion fails
+      }
+    }
+
+    // Permanently delete from database
+    await Product.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: 'Product permanently deleted'
     });
 
   } catch (error) {
