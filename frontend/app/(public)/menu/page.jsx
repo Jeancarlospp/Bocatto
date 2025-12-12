@@ -3,15 +3,31 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { fetchMenu } from '@/lib/api';
+import { useCart } from '@/contexts/CartContext';
+import ProductCustomizationModal from '@/components/ProductCustomizationModal';
 
 export default function MenuPage() {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     loadMenu();
+    
+    // Listen for cart updates to reload menu
+    const handleCartUpdate = () => {
+      loadMenu();
+    };
+    
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate);
+    };
   }, []);
 
   const loadMenu = async () => {
@@ -36,6 +52,24 @@ export default function MenuPage() {
   const filteredItems = selectedCategory === 'all' 
     ? menuItems 
     : menuItems.filter(item => item.category === selectedCategory);
+
+  const handleOrderClick = (product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const handleAddToCart = async (productId, quantity, customizations) => {
+    const result = await addToCart(productId, quantity, customizations);
+    
+    if (result.success) {
+      setIsModalOpen(false);
+      // Reload menu to reflect updated stock
+      await loadMenu();
+      alert('¡Producto agregado al carrito!');
+    } else {
+      alert(result.message || 'Error al agregar al carrito');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-neutral-900">
@@ -205,6 +239,7 @@ export default function MenuPage() {
 
                     {/* Action Button */}
                     <button 
+                      onClick={() => handleOrderClick(item)}
                       className="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition disabled:bg-gray-600 disabled:cursor-not-allowed"
                       disabled={item.currentStock === 0}
                     >
@@ -217,6 +252,14 @@ export default function MenuPage() {
           )}
         </div>
       </section>
+
+      {/* Product Customization Modal */}
+      <ProductCustomizationModal
+        product={selectedProduct}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAddToCart={handleAddToCart}
+      />
     </div>
   );
 }

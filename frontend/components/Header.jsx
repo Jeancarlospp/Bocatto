@@ -4,13 +4,16 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import LoginModal from './LoginModal';
+import CartDropdown from './CartDropdown';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
 
 export default function Header() {
   const router = useRouter();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { user, loading, logout } = useAuth();
+  const { cart, updateQuantity, removeItem, clearCart, loading: cartLoading } = useCart();
 
   const handleLogout = async () => {
     const result = await logout();
@@ -70,6 +73,17 @@ export default function Header() {
                 <Link href="/contact" className="text-white hover:text-orange-500 transition">
                   Contáctenos
                 </Link>
+              </li>
+              
+              {/* Cart Dropdown */}
+              <li>
+                <CartDropdown 
+                  cart={cart}
+                  onUpdateQuantity={updateQuantity}
+                  onRemoveItem={removeItem}
+                  onClearCart={clearCart}
+                  isLoading={cartLoading}
+                />
               </li>
               
               {/* Authentication Section */}

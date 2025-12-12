@@ -561,3 +561,163 @@ export async function getAreas() {
     throw error;
   }
 }
+
+// ========================================
+// CART API FUNCTIONS
+// ========================================
+
+/**
+ * Get or create cart
+ * @param {string} sessionId - Session ID for the cart
+ * @returns {Promise<Object>} Cart data
+ */
+export async function getCart(sessionId) {
+  try {
+    const response = await fetch(`${API_URL}/api/cart/get`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ sessionId })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error retrieving cart');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get Cart Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Add item to cart
+ * @param {string} sessionId - Session ID
+ * @param {string} productId - Product ID
+ * @param {number} quantity - Quantity to add
+ * @param {Object} customizations - { removedIngredients, addedIngredients, specialInstructions }
+ * @returns {Promise<Object>} Updated cart data
+ */
+export async function addToCart(sessionId, productId, quantity, customizations) {
+  try {
+    const response = await fetch(`${API_URL}/api/cart/add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ 
+        sessionId, 
+        productId, 
+        quantity, 
+        customizations 
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error adding item to cart');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Add to Cart Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update cart item quantity
+ * @param {string} sessionId - Session ID
+ * @param {string} itemId - Cart item ID
+ * @param {number} quantity - New quantity
+ * @returns {Promise<Object>} Updated cart data
+ */
+export async function updateCartItem(sessionId, itemId, quantity) {
+  try {
+    const response = await fetch(`${API_URL}/api/cart/update`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ sessionId, itemId, quantity })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error updating cart item');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Update Cart Item Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Remove item from cart
+ * @param {string} sessionId - Session ID
+ * @param {string} itemId - Cart item ID
+ * @returns {Promise<Object>} Updated cart data
+ */
+export async function removeFromCart(sessionId, itemId) {
+  try {
+    const response = await fetch(`${API_URL}/api/cart/remove`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ sessionId, itemId })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error removing item from cart');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Remove from Cart Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Clear all items from cart
+ * @param {string} sessionId - Session ID
+ * @returns {Promise<Object>} Empty cart data
+ */
+export async function clearCart(sessionId) {
+  try {
+    const response = await fetch(`${API_URL}/api/cart/clear`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ sessionId })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error clearing cart');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Clear Cart Error:', error);
+    throw error;
+  }
+}

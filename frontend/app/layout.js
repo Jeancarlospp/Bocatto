@@ -1,5 +1,6 @@
 import "./globals.css";
 import { AuthProvider } from '@/contexts/AuthContext';
+import { CartProvider } from '@/contexts/CartContext';
 
 export const metadata = {
   title: "Bocatto Restaurant",
@@ -11,7 +12,9 @@ export default function RootLayout({ children }) {
     <html lang="es">
       <body className="min-h-screen">
         <AuthProvider>
-          {children}
+          <CartProvider>
+            {children}
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>
