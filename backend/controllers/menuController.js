@@ -114,11 +114,21 @@ export const createProduct = async (req, res) => {
 
 /**
  * GET /api/menu/:id
- * Get product by ID
+ * Get product by ID (using productId numeric)
  */
 export const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const { id } = req.params;
+    const productId = parseInt(id);
+    
+    let product;
+    if (!isNaN(productId)) {
+      // Search by numeric productId
+      product = await Product.findOne({ productId });
+    } else {
+      // Fallback to MongoDB _id
+      product = await Product.findById(id);
+    }
     
     if (!product) {
       return res.status(404).json({
@@ -143,16 +153,22 @@ export const getProductById = async (req, res) => {
 
 /**
  * PUT /api/menu/:id
- * Update existing product
+ * Update existing product (using productId numeric)
  * Requires admin authentication
  * Optionally handles new image upload
  */
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    const productId = parseInt(id);
 
     // Find existing product
-    const product = await Product.findById(id);
+    let product;
+    if (!isNaN(productId)) {
+      product = await Product.findOne({ productId });
+    } else {
+      product = await Product.findById(id);
+    }
 
     if (!product) {
       return res.status(404).json({
@@ -244,7 +260,14 @@ export const toggleProductAvailability = async (req, res) => {
       });
     }
 
-    const product = await Product.findById(id);
+    const productId = parseInt(id);
+    let product;
+    
+    if (!isNaN(productId)) {
+      product = await Product.findOne({ productId });
+    } else {
+      product = await Product.findById(id);
+    }
 
     if (!product) {
       return res.status(404).json({
@@ -300,7 +323,14 @@ export const deleteProduct = async (req, res) => {
       });
     }
 
-    const product = await Product.findById(id);
+    const productId = parseInt(id);
+    let product;
+    
+    if (!isNaN(productId)) {
+      product = await Product.findOne({ productId });
+    } else {
+      product = await Product.findById(id);
+    }
 
     if (!product) {
       return res.status(404).json({
