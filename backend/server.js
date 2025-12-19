@@ -12,6 +12,8 @@ import offerRoutes from './routes/offerRoutes.js';
 import reservationRoutes from './routes/reservationRoutes.js';
 import debugRoutes from './routes/debugRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
+import customizationRoutes from './routes/customizationRoutes.js';
+import allergyRoutes from './routes/allergyRoutes.js';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -51,6 +53,8 @@ app.get('/', (req, res) => {
 app.use('/api/menu', menuRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/products', customizationRoutes);
+app.use('/api/users', allergyRoutes);
 app.use('/areas', areaRoutes);
 app.use('/offers', offerRoutes);
 app.use('/reservations', reservationRoutes);

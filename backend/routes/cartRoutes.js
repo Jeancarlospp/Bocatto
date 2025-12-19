@@ -1,11 +1,12 @@
 import express from 'express';
-import { 
-  getCart, 
-  addToCart, 
-  updateCartItem, 
-  removeFromCart, 
-  clearCart 
+import {
+  getCart,
+  addToCart,
+  updateCartItem,
+  removeFromCart,
+  clearCart
 } from '../controllers/cartController.js';
+import { getCartAllergyWarnings } from '../controllers/customizationController.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -25,5 +26,8 @@ router.post('/add', optionalAuth, addToCart);
 router.put('/update', optionalAuth, updateCartItem);
 router.delete('/remove', optionalAuth, removeFromCart);
 router.delete('/clear', optionalAuth, clearCart);
+
+// GET allergy warnings for cart
+router.get('/allergy-warnings', optionalAuth, getCartAllergyWarnings);
 
 export default router;
