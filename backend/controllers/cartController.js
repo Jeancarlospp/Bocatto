@@ -79,7 +79,7 @@ export const addToCart = async (req, res) => {
     }
 
     // Validate product exists and is available
-    const product = await Product.findById(productId);
+    const product = await Product.findOne({ productId: parseInt(productId) });
     
     if (!product) {
       return res.status(404).json({
@@ -119,7 +119,7 @@ export const addToCart = async (req, res) => {
     // Check if item with same customizations exists
     const customizationsStr = JSON.stringify(customizations || {});
     const existingItemIndex = cart.items.findIndex(item => 
-      item.product.toString() === productId && 
+      item.productId === parseInt(productId) && 
       JSON.stringify(item.customizations) === customizationsStr
     );
 
@@ -237,7 +237,7 @@ export const updateCartItem = async (req, res) => {
     // If quantity is 0, remove item
     if (quantity === 0) {
       // Restore full stock
-      const product = await Product.findById(cartItem.product);
+      const product = await Product.findOne({ productId: cartItem.productId });
       if (product && product.currentStock !== undefined) {
         product.currentStock += oldQuantity;
         await product.save();
@@ -246,7 +246,7 @@ export const updateCartItem = async (req, res) => {
       cart.items.splice(itemIndex, 1);
     } else {
       // Check stock
-      const product = await Product.findById(cart.items[itemIndex].product);
+      const product = await Product.findOne({ productId: cartItem.productId });
       
       if (!product) {
         return res.status(404).json({
@@ -342,7 +342,7 @@ export const removeFromCart = async (req, res) => {
     const cartItem = cart.items[itemIndex];
     
     // Restore stock before removing
-    const product = await Product.findById(cartItem.product);
+    const product = await Product.findOne({ productId: cartItem.productId });
     if (product && product.currentStock !== undefined) {
       product.currentStock += cartItem.quantity;
       await product.save();
@@ -395,7 +395,7 @@ export const clearCart = async (req, res) => {
 
     // Restore stock for all items before clearing
     for (const item of cart.items) {
-      const product = await Product.findById(item.product);
+      const product = await Product.findOne({ productId: item.productId });
       if (product && product.currentStock !== undefined) {
         product.currentStock += item.quantity;
         await product.save();

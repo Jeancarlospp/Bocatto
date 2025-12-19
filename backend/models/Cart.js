@@ -33,6 +33,10 @@ const cartItemSchema = new mongoose.Schema({
       type: String,
       trim: true
     }],
+    allergyWarnings: [{
+      type: String,
+      trim: true
+    }],
     specialInstructions: {
       type: String,
       trim: true,

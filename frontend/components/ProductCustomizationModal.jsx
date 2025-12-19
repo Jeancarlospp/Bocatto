@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 export default function ProductCustomizationModal({ product, isOpen, onClose, onAddToCart }) {
   const [quantity, setQuantity] = useState(1);
   const [removedIngredients, setRemovedIngredients] = useState([]);
+  const [allergyWarnings, setAllergyWarnings] = useState([]);
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [isAdding, setIsAdding] = useState(false);
 
@@ -37,6 +38,7 @@ export default function ProductCustomizationModal({ product, isOpen, onClose, on
     const customizations = {
       removedIngredients,
       addedIngredients: [],
+      allergyWarnings,
       specialInstructions: specialInstructions.trim()
     };
 
@@ -45,6 +47,7 @@ export default function ProductCustomizationModal({ product, isOpen, onClose, on
     // Reset form after successful add
     setQuantity(1);
     setRemovedIngredients([]);
+    setAllergyWarnings([]);
     setSpecialInstructions('');
     setIsAdding(false);
   };
@@ -148,6 +151,63 @@ export default function ProductCustomizationModal({ product, isOpen, onClose, on
               </div>
             </div>
           )}
+
+          {/* Allergy Warnings Section */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
+              <svg className="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              Advertencias de alergia
+            </h3>
+            <p className="text-gray-400 text-sm mb-4">
+              Especifica los alérgenos para esta orden (útil al ordenar para otra persona)
+            </p>
+            
+            <div className="space-y-3">
+              <input
+                type="text"
+                placeholder="Ej: gluten, lactosa, maní, mariscos"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.target.value.trim()) {
+                    e.preventDefault();
+                    const allergy = e.target.value.trim().toLowerCase();
+                    if (!allergyWarnings.includes(allergy)) {
+                      setAllergyWarnings([...allergyWarnings, allergy]);
+                    }
+                    e.target.value = '';
+                  }
+                }}
+                className="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              />
+              
+              {allergyWarnings.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {allergyWarnings.map((allergy, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 px-3 py-2 bg-red-900/30 border border-red-500/50 rounded-lg text-red-300 text-sm"
+                    >
+                      <span>{allergy}</span>
+                      <button
+                        onClick={() => setAllergyWarnings(allergyWarnings.filter((_, i) => i !== index))}
+                        className="text-red-400 hover:text-red-200 transition"
+                        aria-label={`Remover ${allergy}`}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <p className="text-xs text-gray-500">
+                Presiona Enter para agregar cada alérgeno
+              </p>
+            </div>
+          </div>
 
           {/* Special Instructions */}
           <div>
