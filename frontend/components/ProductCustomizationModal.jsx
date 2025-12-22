@@ -42,7 +42,7 @@ export default function ProductCustomizationModal({ product, isOpen, onClose, on
       specialInstructions: specialInstructions.trim()
     };
 
-    await onAddToCart(product._id, quantity, customizations);
+    await onAddToCart(product.productId, quantity, customizations);
     
     // Reset form after successful add
     setQuantity(1);

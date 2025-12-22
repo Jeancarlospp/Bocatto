@@ -8,7 +8,7 @@ import User from '../models/User.js';
 export const authenticateToken = async (req, res, next) => {
   try {
     // Get token from cookies
-    const token = req.cookies.authToken;
+    const token = req.cookies.token;
 
     // Check if token exists
     if (!token) {

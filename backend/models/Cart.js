@@ -53,7 +53,6 @@ const cartSchema = new mongoose.Schema({
   sessionId: {
     type: String,
     required: true,
-    unique: true,
     index: true
   },
   user: {
@@ -94,5 +93,7 @@ cartSchema.pre('save', function(next) {
 // Index for cleanup of expired carts
 cartSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 cartSchema.index({ user: 1, status: 1 });
+// Compound unique index: only one active cart per sessionId
+cartSchema.index({ sessionId: 1, status: 1 }, { unique: true, partialFilterExpression: { status: 'active' } });
 
 export default mongoose.model('Cart', cartSchema, 'carts');

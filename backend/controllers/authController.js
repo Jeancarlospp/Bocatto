@@ -73,7 +73,7 @@ export const adminLogin = async (req, res) => {
     );
 
     // Set HTTP-only cookie
-    res.cookie('authToken', token, {
+    res.cookie('token', token, {
       httpOnly: true, // Prevent XSS attacks
       secure: process.env.NODE_ENV === 'production', // HTTPS only in production
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site in production
@@ -110,7 +110,7 @@ export const adminLogin = async (req, res) => {
 export const adminLogout = async (req, res) => {
   try {
     // Clear the auth cookie
-    res.clearCookie('authToken', {
+    res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
@@ -236,7 +236,7 @@ export const clientRegister = async (req, res) => {
     );
 
     // Set HTTP-only cookie (same config as admin)
-    res.cookie('authToken', token, {
+    res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
@@ -338,7 +338,7 @@ export const clientLogin = async (req, res) => {
     );
 
     // Set HTTP-only cookie (same config as admin)
-    res.cookie('authToken', token, {
+    res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
@@ -375,7 +375,7 @@ export const clientLogin = async (req, res) => {
 export const clientLogout = async (req, res) => {
   try {
     // Clear the auth cookie (same as admin)
-    res.clearCookie('authToken', {
+    res.clearCookie('token', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'

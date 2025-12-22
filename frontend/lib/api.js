@@ -721,3 +721,63 @@ export async function clearCart(sessionId) {
     throw error;
   }
 }
+
+/**
+ * Create order (checkout)
+ * POST /api/orders
+ */
+export async function createOrder(orderData) {
+  try {
+    // Include sessionId from localStorage
+    const sessionId = localStorage.getItem('cartSessionId');
+    
+    const response = await fetch(`${API_URL}/api/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        ...orderData,
+        sessionId
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error creating order');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Create Order Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get user's orders
+ * GET /api/orders/my-orders
+ */
+export async function getMyOrders(params = {}) {
+  try {
+    const queryParams = new URLSearchParams(params).toString();
+    const url = queryParams ? `${API_URL}/api/orders/my-orders?${queryParams}` : `${API_URL}/api/orders/my-orders`;
+    
+    const response = await fetch(url, {
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error fetching orders');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get My Orders Error:', error);
+    throw error;
+  }
+}

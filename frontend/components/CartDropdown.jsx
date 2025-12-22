@@ -1,12 +1,21 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
+import LoginModal from './LoginModal';
 
 export default function CartDropdown({ cart, onUpdateQuantity, onRemoveItem, onClearCart, isLoading }) {
   const [isOpen, setIsOpen] = useState(false);
   const [updatingItems, setUpdatingItems] = useState({});
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const dropdownRef = useRef(null);
   const updateTimeoutRef = useRef({});
+  const router = useRouter();
+  const { user } = useAuth();
+  const { refreshCart } = useCart();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -60,6 +69,25 @@ export default function CartDropdown({ cart, onUpdateQuantity, onRemoveItem, onC
       Object.values(updateTimeoutRef.current).forEach(timeout => clearTimeout(timeout));
     };
   }, []);
+
+  const handleCheckout = () => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+    setIsOpen(false);
+    setShowCheckoutModal(true);
+  };
+
+  const handleLoginSuccess = () => {
+    setShowLoginModal(false);
+    // Reload cart after login to associate session with user
+    setTimeout(async () => {
+      await refreshCart();
+      setIsOpen(false);
+      setShowCheckoutModal(true);
+    }, 300);
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -237,10 +265,7 @@ export default function CartDropdown({ cart, onUpdateQuantity, onRemoveItem, onC
               {/* Checkout Button */}
               <button 
                 className="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition flex items-center justify-center gap-2"
-                onClick={() => {
-                  // TODO: Implement checkout
-                  alert('Funcionalidad de pago próximamente');
-                }}
+                onClick={handleCheckout}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -251,6 +276,200 @@ export default function CartDropdown({ cart, onUpdateQuantity, onRemoveItem, onC
           )}
         </div>
       )}
+
+      {/* Checkout Modal */}
+      {showCheckoutModal && (
+        <CheckoutModal 
+          cart={cart}
+          onClose={() => setShowCheckoutModal(false)}
+          onSuccess={() => {
+            setShowCheckoutModal(false);
+            setIsOpen(false);
+            router.push('/orders');
+          }}
+        />
+      )}
+
+      {/* Login Modal */}
+      {showLoginModal && (
+        <LoginModal 
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      )}
+    </div>
+  );
+}
+
+// Checkout Modal Component
+function CheckoutModal({ cart, onClose, onSuccess }) {
+  const [deliveryType, setDeliveryType] = useState('pickup');
+  const [paymentMethod, setPaymentMethod] = useState('cash');
+  const [customerNotes, setCustomerNotes] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsProcessing(true);
+    setError('');
+
+    try {
+      const { createOrder } = await import('@/lib/api');
+      
+      await createOrder({
+        deliveryType,
+        paymentMethod,
+        customerNotes: customerNotes.trim()
+      });
+
+      alert('¡Orden creada exitosamente!');
+      onSuccess();
+    } catch (error) {
+      console.error('Checkout error:', error);
+      setError(error.message || 'Error al procesar la orden');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fadeIn"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="bg-neutral-800 rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-neutral-700 animate-slideUp">
+        {/* Header */}
+        <div className="sticky top-0 bg-neutral-800 border-b border-neutral-700 p-6 flex justify-between items-center z-10">
+          <h2 className="text-2xl font-bold text-white">Confirmar Orden</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition p-2 hover:bg-neutral-700 rounded-lg"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Content */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* Order Summary */}
+          <div className="bg-neutral-700/50 rounded-lg p-4">
+            <h3 className="text-white font-semibold mb-3">Resumen del Pedido</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between text-gray-300">
+                <span>{cart?.totalItems || 0} items</span>
+                <span className="font-bold text-orange-500">${cart?.totalPrice?.toFixed(2) || '0.00'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Delivery Type */}
+          <div>
+            <label className="block text-white font-semibold mb-3">Tipo de Entrega</label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setDeliveryType('pickup')}
+                className={`p-4 rounded-lg border-2 transition ${
+                  deliveryType === 'pickup'
+                    ? 'border-orange-500 bg-orange-500/20 text-white'
+                    : 'border-neutral-600 bg-neutral-700 text-gray-300 hover:border-orange-500/50'
+                }`}
+              >
+                <div className="text-2xl mb-1">🏪</div>
+                <div className="font-semibold">Recoger</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDeliveryType('dine-in')}
+                className={`p-4 rounded-lg border-2 transition ${
+                  deliveryType === 'dine-in'
+                    ? 'border-orange-500 bg-orange-500/20 text-white'
+                    : 'border-neutral-600 bg-neutral-700 text-gray-300 hover:border-orange-500/50'
+                }`}
+              >
+                <div className="text-2xl mb-1">🍽️</div>
+                <div className="font-semibold">Comer Aquí</div>
+              </button>
+            </div>
+          </div>
+
+          {/* Payment Method */}
+          <div>
+            <label className="block text-white font-semibold mb-3">Método de Pago</label>
+            <div className="grid grid-cols-3 gap-3">
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('cash')}
+                className={`p-3 rounded-lg border-2 transition ${
+                  paymentMethod === 'cash'
+                    ? 'border-orange-500 bg-orange-500/20 text-white'
+                    : 'border-neutral-600 bg-neutral-700 text-gray-300 hover:border-orange-500/50'
+                }`}
+              >
+                <div className="text-xl mb-1">💵</div>
+                <div className="text-sm font-semibold">Efectivo</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('card')}
+                className={`p-3 rounded-lg border-2 transition ${
+                  paymentMethod === 'card'
+                    ? 'border-orange-500 bg-orange-500/20 text-white'
+                    : 'border-neutral-600 bg-neutral-700 text-gray-300 hover:border-orange-500/50'
+                }`}
+              >
+                <div className="text-xl mb-1">💳</div>
+                <div className="text-sm font-semibold">Tarjeta</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPaymentMethod('transfer')}
+                className={`p-3 rounded-lg border-2 transition ${
+                  paymentMethod === 'transfer'
+                    ? 'border-orange-500 bg-orange-500/20 text-white'
+                    : 'border-neutral-600 bg-neutral-700 text-gray-300 hover:border-orange-500/50'
+                }`}
+              >
+                <div className="text-xl mb-1">🏦</div>
+                <div className="text-sm font-semibold">Transfer</div>
+              </button>
+            </div>
+          </div>
+
+          {/* Customer Notes */}
+          <div>
+            <label className="block text-white font-semibold mb-2">Notas Adicionales (Opcional)</label>
+            <textarea
+              value={customerNotes}
+              onChange={(e) => setCustomerNotes(e.target.value)}
+              placeholder="Instrucciones especiales, hora de recogida, etc."
+              maxLength={1000}
+              rows={3}
+              className="w-full px-4 py-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+            />
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-900/30 border border-red-500 rounded-lg p-4 text-red-300 text-sm">
+              {error}
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isProcessing}
+            className="w-full py-4 bg-orange-600 hover:bg-orange-700 disabled:bg-neutral-600 disabled:cursor-not-allowed text-white font-bold rounded-lg transition text-lg"
+          >
+            {isProcessing ? 'Procesando...' : 'Confirmar Orden'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
