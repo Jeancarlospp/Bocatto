@@ -72,7 +72,23 @@ const userSchema = new mongoose.Schema({
   },
   lastLogin: {
     type: Date
-  }
+  },
+  allergies: [{
+    allergen: {
+      type: String,
+      enum: ['gluten', 'lactosa', 'maní', 'mariscos', 'huevo', 'soya', 'frutos_secos', 'pescado', 'apio', 'mostaza', 'sésamo', 'sulfitos'],
+      required: true
+    },
+    severity: {
+      type: String,
+      enum: ['low', 'medium', 'high'],
+      default: 'medium'
+    },
+    addedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }]
 }, {
   timestamps: true
 });

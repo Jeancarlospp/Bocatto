@@ -161,8 +161,18 @@ export const getAllOffers = async (req, res) => {
  */
 export const getOfferById = async (req, res) => {
   try {
-    const offer = await Offer.findById(req.params.id);
-    
+    const { id } = req.params;
+    const offerId = parseInt(id);
+
+    let offer;
+    if (!isNaN(offerId)) {
+      // Search by numeric offerId
+      offer = await Offer.findOne({ offerId });
+    } else {
+      // Fallback to MongoDB _id
+      offer = await Offer.findById(id);
+    }
+
     if (!offer) {
       return res.status(404).json({
         success: false,
@@ -194,22 +204,31 @@ export const updateOffer = async (req, res) => {
     console.log('Updating offer - Request body:', req.body);
     console.log('File received:', req.file);
 
-    const { 
-      name, 
-      description, 
-      items, 
-      originalPrice, 
-      offerPrice, 
-      validDays, 
-      startDate, 
-      endDate, 
-      badge, 
-      featured, 
-      active 
+    const {
+      name,
+      description,
+      items,
+      originalPrice,
+      offerPrice,
+      validDays,
+      startDate,
+      endDate,
+      badge,
+      featured,
+      active
     } = req.body;
 
     // Find existing offer
-    const existingOffer = await Offer.findById(req.params.id);
+    const { id } = req.params;
+    const offerId = parseInt(id);
+
+    let existingOffer;
+    if (!isNaN(offerId)) {
+      existingOffer = await Offer.findOne({ offerId });
+    } else {
+      existingOffer = await Offer.findById(id);
+    }
+
     if (!existingOffer) {
       return res.status(404).json({
         success: false,
@@ -260,27 +279,22 @@ export const updateOffer = async (req, res) => {
     }
 
     // Update offer
-    const updatedOffer = await Offer.findByIdAndUpdate(
-      req.params.id,
-      {
-        name,
-        description,
-        items: parsedItems,
-        originalPrice: originalPrice ? Number(originalPrice) : existingOffer.originalPrice,
-        offerPrice: offerPrice ? Number(offerPrice) : existingOffer.offerPrice,
-        validDays: parsedValidDays,
-        startDate: startDate ? new Date(startDate) : existingOffer.startDate,
-        endDate: endDate ? new Date(endDate) : existingOffer.endDate,
-        badge: parsedBadge,
-        imageUrl: imageUrl,
-        featured: featured !== undefined ? (featured === 'true' || featured === true) : existingOffer.featured,
-        active: active !== undefined ? (active !== 'false' && active !== false) : existingOffer.active
-      },
-      { 
-        new: true, 
-        runValidators: true 
-      }
-    );
+    existingOffer.name = name || existingOffer.name;
+    existingOffer.description = description || existingOffer.description;
+    existingOffer.items = parsedItems || existingOffer.items;
+    existingOffer.originalPrice = originalPrice ? Number(originalPrice) : existingOffer.originalPrice;
+    existingOffer.offerPrice = offerPrice ? Number(offerPrice) : existingOffer.offerPrice;
+    existingOffer.validDays = parsedValidDays || existingOffer.validDays;
+    existingOffer.startDate = startDate ? new Date(startDate) : existingOffer.startDate;
+    existingOffer.endDate = endDate ? new Date(endDate) : existingOffer.endDate;
+    existingOffer.badge = parsedBadge || existingOffer.badge;
+    existingOffer.imageUrl = imageUrl;
+    existingOffer.featured = featured !== undefined ? (featured === 'true' || featured === true) : existingOffer.featured;
+    existingOffer.active = active !== undefined ? (active !== 'false' && active !== false) : existingOffer.active;
+
+    await existingOffer.save();
+
+    const updatedOffer = existingOffer;
 
     return res.status(200).json({
       success: true,
@@ -304,8 +318,16 @@ export const updateOffer = async (req, res) => {
  */
 export const deleteOffer = async (req, res) => {
   try {
-    const offer = await Offer.findById(req.params.id);
-    
+    const { id } = req.params;
+    const offerId = parseInt(id);
+
+    let offer;
+    if (!isNaN(offerId)) {
+      offer = await Offer.findOne({ offerId });
+    } else {
+      offer = await Offer.findById(id);
+    }
+
     if (!offer) {
       return res.status(404).json({
         success: false,
@@ -322,8 +344,8 @@ export const deleteOffer = async (req, res) => {
       }
     }
 
-    // Delete offer from database
-    await Offer.findByIdAndDelete(req.params.id);
+    // Delete offer from database using the MongoDB _id
+    await Offer.findByIdAndDelete(offer._id);
 
     return res.status(200).json({
       success: true,
