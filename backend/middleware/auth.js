@@ -21,8 +21,8 @@ export const authenticateToken = async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Find user by ID from token
-    const user = await User.findById(decoded.userId).select('-password');
+    // Find user by ID from token (using incremental id)
+    const user = await User.findOne({ id: decoded.userId }).select('-password');
 
     if (!user) {
       return res.status(401).json({

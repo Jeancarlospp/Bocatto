@@ -62,7 +62,7 @@ export const adminLogin = async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       {
-        userId: user._id,
+        userId: user.id,
         email: user.email,
         role: user.role
       },
@@ -85,7 +85,7 @@ export const adminLogin = async (req, res) => {
       success: true,
       message: 'Login successful.',
       user: {
-        id: user._id,
+          id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
@@ -146,7 +146,7 @@ export const verifySession = async (req, res) => {
     return res.status(200).json({
       success: true,
       user: {
-        id: req.user._id,
+        id: req.user.id,
         firstName: req.user.firstName,
         lastName: req.user.lastName,
         email: req.user.email,
@@ -225,7 +225,7 @@ export const clientRegister = async (req, res) => {
     // Generate JWT token (auto-login after registration)
     const token = jwt.sign(
       {
-        userId: newUser._id,
+        userId: newUser.id,
         email: newUser.email,
         role: newUser.role
       },
@@ -248,7 +248,7 @@ export const clientRegister = async (req, res) => {
       success: true,
       message: 'Registro exitoso.',
       user: {
-        id: newUser._id,
+        id: newUser.id,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         email: newUser.email,
@@ -327,7 +327,7 @@ export const clientLogin = async (req, res) => {
     // Generate JWT token (same as admin)
     const token = jwt.sign(
       {
-        userId: user._id,
+        userId: user.id,
         email: user.email,
         role: user.role
       },
@@ -350,7 +350,7 @@ export const clientLogin = async (req, res) => {
       success: true,
       message: 'Inicio de sesión exitoso.',
       user: {
-        id: user._id,
+        id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
@@ -419,7 +419,7 @@ export const verifyClientSession = async (req, res) => {
     return res.status(200).json({
       success: true,
       user: {
-        id: req.user._id,
+        id: req.user.id,
         firstName: req.user.firstName,
         lastName: req.user.lastName,
         email: req.user.email,
@@ -435,6 +435,63 @@ export const verifyClientSession = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Error al verificar la sesión.'
+    });
+  }
+};
+
+/**
+ * Get user by ID (incremental id or MongoDB _id)
+ * GET /api/auth/users/:id
+ * Protected route - requires authentication
+ */
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let user;
+
+    // Try to find by incremental id first
+    if (!isNaN(id)) {
+      user = await User.findOne({ id: parseInt(id) }).select('-password');
+    }
+    
+    // If not found, try by MongoDB _id
+    if (!user) {
+      user = await User.findById(id).select('-password');
+    }
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado.'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        phone: user.phone,
+        address: user.address,
+        isActive: user.isActive,
+        loyaltyPoints: user.loyaltyPoints,
+        lastLogin: user.lastLogin,
+        acceso: user.acceso,
+        adminAcceso: user.adminAcceso,
+        allergies: user.allergies,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      }
+    });
+
+  } catch (error) {
+    console.error('Get user by ID error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener el usuario.'
     });
   }
 };

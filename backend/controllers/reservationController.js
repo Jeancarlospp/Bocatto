@@ -84,7 +84,7 @@ const validateReservationDates = (startTime, endTime) => {
 export const createReservation = async (req, res) => {
   try {
     const { areaId, startTime, endTime, guestCount, notes, paymentMethodSimulated } = req.body;
-    const userId = req.user._id; // From auth middleware
+    const userId = req.user.id; // From auth middleware
 
     console.log('📝 Creating reservation:', { areaId, startTime, endTime, guestCount, userId: userId.toString() });
 
@@ -230,7 +230,7 @@ export const createReservation = async (req, res) => {
  */
 export const getMyReservations = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const { status, upcoming } = req.query;
 
     const query = { user: userId };
@@ -278,7 +278,7 @@ export const getMyReservations = async (req, res) => {
 export const getReservationById = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user._id;
+    const userId = req.user.id;
     const isAdmin = req.user.role === 'admin';
 
     const reservation = await Reservation.findById(id)
@@ -293,7 +293,7 @@ export const getReservationById = async (req, res) => {
     }
 
     // Check authorization: only owner or admin can view
-    if (!isAdmin && reservation.user._id.toString() !== userId.toString()) {
+    if (!isAdmin && reservation.user.id !== userId) {
       return res.status(403).json({
         success: false,
         message: 'No tienes permiso para ver esta reservación'
@@ -333,7 +333,7 @@ export const getReservationById = async (req, res) => {
 export const cancelReservation = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user._id;
+    const userId = req.user.id;
     const isAdmin = req.user.role === 'admin';
 
     const reservation = await Reservation.findById(id);
@@ -346,7 +346,7 @@ export const cancelReservation = async (req, res) => {
     }
 
     // Check authorization: only owner or admin can cancel
-    if (!isAdmin && reservation.user.toString() !== userId.toString()) {
+    if (!isAdmin && reservation.user !== userId) {
       return res.status(403).json({
         success: false,
         message: 'No tienes permiso para cancelar esta reservación'
@@ -424,7 +424,7 @@ export const cancelReservation = async (req, res) => {
 export const confirmPayment = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user._id;
+    const userId = req.user.id;
 
     const reservation = await Reservation.findById(id)
       .populate('area', 'name description imageUrl')
@@ -438,7 +438,7 @@ export const confirmPayment = async (req, res) => {
     }
 
     // Check authorization: only owner can confirm payment
-    if (reservation.user._id.toString() !== userId.toString()) {
+    if (reservation.user.id !== userId) {
       return res.status(403).json({
         success: false,
         message: 'No tienes permiso para confirmar el pago de esta reservación'

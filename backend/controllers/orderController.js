@@ -11,7 +11,7 @@ import Product from '../models/Menu.js';
 export const createOrder = async (req, res) => {
   try {
     const { deliveryType, paymentMethod, customerNotes, sessionId } = req.body;
-    const userId = req.user._id;
+    const userId = req.user.id;
 
     console.log('=== CREATE ORDER DEBUG ===');
     console.log('User ID:', userId);
@@ -178,7 +178,7 @@ export const createOrder = async (req, res) => {
  */
 export const getMyOrders = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const { status, limit = 20 } = req.query;
 
     const filter = { user: userId };
@@ -216,7 +216,7 @@ export const getMyOrders = async (req, res) => {
 export const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user._id;
+    const userId = req.user.id;
     const userRole = req.user.role;
 
     const order = await Order.findById(id).populate('user', 'firstName lastName email');
@@ -229,7 +229,7 @@ export const getOrderById = async (req, res) => {
     }
 
     // Check if user is owner or admin
-    if (order.user._id.toString() !== userId.toString() && userRole !== 'admin') {
+    if (order.user.id !== userId && userRole !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Access denied. You can only view your own orders'
@@ -378,7 +378,7 @@ export const cancelOrder = async (req, res) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
-    const userId = req.user._id;
+    const userId = req.user.id;
     const userRole = req.user.role;
 
     const order = await Order.findById(id);
@@ -391,7 +391,7 @@ export const cancelOrder = async (req, res) => {
     }
 
     // Check if user is owner or admin
-    if (order.user.toString() !== userId.toString() && userRole !== 'admin') {
+    if (order.user !== userId && userRole !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Access denied. You can only cancel your own orders'

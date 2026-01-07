@@ -6,7 +6,8 @@ import {
   clientRegister,
   clientLogin,
   clientLogout,
-  verifyClientSession
+  verifyClientSession,
+  getUserById
 } from '../controllers/authController.js';
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 
@@ -60,5 +61,17 @@ router.post('/client/logout', authenticateToken, clientLogout);
 // GET /api/auth/client/verify
 // Requires valid JWT token + client role
 router.get('/client/verify', authenticateToken, verifyClientSession);
+
+/**
+ * ========================================
+ * USER ROUTES
+ * Base path: /api/auth
+ * ========================================
+ */
+
+// Get user by ID (incremental id or MongoDB _id)
+// GET /api/auth/users/:id
+// Protected route - requires authentication
+router.get('/users/:id', authenticateToken, getUserById);
 
 export default router;

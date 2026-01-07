@@ -38,7 +38,7 @@ export const saveUserAllergies = async (req, res) => {
     }
 
     // Find user and update allergies
-    const user = await User.findById(userId);
+    const user = await User.findOne({ id: userId });
 
     if (!user) {
       return res.status(404).json({
@@ -61,7 +61,7 @@ export const saveUserAllergies = async (req, res) => {
       success: true,
       message: 'Allergy preferences saved successfully',
       data: {
-        userId: user._id,
+        userId: user.id,
         allergies: user.allergies
       }
     });
@@ -84,7 +84,7 @@ export const getUserAllergies = async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    const user = await User.findById(userId).select('allergies');
+    const user = await User.findOne({ id: userId }).select('allergies');
 
     if (!user) {
       return res.status(404).json({
@@ -120,7 +120,7 @@ export const getSafeProducts = async (req, res) => {
     const userId = req.user.userId;
 
     // Get user with allergies
-    const user = await User.findById(userId).select('allergies');
+    const user = await User.findOne({ id: userId }).select('allergies');
 
     if (!user) {
       return res.status(404).json({
@@ -240,7 +240,7 @@ export const checkProduct = async (req, res) => {
     const { id } = req.params;
 
     // Get user allergies
-    const user = await User.findById(userId).select('allergies');
+    const user = await User.findOne({ id: userId }).select('allergies');
 
     if (!user) {
       return res.status(404).json({

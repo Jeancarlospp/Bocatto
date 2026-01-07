@@ -1,7 +1,19 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+// Counter schema for auto-incrementing IDs
+const counterSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  seq: { type: Number, default: 0 }
+});
+
+const Counter = mongoose.model('Counter', counterSchema);
+
 const userSchema = new mongoose.Schema({
+  id: {
+    type: Number,
+    unique: true
+  },
   firstName: {
     type: String,
     required: [true, 'First name is required'],
@@ -91,6 +103,25 @@ const userSchema = new mongoose.Schema({
   }]
 }, {
   timestamps: true
+});
+
+// Auto-increment id before saving
+userSchema.pre('save', async function(next) {
+  if (this.isNew && !this.id) {
+    try {
+      const counter = await Counter.findByIdAndUpdate(
+        'userId',
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true }
+      );
+      this.id = counter.seq;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next();
+  }
 });
 
 // Hash password before saving (only for admin users with password)
