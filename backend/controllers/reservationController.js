@@ -178,7 +178,7 @@ export const createReservation = async (req, res) => {
         success: false,
         message: 'Ya existe una reservación para este ambiente en ese rango de tiempo',
         overlappingReservations: overlapping.map(r => ({
-          id: r._id,
+          id: r._id.toString(),
           startTime: r.startTime,
           endTime: r.endTime,
           status: r.status
@@ -211,7 +211,7 @@ export const createReservation = async (req, res) => {
       success: true,
       message: 'Reservación creada exitosamente',
       reservation: {
-        id: reservation._id,
+        id: reservation._id.toString(),
         area: populatedReservation.area,
         user: populatedReservation.user,
         startTime: reservation.startTime,
@@ -422,7 +422,7 @@ export const cancelReservation = async (req, res) => {
       success: true,
       message: 'Reservación cancelada exitosamente',
       reservation: {
-        id: reservation._id,
+        id: reservation._id.toString(),
         status: reservation.status
       }
     });
@@ -514,7 +514,7 @@ export const confirmPayment = async (req, res) => {
       success: true,
       message: 'Pago confirmado exitosamente',
       reservation: {
-        id: reservation._id,
+        id: reservation._id.toString(),
         area: populatedReservation.area,
         startTime: reservation.startTime,
         endTime: reservation.endTime,
@@ -648,7 +648,7 @@ export const adminCancelReservation = async (req, res) => {
       success: true,
       message: 'Reservación cancelada por administrador',
       reservation: {
-        id: reservation._id,
+        id: reservation._id.toString(),
         status: reservation.status
       }
     });

@@ -351,7 +351,7 @@ export const deleteProduct = async (req, res) => {
     }
 
     // Permanently delete from database
-    await Product.findByIdAndDelete(id);
+    await Product.findByIdAndDelete(product._id);
 
     res.status(200).json({
       success: true,

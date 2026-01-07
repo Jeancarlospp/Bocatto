@@ -142,7 +142,7 @@ export const addToCart = async (req, res) => {
     } else {
       // Add new item
       cart.items.push({
-        product: product._id,
+        product: product.productId,
         productId: product.productId,
         name: product.name,
         price: product.price,

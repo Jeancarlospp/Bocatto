@@ -117,14 +117,14 @@ export const createOrder = async (req, res) => {
       console.log('Processing item:', {
         name: item.name,
         productId: item.productId,
-        product: item.product?._id || item.product,
+        product: item.product || item.productId,
         quantity: item.quantity,
         price: item.price,
         subtotal: item.subtotal
       });
       
       return {
-        product: item.product?._id || item.product,
+        product: item.product || item.productId,
         productId: item.productId,
         name: item.name,
         price: item.price,

@@ -256,7 +256,7 @@ export const getCartAllergyWarnings = async (req, res) => {
 
         if (matchedAllergens.length > 0) {
           warnings.push({
-            itemId: item._id,
+            itemId: item.productId,
             productName: product.name,
             allergens: matchedAllergens
           });
