@@ -8,13 +8,11 @@ import mongoose from 'mongoose';
 const reservationSchema = new mongoose.Schema(
   {
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      type: Number,
       required: [true, 'User is required']
     },
     area: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Area',
+      type: Number,
       required: [true, 'Area is required']
     },
     startTime: {

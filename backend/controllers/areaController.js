@@ -110,8 +110,17 @@ export const getAllAreas = async (req, res) => {
 export const getAreaById = async (req, res) => {
   try {
     const { id } = req.params;
+    let area;
 
-    const area = await Area.findById(id);
+    // Try to find by incremental id first
+    if (!isNaN(id)) {
+      area = await Area.findOne({ id: parseInt(id) });
+    }
+    
+    // If not found, try by MongoDB _id
+    if (!area) {
+      area = await Area.findById(id);
+    }
 
     if (!area) {
       return res.status(404).json({
@@ -153,7 +162,13 @@ export const updateArea = async (req, res) => {
     const { name, description, minCapacity, maxCapacity, features } = req.body;
 
     // Find existing area
-    const area = await Area.findById(id);
+    let area;
+    if (!isNaN(id)) {
+      area = await Area.findOne({ id: parseInt(id) });
+    }
+    if (!area) {
+      area = await Area.findById(id);
+    }
 
     if (!area) {
       // Delete uploaded file if exists
@@ -244,7 +259,13 @@ export const deleteArea = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const area = await Area.findById(id);
+    let area;
+    if (!isNaN(id)) {
+      area = await Area.findOne({ id: parseInt(id) });
+    }
+    if (!area) {
+      area = await Area.findById(id);
+    }
 
     if (!area) {
       return res.status(404).json({
@@ -288,7 +309,13 @@ export const toggleAreaStatus = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const area = await Area.findById(id);
+    let area;
+    if (!isNaN(id)) {
+      area = await Area.findOne({ id: parseInt(id) });
+    }
+    if (!area) {
+      area = await Area.findById(id);
+    }
 
     if (!area) {
       return res.status(404).json({

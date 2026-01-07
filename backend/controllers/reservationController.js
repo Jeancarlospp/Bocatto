@@ -1,11 +1,38 @@
 import Reservation from '../models/Reservation.js';
 import Area from '../models/Area.js';
+import User from '../models/User.js';
 
 /**
  * ========================================
  * UTILITY FUNCTIONS
  * ========================================
  */
+
+/**
+ * Populate reservation with area and user details manually
+ */
+const populateReservation = async (reservation) => {
+  const reservationObj = reservation.toObject ? reservation.toObject() : reservation;
+  
+  // Get area details
+  const area = await Area.findOne({ id: reservationObj.area }).select('id name description imageUrl minCapacity maxCapacity');
+  
+  // Get user details
+  const user = await User.findOne({ id: reservationObj.user }).select('id firstName lastName email phone');
+  
+  return {
+    ...reservationObj,
+    area: area || { id: reservationObj.area },
+    user: user || { id: reservationObj.user }
+  };
+};
+
+/**
+ * Populate multiple reservations
+ */
+const populateReservations = async (reservations) => {
+  return Promise.all(reservations.map(r => populateReservation(r)));
+};
 
 /**
  * Validate reservation date constraints
@@ -106,7 +133,14 @@ export const createReservation = async (req, res) => {
     }
 
     // Check if area exists and is active
-    const area = await Area.findById(areaId);
+    let area;
+    if (!isNaN(areaId)) {
+      area = await Area.findOne({ id: parseInt(areaId) });
+    }
+    if (!area) {
+      area = await Area.findById(areaId);
+    }
+    
     if (!area) {
       return res.status(404).json({
         success: false,
@@ -155,10 +189,10 @@ export const createReservation = async (req, res) => {
     // Calculate total price
     const totalPrice = Reservation.calculatePrice(new Date(startTime), new Date(endTime));
 
-    // Create reservation
+    // Create reservation with incremental IDs
     const reservation = await Reservation.create({
       user: userId,
-      area: areaId,
+      area: area.id,  // Use incremental id
       startTime: new Date(startTime),
       endTime: new Date(endTime),
       totalPrice,
@@ -168,11 +202,8 @@ export const createReservation = async (req, res) => {
       status: 'pending'
     });
 
-    // Populate area and user details
-    await reservation.populate([
-      { path: 'area', select: 'name description imageUrl minCapacity maxCapacity' },
-      { path: 'user', select: 'firstName lastName email' }
-    ]);
+    // Manually populate area and user details
+    const populatedReservation = await populateReservation(reservation);
 
     console.log('✅ Reservation created:', reservation._id);
 
@@ -181,8 +212,8 @@ export const createReservation = async (req, res) => {
       message: 'Reservación creada exitosamente',
       reservation: {
         id: reservation._id,
-        area: reservation.area,
-        user: reservation.user,
+        area: populatedReservation.area,
+        user: populatedReservation.user,
         startTime: reservation.startTime,
         endTime: reservation.endTime,
         totalPrice: reservation.totalPrice,
@@ -246,13 +277,15 @@ export const getMyReservations = async (req, res) => {
     }
 
     const reservations = await Reservation.find(query)
-      .populate('area', 'name description imageUrl minCapacity maxCapacity')
       .sort({ startTime: -1 }); // Most recent first
+
+    // Manually populate area and user details
+    const populatedReservations = await populateReservations(reservations);
 
     return res.status(200).json({
       success: true,
       count: reservations.length,
-      reservations
+      reservations: populatedReservations
     });
 
   } catch (error) {
@@ -281,9 +314,7 @@ export const getReservationById = async (req, res) => {
     const userId = req.user.id;
     const isAdmin = req.user.role === 'admin';
 
-    const reservation = await Reservation.findById(id)
-      .populate('area', 'name description imageUrl minCapacity maxCapacity features')
-      .populate('user', 'firstName lastName email phone');
+    const reservation = await Reservation.findById(id);
 
     if (!reservation) {
       return res.status(404).json({
@@ -293,16 +324,19 @@ export const getReservationById = async (req, res) => {
     }
 
     // Check authorization: only owner or admin can view
-    if (!isAdmin && reservation.user.id !== userId) {
+    if (!isAdmin && reservation.user !== userId) {
       return res.status(403).json({
         success: false,
         message: 'No tienes permiso para ver esta reservación'
       });
     }
 
+    // Manually populate area and user details
+    const populatedReservation = await populateReservation(reservation);
+
     return res.status(200).json({
       success: true,
-      reservation
+      reservation: populatedReservation
     });
 
   } catch (error) {
@@ -426,9 +460,7 @@ export const confirmPayment = async (req, res) => {
     const { id } = req.params;
     const userId = req.user.id;
 
-    const reservation = await Reservation.findById(id)
-      .populate('area', 'name description imageUrl')
-      .populate('user', 'firstName lastName email');
+    const reservation = await Reservation.findById(id);
 
     if (!reservation) {
       return res.status(404).json({
@@ -438,7 +470,7 @@ export const confirmPayment = async (req, res) => {
     }
 
     // Check authorization: only owner can confirm payment
-    if (reservation.user.id !== userId) {
+    if (reservation.user !== userId) {
       return res.status(403).json({
         success: false,
         message: 'No tienes permiso para confirmar el pago de esta reservación'
@@ -473,6 +505,9 @@ export const confirmPayment = async (req, res) => {
     reservation.status = 'paid';
     await reservation.save();
 
+    // Manually populate area and user details
+    const populatedReservation = await populateReservation(reservation);
+
     console.log('✅ Payment confirmed for reservation:', reservation._id);
 
     return res.status(200).json({
@@ -480,7 +515,7 @@ export const confirmPayment = async (req, res) => {
       message: 'Pago confirmado exitosamente',
       reservation: {
         id: reservation._id,
-        area: reservation.area,
+        area: populatedReservation.area,
         startTime: reservation.startTime,
         endTime: reservation.endTime,
         totalPrice: reservation.totalPrice,
@@ -550,14 +585,15 @@ export const getAllReservations = async (req, res) => {
     }
 
     const reservations = await Reservation.find(query)
-      .populate('area', 'name description imageUrl')
-      .populate('user', 'firstName lastName email phone')
       .sort({ startTime: -1 });
+
+    // Manually populate area and user details
+    const populatedReservations = await populateReservations(reservations);
 
     return res.status(200).json({
       success: true,
       count: reservations.length,
-      reservations
+      reservations: populatedReservations
     });
 
   } catch (error) {
@@ -660,7 +696,14 @@ export const getAvailability = async (req, res) => {
     }
 
     // Check if area exists
-    const area = await Area.findById(areaId);
+    let area;
+    if (!isNaN(areaId)) {
+      area = await Area.findOne({ id: parseInt(areaId) });
+    }
+    if (!area) {
+      area = await Area.findById(areaId);
+    }
+    
     if (!area) {
       return res.status(404).json({
         success: false,

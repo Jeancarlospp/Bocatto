@@ -1,5 +1,13 @@
 import mongoose from 'mongoose';
 
+// Counter schema for auto-incrementing IDs (shared with User model)
+const counterSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  seq: { type: Number, default: 0 }
+});
+
+const Counter = mongoose.models.Counter || mongoose.model('Counter', counterSchema);
+
 /**
  * Area (Ambiente) Model
  * Represents dining areas/environments available for reservations
@@ -7,6 +15,10 @@ import mongoose from 'mongoose';
  */
 const areaSchema = new mongoose.Schema(
   {
+    id: {
+      type: Number,
+      unique: true
+    },
     name: {
       type: String,
       required: [true, 'Area name is required'],
@@ -80,6 +92,25 @@ const areaSchema = new mongoose.Schema(
     collection: 'areas' // Explicit collection name
   }
 );
+
+// Auto-increment id before saving
+areaSchema.pre('save', async function(next) {
+  if (this.isNew && !this.id) {
+    try {
+      const counter = await Counter.findByIdAndUpdate(
+        'areaId',
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true }
+      );
+      this.id = counter.seq;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next();
+  }
+});
 
 // Index for efficient queries
 areaSchema.index({ isActive: 1 });
