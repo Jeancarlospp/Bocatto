@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createReservation } from '@/lib/api';
+import SuccessToast from './SuccessToast';
 
 /**
  * ReservationModal Component
@@ -31,6 +32,8 @@ export default function ReservationModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Reset form when modal opens
   useEffect(() => {
@@ -192,11 +195,40 @@ export default function ReservationModal({
       const result = await createReservation(reservationData);
 
       if (result.success) {
-        // Success! Notify parent and close
-        if (onSuccess) {
-          onSuccess(result.reservation);
-        }
-        onClose();
+        // Formatear mensaje de éxito con detalles de la reservación
+        const reservation = result.reservation;
+        const startDate = new Date(reservation.startTime);
+        const endDate = new Date(reservation.endTime);
+        
+        const dateStr = startDate.toLocaleDateString('es-ES', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+        
+        const startTimeStr = startDate.toLocaleTimeString('es-ES', { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+        
+        const endTimeStr = endDate.toLocaleTimeString('es-ES', { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+
+        const message = `Tu reservación #${reservation.id} para ${area.name} ha sido confirmada para el ${dateStr} de ${startTimeStr} a ${endTimeStr}. ¡Te esperamos!`;
+        
+        setSuccessMessage(message);
+        setShowSuccessToast(true);
+        
+        // Cerrar modal después de un pequeño delay
+        setTimeout(() => {
+          if (onSuccess) {
+            onSuccess(result.reservation);
+          }
+          onClose();
+        }, 500);
       } else {
         setError(result.message || 'Error al crear la reservación');
       }
@@ -430,6 +462,15 @@ export default function ReservationModal({
           </div>
         </form>
       </div>
+
+      {/* Success Toast Notification */}
+      {showSuccessToast && (
+        <SuccessToast
+          message={successMessage}
+          onClose={() => setShowSuccessToast(false)}
+          duration={5000}
+        />
+      )}
     </div>
   );
 }
