@@ -167,8 +167,9 @@ export const createReservation = async (req, res) => {
     const requestedStart = new Date(startTime);
     const requestedEnd = new Date(endTime);
 
+    // Usar el id incremental del área para la búsqueda
     const overlapping = await Reservation.findOverlapping(
-      areaId,
+      area.id,
       requestedStart,
       requestedEnd
     );
