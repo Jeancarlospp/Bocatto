@@ -222,13 +222,13 @@ export default function ReservationModal({
         setSuccessMessage(message);
         setShowSuccessToast(true);
         
-        // Cerrar modal después de un pequeño delay
+        // Cerrar modal después de 2.5 segundos para dar tiempo a leer el mensaje
         setTimeout(() => {
           if (onSuccess) {
             onSuccess(result.reservation);
           }
           onClose();
-        }, 500);
+        }, 2500);
       } else {
         setError(result.message || 'Error al crear la reservación');
       }

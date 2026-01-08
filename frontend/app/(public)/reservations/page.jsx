@@ -56,8 +56,7 @@ export default function ReservationsPage() {
   };
 
   const handleReservationSuccess = (reservation) => {
-    // Show success message and reload areas if needed
-    alert(`¡Reservación creada exitosamente! ID: ${reservation.id}\nEstado: Pendiente de pago\nPrecio: $${reservation.totalPrice.toFixed(2)}`);
+    // Success notification is now handled by SuccessToast in ReservationModal
     // Optionally redirect to "Mis Reservas"
     // window.location.href = '/my-reservations';
   };
