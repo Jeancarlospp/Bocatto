@@ -1,12 +1,27 @@
 import mongoose from 'mongoose';
 
 /**
+ * Counter Schema for auto-incrementing IDs
+ */
+const counterSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
+  seq: { type: Number, default: 0 }
+});
+
+const Counter = mongoose.models.Counter || mongoose.model('Counter', counterSchema);
+
+/**
  * Reservation Model
  * Represents table/area reservations made by clients
  * Collection: 'reservacions' in MongoDB (existing collection name)
  */
 const reservationSchema = new mongoose.Schema(
   {
+    id: {
+      type: Number,
+      unique: true,
+      sparse: true // Permite que documentos existentes sin 'id' puedan coexistir
+    },
     user: {
       type: Number,
       required: [true, 'User is required']
@@ -158,6 +173,29 @@ reservationSchema.statics.calculatePrice = function(startTime, endTime) {
 
   return parseFloat(totalPrice.toFixed(2));
 };
+
+/**
+ * Pre-save middleware to auto-increment reservation ID
+ * Solo asigna ID a nuevas reservaciones (no afecta las existentes)
+ */
+reservationSchema.pre('save', async function(next) {
+  // Solo asignar ID a nuevas reservaciones
+  if (this.isNew && !this.id) {
+    try {
+      const counter = await Counter.findByIdAndUpdate(
+        'reservationId',
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true }
+      );
+      this.id = counter.seq;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next();
+  }
+});
 
 const Reservation = mongoose.model('Reservation', reservationSchema);
 

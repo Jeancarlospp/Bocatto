@@ -178,7 +178,7 @@ export const createReservation = async (req, res) => {
         success: false,
         message: 'Ya existe una reservación para este ambiente en ese rango de tiempo',
         overlappingReservations: overlapping.map(r => ({
-          id: r._id.toString(),
+          id: r.id || r._id.toString(),
           startTime: r.startTime,
           endTime: r.endTime,
           status: r.status
@@ -205,13 +205,13 @@ export const createReservation = async (req, res) => {
     // Manually populate area and user details
     const populatedReservation = await populateReservation(reservation);
 
-    console.log('✅ Reservation created:', reservation._id);
+    console.log('✅ Reservation created:', reservation.id || reservation._id);
 
     return res.status(201).json({
       success: true,
       message: 'Reservación creada exitosamente',
       reservation: {
-        id: reservation._id.toString(),
+        id: reservation.id || reservation._id.toString(),
         area: populatedReservation.area,
         user: populatedReservation.user,
         startTime: reservation.startTime,
@@ -314,7 +314,14 @@ export const getReservationById = async (req, res) => {
     const userId = req.user.id;
     const isAdmin = req.user.role === 'admin';
 
-    const reservation = await Reservation.findById(id);
+    // Buscar primero por id incremental, luego por _id de MongoDB
+    let reservation;
+    if (!isNaN(id)) {
+      reservation = await Reservation.findOne({ id: parseInt(id) });
+    }
+    if (!reservation) {
+      reservation = await Reservation.findById(id);
+    }
 
     if (!reservation) {
       return res.status(404).json({
@@ -370,7 +377,14 @@ export const cancelReservation = async (req, res) => {
     const userId = req.user.id;
     const isAdmin = req.user.role === 'admin';
 
-    const reservation = await Reservation.findById(id);
+    // Buscar primero por id incremental, luego por _id de MongoDB
+    let reservation;
+    if (!isNaN(id)) {
+      reservation = await Reservation.findOne({ id: parseInt(id) });
+    }
+    if (!reservation) {
+      reservation = await Reservation.findById(id);
+    }
 
     if (!reservation) {
       return res.status(404).json({
@@ -416,13 +430,13 @@ export const cancelReservation = async (req, res) => {
     reservation.status = 'cancelled';
     await reservation.save();
 
-    console.log('✅ Reservation cancelled:', reservation._id);
+    console.log('✅ Reservation cancelled:', reservation.id || reservation._id);
 
     return res.status(200).json({
       success: true,
       message: 'Reservación cancelada exitosamente',
       reservation: {
-        id: reservation._id.toString(),
+        id: reservation.id || reservation._id.toString(),
         status: reservation.status
       }
     });
@@ -460,7 +474,14 @@ export const confirmPayment = async (req, res) => {
     const { id } = req.params;
     const userId = req.user.id;
 
-    const reservation = await Reservation.findById(id);
+    // Buscar primero por id incremental, luego por _id de MongoDB
+    let reservation;
+    if (!isNaN(id)) {
+      reservation = await Reservation.findOne({ id: parseInt(id) });
+    }
+    if (!reservation) {
+      reservation = await Reservation.findById(id);
+    }
 
     if (!reservation) {
       return res.status(404).json({
@@ -508,13 +529,13 @@ export const confirmPayment = async (req, res) => {
     // Manually populate area and user details
     const populatedReservation = await populateReservation(reservation);
 
-    console.log('✅ Payment confirmed for reservation:', reservation._id);
+    console.log('✅ Payment confirmed for reservation:', reservation.id || reservation._id);
 
     return res.status(200).json({
       success: true,
       message: 'Pago confirmado exitosamente',
       reservation: {
-        id: reservation._id.toString(),
+        id: reservation.id || reservation._id.toString(),
         area: populatedReservation.area,
         startTime: reservation.startTime,
         endTime: reservation.endTime,
@@ -622,7 +643,14 @@ export const adminCancelReservation = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const reservation = await Reservation.findById(id);
+    // Buscar primero por id incremental, luego por _id de MongoDB
+    let reservation;
+    if (!isNaN(id)) {
+      reservation = await Reservation.findOne({ id: parseInt(id) });
+    }
+    if (!reservation) {
+      reservation = await Reservation.findById(id);
+    }
 
     if (!reservation) {
       return res.status(404).json({
@@ -642,13 +670,13 @@ export const adminCancelReservation = async (req, res) => {
     reservation.status = 'cancelled';
     await reservation.save();
 
-    console.log('✅ Admin cancelled reservation:', reservation._id);
+    console.log('✅ Admin cancelled reservation:', reservation.id || reservation._id);
 
     return res.status(200).json({
       success: true,
       message: 'Reservación cancelada por administrador',
       reservation: {
-        id: reservation._id.toString(),
+        id: reservation.id || reservation._id.toString(),
         status: reservation.status
       }
     });
