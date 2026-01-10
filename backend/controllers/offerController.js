@@ -30,7 +30,7 @@ export const createOffer = async (req, res) => {
 
     // Parse items if sent as string
     let parsedItems = items;
-    if (typeof items === 'string') {
+    if (items && typeof items === 'string') {
       try {
         parsedItems = JSON.parse(items);
       } catch (e) {
@@ -44,7 +44,7 @@ export const createOffer = async (req, res) => {
 
     // Parse validDays if sent as string
     let parsedValidDays = validDays;
-    if (typeof validDays === 'string') {
+    if (validDays && typeof validDays === 'string') {
       try {
         parsedValidDays = JSON.parse(validDays);
       } catch (e) {
@@ -54,7 +54,7 @@ export const createOffer = async (req, res) => {
 
     // Parse badge if sent as string
     let parsedBadge = badge;
-    if (typeof badge === 'string') {
+    if (badge && typeof badge === 'string') {
       try {
         parsedBadge = JSON.parse(badge);
       } catch (e) {
@@ -162,15 +162,18 @@ export const getAllOffers = async (req, res) => {
 export const getOfferById = async (req, res) => {
   try {
     const { id } = req.params;
-    const offerId = parseInt(id);
 
     let offer;
-    if (!isNaN(offerId)) {
-      // Search by numeric offerId
-      offer = await Offer.findOne({ offerId });
-    } else {
-      // Fallback to MongoDB _id
+
+    // Try to find by MongoDB _id first (24 char hex string)
+    if (id.length === 24 && /^[0-9a-fA-F]{24}$/.test(id)) {
       offer = await Offer.findById(id);
+    } else {
+      // Otherwise try numeric offerId
+      const offerId = parseInt(id);
+      if (!isNaN(offerId)) {
+        offer = await Offer.findOne({ offerId });
+      }
     }
 
     if (!offer) {
@@ -220,13 +223,18 @@ export const updateOffer = async (req, res) => {
 
     // Find existing offer
     const { id } = req.params;
-    const offerId = parseInt(id);
 
     let existingOffer;
-    if (!isNaN(offerId)) {
-      existingOffer = await Offer.findOne({ offerId });
-    } else {
+
+    // Try to find by MongoDB _id first (24 char hex string)
+    if (id.length === 24 && /^[0-9a-fA-F]{24}$/.test(id)) {
       existingOffer = await Offer.findById(id);
+    } else {
+      // Otherwise try numeric offerId
+      const offerId = parseInt(id);
+      if (!isNaN(offerId)) {
+        existingOffer = await Offer.findOne({ offerId });
+      }
     }
 
     if (!existingOffer) {
@@ -238,7 +246,7 @@ export const updateOffer = async (req, res) => {
 
     // Parse complex fields
     let parsedItems = items;
-    if (typeof items === 'string') {
+    if (items && typeof items === 'string') {
       try {
         parsedItems = JSON.parse(items);
       } catch (e) {
@@ -247,7 +255,7 @@ export const updateOffer = async (req, res) => {
     }
 
     let parsedValidDays = validDays;
-    if (typeof validDays === 'string') {
+    if (validDays && typeof validDays === 'string') {
       try {
         parsedValidDays = JSON.parse(validDays);
       } catch (e) {
@@ -256,7 +264,7 @@ export const updateOffer = async (req, res) => {
     }
 
     let parsedBadge = badge;
-    if (typeof badge === 'string') {
+    if (badge && typeof badge === 'string') {
       try {
         parsedBadge = JSON.parse(badge);
       } catch (e) {
@@ -319,13 +327,18 @@ export const updateOffer = async (req, res) => {
 export const deleteOffer = async (req, res) => {
   try {
     const { id } = req.params;
-    const offerId = parseInt(id);
 
     let offer;
-    if (!isNaN(offerId)) {
-      offer = await Offer.findOne({ offerId });
-    } else {
+
+    // Try to find by MongoDB _id first (24 char hex string)
+    if (id.length === 24 && /^[0-9a-fA-F]{24}$/.test(id)) {
       offer = await Offer.findById(id);
+    } else {
+      // Otherwise try numeric offerId
+      const offerId = parseInt(id);
+      if (!isNaN(offerId)) {
+        offer = await Offer.findOne({ offerId });
+      }
     }
 
     if (!offer) {
