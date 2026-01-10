@@ -11,21 +11,18 @@ export const createOffer = async (req, res) => {
     console.log('Creating offer - Request body:', req.body);
     console.log('File received:', req.file);
     
-    const { 
-      name, 
-      description, 
-      items, 
-      originalPrice, 
-      offerPrice, 
-      validDays, 
-      startDate, 
-      endDate, 
-      startTime, 
-      endTime, 
-      badge, 
-      featured, 
-      active, 
-      maxUsage 
+    const {
+      name,
+      description,
+      items,
+      originalPrice,
+      offerPrice,
+      validDays,
+      startDate,
+      endDate,
+      badge,
+      featured,
+      active
     } = req.body;
 
     // Parse items if sent as string
