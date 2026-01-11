@@ -5,9 +5,6 @@ import mongoose from 'mongoose';
 // Get or create cart
 export const getCart = async (req, res) => {
   try {
-    console.log('Get Cart - Body:', req.body);
-    console.log('Get Cart - User:', req.user);
-    
     const { sessionId } = req.body;
     
     if (!sessionId) {
@@ -58,9 +55,6 @@ export const getCart = async (req, res) => {
 // Add item to cart
 export const addToCart = async (req, res) => {
   try {
-    console.log('Add to Cart - Body:', req.body);
-    console.log('Add to Cart - User:', req.user);
-
     const { sessionId, productId, quantity, customizations } = req.body;
 
     // Validation
@@ -201,8 +195,6 @@ export const addToCart = async (req, res) => {
 // Update cart item quantity
 export const updateCartItem = async (req, res) => {
   try {
-    console.log('Update Cart Item - Body:', req.body);
-
     const { sessionId, itemId, quantity } = req.body;
 
     if (!sessionId || !itemId || quantity === undefined) {
@@ -320,8 +312,6 @@ export const updateCartItem = async (req, res) => {
 // Remove item from cart
 export const removeFromCart = async (req, res) => {
   try {
-    console.log('Remove from Cart - Body:', req.body);
-
     const { sessionId, itemId } = req.body;
 
     if (!sessionId || !itemId) {
@@ -389,8 +379,6 @@ export const removeFromCart = async (req, res) => {
 // Clear cart
 export const clearCart = async (req, res) => {
   try {
-    console.log('Clear Cart - Body:', req.body);
-
     const { sessionId } = req.body;
 
     if (!sessionId) {
