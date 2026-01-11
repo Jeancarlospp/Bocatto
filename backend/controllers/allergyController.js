@@ -8,7 +8,7 @@ import Product from '../models/Menu.js';
  */
 export const saveUserAllergies = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     const { allergies } = req.body;
 
     if (!Array.isArray(allergies)) {
@@ -82,7 +82,7 @@ export const saveUserAllergies = async (req, res) => {
  */
 export const getUserAllergies = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     const user = await User.findOne({ id: userId }).select('allergies');
 
@@ -117,7 +117,7 @@ export const getUserAllergies = async (req, res) => {
  */
 export const getSafeProducts = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
     // Get user with allergies
     const user = await User.findOne({ id: userId }).select('allergies');
@@ -236,7 +236,7 @@ export const getSafeProducts = async (req, res) => {
  */
 export const checkProduct = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.id;
     const { id } = req.params;
 
     // Get user allergies

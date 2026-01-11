@@ -152,9 +152,6 @@ export const createOrder = async (req, res) => {
     cart.status = 'completed';
     await cart.save();
 
-    // Populate order details
-    await order.populate('user', 'firstName lastName email');
-
     return res.status(201).json({
       success: true,
       message: 'Order created successfully',
@@ -189,8 +186,7 @@ export const getMyOrders = async (req, res) => {
 
     const orders = await Order.find(filter)
       .sort({ createdAt: -1 })
-      .limit(parseInt(limit))
-      .populate('user', 'firstName lastName email');
+      .limit(parseInt(limit));
 
     return res.status(200).json({
       success: true,
@@ -219,7 +215,7 @@ export const getOrderById = async (req, res) => {
     const userId = req.user.id;
     const userRole = req.user.role;
 
-    const order = await Order.findById(id).populate('user', 'firstName lastName email');
+    const order = await Order.findById(id);
 
     if (!order) {
       return res.status(404).json({
@@ -229,7 +225,7 @@ export const getOrderById = async (req, res) => {
     }
 
     // Check if user is owner or admin
-    if (order.user.id !== userId && userRole !== 'admin') {
+    if (order.user !== userId && userRole !== 'admin') {
       return res.status(403).json({
         success: false,
         message: 'Access denied. You can only view your own orders'
@@ -275,8 +271,7 @@ export const getAllOrders = async (req, res) => {
     const orders = await Order.find(filter)
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))
-      .skip(skip)
-      .populate('user', 'firstName lastName email');
+      .skip(skip);
 
     const total = await Order.countDocuments(filter);
 
@@ -350,7 +345,6 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     await order.save();
-    await order.populate('user', 'firstName lastName email');
 
     return res.status(200).json({
       success: true,
@@ -426,8 +420,6 @@ export const cancelOrder = async (req, res) => {
     order.cancellationReason = reason || 'Cancelled by ' + (userRole === 'admin' ? 'admin' : 'customer');
     await order.save();
 
-    await order.populate('user', 'firstName lastName email');
-
     return res.status(200).json({
       success: true,
       message: 'Order cancelled successfully',
@@ -455,8 +447,7 @@ export const getKitchenOrders = async (req, res) => {
     const orders = await Order.find({
       status: { $in: ['confirmed', 'preparing', 'ready'] }
     })
-      .sort({ createdAt: 1 }) // Oldest first
-      .populate('user', 'firstName lastName');
+      .sort({ createdAt: 1 }); // Oldest first
 
     return res.status(200).json({
       success: true,

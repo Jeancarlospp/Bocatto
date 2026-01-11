@@ -188,7 +188,7 @@ export const getCartAllergyWarnings = async (req, res) => {
     // Get user allergies if user is authenticated
     let userAllergies = [];
     if (req.user) {
-      const user = await User.findOne({ id: req.user.userId });
+      const user = await User.findOne({ id: req.user.id });
       if (user && user.allergies) {
         userAllergies = user.allergies;
       }

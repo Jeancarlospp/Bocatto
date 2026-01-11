@@ -1,4 +1,6 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 import {
   getCart,
   addToCart,
@@ -11,12 +13,36 @@ import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Optional authentication - if token exists, attach user info
-const optionalAuth = (req, res, next) => {
-  const token = req.cookies.token;
-  if (token) {
-    return authenticateToken(req, res, next);
+// Optional authentication - if token exists and valid, attach user info
+// If token is invalid or expired, clear it and continue as anonymous
+const optionalAuth = async (req, res, next) => {
+  try {
+    const token = req.cookies.token;
+    
+    if (!token) {
+      req.user = null;
+      return next();
+    }
+
+    // Try to verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Find user by incremental ID
+    const user = await User.findOne({ id: decoded.userId }).select('-password');
+    
+    if (user && user.isActive) {
+      req.user = user;
+    } else {
+      // User not found or inactive, clear cookie
+      res.clearCookie('token');
+      req.user = null;
+    }
+  } catch (error) {
+    // Token invalid or expired, clear it and continue as anonymous
+    res.clearCookie('token');
+    req.user = null;
   }
+  
   next();
 };
 

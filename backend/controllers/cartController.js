@@ -20,13 +20,13 @@ export const getCart = async (req, res) => {
     let cart = await Cart.findOne({ 
       sessionId, 
       status: 'active' 
-    }).populate('items.product', 'name price img available currentStock');
+    });
 
     // Create new cart if doesn't exist
     if (!cart) {
       cart = new Cart({
         sessionId,
-        user: req.user?.userId || null,
+        user: req.user?.id || null,
         items: [],
         totalItems: 0,
         totalPrice: 0
@@ -36,7 +36,7 @@ export const getCart = async (req, res) => {
 
     // Update user if logged in and cart doesn't have user
     if (req.user && !cart.user) {
-      cart.user = req.user.userId;
+      cart.user = req.user.id;
       await cart.save();
     }
 
@@ -111,7 +111,7 @@ export const addToCart = async (req, res) => {
     if (!cart) {
       cart = new Cart({
         sessionId,
-        user: req.user?.userId || null,
+        user: req.user?.id || null,
         items: []
       });
     }
@@ -129,7 +129,7 @@ export const addToCart = async (req, res) => {
       // Update existing item
       const newQuantity = cart.items[existingItemIndex].quantity + quantity;
       
-      // Check stock again for new quantity
+      // Check stock again for additional quantity
       if (product.currentStock !== undefined && product.currentStock < quantity) {
         return res.status(400).json({
           success: false,
@@ -139,6 +139,12 @@ export const addToCart = async (req, res) => {
 
       cart.items[existingItemIndex].quantity = newQuantity;
       cart.items[existingItemIndex].subtotal = product.price * newQuantity;
+      
+      // Decrement stock for the additional quantity
+      if (product.currentStock !== undefined) {
+        product.currentStock = Math.max(0, product.currentStock - quantity);
+        await product.save();
+      }
     } else {
       // Add new item
       cart.items.push({
@@ -154,16 +160,19 @@ export const addToCart = async (req, res) => {
         },
         subtotal
       });
+      
+      // Decrement stock for new item
+      if (product.currentStock !== undefined) {
+        product.currentStock = Math.max(0, product.currentStock - quantity);
+        await product.save();
+      }
     }
 
-    // Update product stock in database (only once)
-    if (product.currentStock !== undefined) {
-      product.currentStock = Math.max(0, product.currentStock - quantity);
-      await product.save();
-    }
+    // Calculate totals
+    cart.totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.subtotal, 0);
 
-    await cart.save();    // Populate product details
-    await cart.populate('items.product', 'name price img available currentStock');
+    await cart.save();
 
     return res.status(200).json({
       success: true,
@@ -213,7 +222,7 @@ export const updateCartItem = async (req, res) => {
     const cart = await Cart.findOne({ 
       sessionId, 
       status: 'active' 
-    }).populate('items.product', 'name price img available currentStock');
+    });
 
     if (!cart) {
       return res.status(404).json({
@@ -286,6 +295,10 @@ export const updateCartItem = async (req, res) => {
       cart.items[itemIndex].subtotal = cart.items[itemIndex].price * quantity;
     }
 
+    // Calculate totals
+    cart.totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.subtotal, 0);
+
     await cart.save();
 
     return res.status(200).json({
@@ -321,7 +334,7 @@ export const removeFromCart = async (req, res) => {
     const cart = await Cart.findOne({ 
       sessionId, 
       status: 'active' 
-    }).populate('items.product', 'name price img available currentStock');
+    });
 
     if (!cart) {
       return res.status(404).json({
@@ -348,7 +361,13 @@ export const removeFromCart = async (req, res) => {
       await product.save();
     }
 
+    // Remove item
     cart.items.splice(itemIndex, 1);
+
+    // Calculate totals
+    cart.totalItems = cart.items.reduce((sum, item) => sum + item.quantity, 0);
+    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.subtotal, 0);
+
     await cart.save();
 
     return res.status(200).json({
