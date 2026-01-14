@@ -1,0 +1,136 @@
+/* ========================================
+   LOGIN MODAL
+   Estilos para el modal de inicio de sesión
+   ======================================== */
+
+/* Login Modal */
+.login-modal {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+	justify-content: center;
+	align-items: center;
+}
+
+.login-modal-content {
+	background-color: #ffffff;
+	border-radius: 15px;
+	padding: 40px;
+	max-width: 450px;
+	width: 90%;
+	position: relative;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+	animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+	from {
+		transform: translateY(-50px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+.close-modal {
+	position: absolute;
+	top: 15px;
+	right: 20px;
+	font-size: 30px;
+	font-weight: bold;
+	color: #999;
+	cursor: pointer;
+	transition: color 0.3s;
+}
+
+.close-modal:hover {
+	color: #333;
+}
+
+.login-modal h2 {
+	text-align: center;
+	margin-bottom: 30px;
+	color: #333;
+	font-size: 28px;
+	font-family: 'Satisfy', cursive;
+}
+
+.login-option {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 15px 20px;
+	margin-bottom: 15px;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	font-weight: 500;
+	font-size: 16px;
+	border: 2px solid transparent;
+}
+
+.login-option:last-child {
+	margin-bottom: 0;
+}
+
+.login-option i {
+	margin-right: 12px;
+	font-size: 20px;
+}
+
+.google-login {
+	background-color: #ffffff;
+	color: #333;
+	border: 2px solid #ddd;
+}
+
+.google-login:hover {
+	border-color: #4285f4;
+	box-shadow: 0 2px 8px rgba(66, 133, 244, 0.3);
+	transform: translateY(-2px);
+}
+
+.facebook-login {
+	background-color: #1877f2;
+	color: #ffffff;
+}
+
+.facebook-login:hover {
+	background-color: #145dbf;
+	box-shadow: 0 2px 8px rgba(24, 119, 242, 0.3);
+	transform: translateY(-2px);
+}
+
+.email-login {
+	background-color: #EE9B14;
+	color: #ffffff;
+}
+
+.email-login:hover {
+	background-color: #d88a10;
+	box-shadow: 0 2px 8px rgba(238, 155, 20, 0.3);
+	transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+	.login-modal-content {
+		padding: 30px 20px;
+		max-width: 90%;
+	}
+
+	.login-modal h2 {
+		font-size: 24px;
+	}
+
+	.login-option {
+		padding: 12px 15px;
+		font-size: 14px;
+	}
+}

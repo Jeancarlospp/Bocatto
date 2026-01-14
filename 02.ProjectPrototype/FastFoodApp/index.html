@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="Restaurante" />
+	<meta name="keywords" content="El mejor restaurante del país" />
+	<title>Bocatto Valley</title>
+	<link rel="stylesheet" type="text/css" href="styles/header-menu.css">
+	<link rel="stylesheet" type="text/css" href="styles/stylesIndex.css">
+	<link rel="stylesheet" type="text/css" href="styles/login-modal.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+	<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+</head>
+
+<body>
+	<header>
+		<nav>
+			<ul class="menu_list" id="menu_list">
+				<li class="list_item"><a href="index.html" class="link">Inicio</a></li>
+				<li class="list_item"><a href="html/menu.html" class="link">Menú</a></li>
+				<li class="list_item"><a href="#" class="link">Reservaciones</a></li>
+				<li class="list_item"><a href="html/ofertas.html" class="link">Ofertas</a></li>
+				<li class="list_item"><a href="#" class="link">Ubicaciones</a></li>
+				<li class="list_item"><a href="html/quienesSomos.html" class="link">Quiénes Somos</a></li>
+				<li class="list_item"><a href="#" class="link">Contáctenos</a></li>
+				<li class="list_item"><a href="#" class="link">Trabaja con Nosotros</a></li>
+				<li class="list_item"><a href="#" class="login-btn" id="loginBtn">Ingresar</a></li>
+			</ul>
+		</nav>
+
+		<div class="header-content">
+			<h1>BOCATTO VALLEY</h1>
+			<p>Experiencia Gastronómica Única</p>
+		</div>
+	</header>
+
+	<!-- Login Modal -->
+	<div id="loginModal" class="login-modal">
+		<div class="login-modal-content">
+			<span class="close-modal" id="closeModal">&times;</span>
+			<h2>Iniciar Sesión</h2>
+			<div class="login-option google-login">
+				<i class="fa fa-google"></i>
+				<span>Continuar con Google</span>
+			</div>
+			<div class="login-option facebook-login">
+				<i class="fa fa-facebook"></i>
+				<span>Continuar con Facebook</span>
+			</div>
+			<div class="login-option email-login">
+				<i class="fa fa-envelope"></i>
+				<span>Continuar con Correo Electrónico</span>
+			</div>
+		</div>
+	</div>
+
+	<br>
+
+	<div class="container_slider">
+		<div class="slider" id="slider">
+			<div class="slider_section">
+				<img src="images/slider/slider1.jpg" alt="img1" class="slider_img">
+			</div>
+			<div class="slider_section">
+				<img src="images/slider/slider2.jpg" alt="img2" class="slider_img">
+			</div>
+			<div class="slider_section">
+				<img src="images/slider/slider3.jpg" alt="img3" class="slider_img">
+			</div>
+			<div class="slider_section">
+				<img src="images/slider/slider4.jpg" alt="img4" class="slider_img">
+			</div>
+		</div>
+	</div>
+	<script src="js/slider.js"></script>
+	<section class="laParada">
+		<h1>Restaurante Bocatto valley</h1>
+		<div class="contenedor-laParada">
+			<img src="images/home/menu.jpg" alt="img1" class="contenedor-imagen">
+			<div class="texo-de-imagen">
+				<h2>Menú</h2>
+				<p>"No dejes para mañana lo que puedas comer hoy"</p>
+			</div>
+		</div>
+		<div class="contenedor-laParada">
+			<div class="texo-de-imagen">
+				<h2>Postres</h2>
+				<p>"Todo lo que necesitas es amor. Pero un poco de chocolate de vez en cuando no hace daño"</p>
+			</div>
+			<img src="images/home/postres.jpg" alt="img1" class="contenedor-imagen">
+		</div>
+		<div class="contenedor-laParada">
+			<img src="images/home/reservaciones.jpg" alt="img1" class="contenedor-imagen">
+			<div class="texo-de-imagen">
+				<h2>Reservaciones</h2>
+				<p>"Alegrar corazones por intermedio de nuestra comida es nuestro propósito de vida"</p>
+			</div>
+		</div>
+	</section>
+	<footer>
+		<div class="derechos">
+			<p>reCAPTCHA y Google protegen este sitio</p>
+			<p>copyright &copy;2025 Bocatto Valley. Inc</p>
+		</div>
+	</footer>
+	<script src="js/menu.js"></script>
+	<script src="js/login-modal.js"></script>
+</body>
+
+</html>

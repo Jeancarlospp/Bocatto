@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Restaurante" />
+	<meta name="keywords" content="El mejor restaurante del país" />
+    <title>Bocatto Valley</title>
+    <link rel="stylesheet" type="text/css" href="../styles/header-menu.css">
+    <link rel="stylesheet" type="text/css" href="../styles/stylesReservaciones.css">
+    <link rel="stylesheet" type="text/css" href="../styles/login-modal.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <ul class="menu_list" id="menu_list">
+                <li class="list_item"><a href="../index.html" class="link">Inicio</a></li>
+                <li class="list_item"><a href="menu.html" class="link">Menú</a></li>
+                <li class="list_item"><a href="reservaciones.html" class="link">Reservaciones</a></li>
+                <li class="list_item"><a href="ofertas.html" class="link">Ofertas</a></li>
+                <li class="list_item"><a href="#" class="link">Ubicaciones</a></li>
+                <li class="list_item"><a href="#" class="link">Quiénes Somos</a></li>
+                <li class="list_item"><a href="#" class="link">Contáctenos</a></li>
+                <li class="list_item"><a href="#" class="link">Trabaja con Nosotros</a></li>
+                <li class="list_item"><a href="#" class="login-btn" id="loginBtn">Ingresar</a></li>
+            </ul>
+        </nav>
+
+		<div class="header-content">
+			<h1>Reservaciones</h1>
+			<p>Reserva tu Mesa Ahora</p>
+		</div>
+    </header>
+
+	<!-- Login Modal -->
+	<div id="loginModal" class="login-modal">
+		<div class="login-modal-content">
+			<span class="close-modal" id="closeModal">&times;</span>
+			<h2>Iniciar Sesión</h2>
+			<div class="login-option google-login">
+				<i class="fa fa-google"></i>
+				<span>Continuar con Google</span>
+			</div>
+			<div class="login-option facebook-login">
+				<i class="fa fa-facebook"></i>
+				<span>Continuar con Facebook</span>
+			</div>
+			<div class="login-option email-login">
+				<i class="fa fa-envelope"></i>
+				<span>Continuar con Correo Electrónico</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- Sección de introducción -->
+	<section class="intro-reservaciones">
+		<div class="intro-content">
+			<h2>Elige tu Ambiente Perfecto</h2>
+			<p>Descubre nuestros espacios únicos y reserva la experiencia ideal para tu ocasión especial</p>
+		</div>
+	</section>
+
+	<!-- Galería de Ambientes -->
+	<section class="ambientes-container">
+		<!-- Ambiente 1: Salón Principal -->
+		<article class="ambiente-card" data-ambiente="salon-principal">
+			<div class="ambiente-image">
+				<img src="../images/home/menu.jpg" alt="Salón Principal">
+				<div class="ambiente-badge">
+					<i class="fa fa-users"></i>
+					<span>2-8 personas</span>
+				</div>
+			</div>
+			<div class="ambiente-info">
+				<h3>Salón Principal</h3>
+				<p class="ambiente-descripcion">Ambiente acogedor y elegante ideal para cenas románticas o reuniones íntimas</p>
+				<div class="ambiente-caracteristicas">
+					<span><i class="fa fa-check-circle"></i> Aire acondicionado</span>
+					<span><i class="fa fa-check-circle"></i> Vista al jardín</span>
+					<span><i class="fa fa-check-circle"></i> Música ambiental</span>
+					<span><i class="fa fa-check-circle"></i> WiFi gratuito</span>
+				</div>
+				<div class="ambiente-rating">
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<span class="rating-text">4.9 (127 reseñas)</span>
+				</div>
+				<button class="btn-reservar" onclick="abrirModalReserva('salon-principal')">
+					<i class="fa fa-calendar"></i> Reservar Ahora
+				</button>
+			</div>
+		</article>
+
+		<!-- Ambiente 2: Terraza VIP -->
+		<article class="ambiente-card" data-ambiente="terraza-vip">
+			<div class="ambiente-image">
+				<img src="../images/home/reservaciones.jpg" alt="Terraza VIP">
+				<div class="ambiente-badge vip">
+					<i class="fa fa-star"></i>
+					<span>4-12 personas</span>
+				</div>
+			</div>
+			<div class="ambiente-info">
+				<h3>Terraza VIP</h3>
+				<p class="ambiente-descripcion">Espacio premium al aire libre con vista panorámica, perfecto para celebraciones especiales</p>
+				<div class="ambiente-caracteristicas">
+					<span><i class="fa fa-check-circle"></i> Vista panorámica</span>
+					<span><i class="fa fa-check-circle"></i> Área privada</span>
+					<span><i class="fa fa-check-circle"></i> Servicio exclusivo</span>
+					<span><i class="fa fa-check-circle"></i> Decoración personalizada</span>
+				</div>
+				<div class="ambiente-rating">
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<span class="rating-text">5.0 (89 reseñas)</span>
+				</div>
+				<button class="btn-reservar" onclick="abrirModalReserva('terraza-vip')">
+					<i class="fa fa-calendar"></i> Reservar Ahora
+				</button>
+			</div>
+		</article>
+
+		<!-- Ambiente 3: Salón Familiar -->
+		<article class="ambiente-card" data-ambiente="salon-familiar">
+			<div class="ambiente-image">
+				<img src="../images/slider/slider2.jpg" alt="Salón Familiar">
+				<div class="ambiente-badge familiar">
+					<i class="fa fa-users"></i>
+					<span>6-15 personas</span>
+				</div>
+			</div>
+			<div class="ambiente-info">
+				<h3>Salón Familiar</h3>
+				<p class="ambiente-descripcion">Espacio amplio y confortable diseñado para grupos grandes y familias</p>
+				<div class="ambiente-caracteristicas">
+					<span><i class="fa fa-check-circle"></i> Espacio amplio</span>
+					<span><i class="fa fa-check-circle"></i> Área de juegos</span>
+					<span><i class="fa fa-check-circle"></i> Menú infantil</span>
+					<span><i class="fa fa-check-circle"></i> Sillas altas disponibles</span>
+				</div>
+				<div class="ambiente-rating">
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star-half-o"></i>
+					<span class="rating-text">4.7 (156 reseñas)</span>
+				</div>
+				<button class="btn-reservar" onclick="abrirModalReserva('salon-familiar')">
+					<i class="fa fa-calendar"></i> Reservar Ahora
+				</button>
+			</div>
+		</article>
+
+		<!-- Ambiente 4: Bar Lounge -->
+		<article class="ambiente-card" data-ambiente="bar-lounge">
+			<div class="ambiente-image">
+				<img src="../images/slider/slider4.jpg" alt="Bar Lounge">
+				<div class="ambiente-badge lounge">
+					<i class="fa fa-glass"></i>
+					<span>2-6 personas</span>
+				</div>
+			</div>
+			<div class="ambiente-info">
+				<h3>Bar Lounge</h3>
+				<p class="ambiente-descripcion">Ambiente relajado con cócteles premium y música en vivo los fines de semana</p>
+				<div class="ambiente-caracteristicas">
+					<span><i class="fa fa-check-circle"></i> Coctelería premium</span>
+					<span><i class="fa fa-check-circle"></i> Música en vivo</span>
+					<span><i class="fa fa-check-circle"></i> Happy hour</span>
+					<span><i class="fa fa-check-circle"></i> Ambiente nocturno</span>
+				</div>
+				<div class="ambiente-rating">
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<i class="fa fa-star"></i>
+					<span class="rating-text">4.8 (203 reseñas)</span>
+				</div>
+				<button class="btn-reservar" onclick="abrirModalReserva('bar-lounge')">
+					<i class="fa fa-calendar"></i> Reservar Ahora
+				</button>
+			</div>
+		</article>
+	</section>
+
+	<!-- Modal de Reserva -->
+	<div id="modalReserva" class="modal-reserva">
+		<div class="modal-reserva-content">
+			<span class="close-reserva" onclick="cerrarModalReserva()">&times;</span>
+			<h2 id="modalAmbienteTitulo">Reservar Mesa</h2>
+			
+			<div class="modal-reserva-body">
+				<div class="reserva-form-section">
+					<form id="formReserva">
+						<div class="form-group">
+							<label><i class="fa fa-calendar"></i> Fecha</label>
+							<input type="date" id="fecha" name="fecha" required>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label><i class="fa fa-clock-o"></i> Hora</label>
+								<select id="hora" name="hora" required>
+									<option value="">Seleccionar hora</option>
+									<option value="12:00">12:00 PM</option>
+									<option value="12:30">12:30 PM</option>
+									<option value="13:00">1:00 PM</option>
+									<option value="13:30">1:30 PM</option>
+									<option value="14:00">2:00 PM</option>
+									<option value="19:00">7:00 PM</option>
+									<option value="19:30">7:30 PM</option>
+									<option value="20:00">8:00 PM</option>
+									<option value="20:30">8:30 PM</option>
+									<option value="21:00">9:00 PM</option>
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label><i class="fa fa-users"></i> Personas</label>
+								<select id="personas" name="personas" required>
+									<option value="">Seleccionar</option>
+									<option value="1">1 persona</option>
+									<option value="2">2 personas</option>
+									<option value="3">3 personas</option>
+									<option value="4">4 personas</option>
+									<option value="5">5 personas</option>
+									<option value="6">6 personas</option>
+									<option value="7">7 personas</option>
+									<option value="8">8 personas</option>
+									<option value="9">9 personas</option>
+									<option value="10">10+ personas</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label><i class="fa fa-star"></i> Ocasión Especial</label>
+							<select id="ocasion" name="ocasion">
+								<option value="">Ninguna</option>
+								<option value="cumpleaños">Cumpleaños</option>
+								<option value="aniversario">Aniversario</option>
+								<option value="cita-romantica">Cita Romántica</option>
+								<option value="negocios">Comida de Negocios</option>
+								<option value="otro">Otro</option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label><i class="fa fa-comment"></i> Comentarios Adicionales</label>
+							<textarea id="comentarios" name="comentarios" rows="3" placeholder="Alergias, preferencias de mesa, etc."></textarea>
+						</div>
+
+						<div class="disponibilidad-info">
+							<i class="fa fa-info-circle"></i>
+							<span id="disponibilidadTexto">Selecciona fecha y hora para verificar disponibilidad</span>
+						</div>
+
+						<button type="submit" class="btn-confirmar-reserva">
+							<i class="fa fa-check"></i> Confirmar Reserva
+						</button>
+					</form>
+				</div>
+
+				<div class="comentarios-section">
+					<h3><i class="fa fa-comments"></i> Reseñas de Clientes</h3>
+					<div class="comentarios-lista" id="comentariosLista">
+						<!-- Los comentarios se cargarán dinámicamente -->
+					</div>
+					<button class="btn-comentar" onclick="verificarLogin()">
+						<i class="fa fa-pencil"></i> Dejar una Reseña
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+    <footer>
+        <div class="footer-content">
+            <h3>Síguenos en nuestras redes sociales</h3>
+            <ul class="redes_sociales">
+                <li><a href="https://www.facebook.com"><i class="fa fa-facebook"></i></a></li>
+				<li><a href="https://www.instagram.com"><i class="fa fa-instagram"></i></a></li>
+				<li><a href="https://www.twitter.com"><i class="fa fa-twitter"></i></a></li>
+            </ul>
+        </div>
+        <div class="derechos">
+            <p>reCAPTCHA y Google protegen este sitio</p>
+            <p>copyright &copy;2025 Bocatto Valley. Inc</p>
+        </div>
+    </footer>
+	<script src="../js/menu.js"></script>
+	<script src="../js/login-modal.js"></script>
+	<script src="../js/reservaciones.js"></script>
+</body>
+
+</html>

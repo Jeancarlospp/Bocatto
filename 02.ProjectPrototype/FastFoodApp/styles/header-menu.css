@@ -1,0 +1,255 @@
+/* ========================================
+   HEADER Y MENU GLOBAL
+   Estilos compartidos por todas las páginas
+   ======================================== */
+
+/* Reset y estilos base */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+/* Header Styles */
+header {
+	position: relative;
+	width: 100%;
+	height: 100vh;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+header::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.3);
+	z-index: 1;
+}
+
+/* Navigation Menu */
+nav {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 100;
+	background: transparent;
+	padding: 20px 0;
+}
+
+.menu_list {
+	list-style: none;
+	display: flex;
+	gap: 30px;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	padding: 10px 20px;
+	margin: 0;
+}
+
+.list_item {
+	position: relative;
+}
+
+.list_item .link {
+	color: #ffffff;
+	text-decoration: none;
+	font-size: 15px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	transition: all 0.3s ease;
+	padding: 8px 12px;
+	display: block;
+}
+
+.list_item .link:hover {
+	color: #EE9B14;
+	transform: translateY(-2px);
+}
+
+.list_item .link::after {
+	content: '';
+	position: absolute;
+	bottom: 3px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 0;
+	height: 2px;
+	background: #EE9B14;
+	transition: width 0.3s ease;
+}
+
+.list_item .link:hover::after {
+	width: 80%;
+}
+
+/* Botón Ingresar - Estilo mejorado */
+.login-btn {
+	background: linear-gradient(135deg, #EE9B14 0%, #d88a10 100%);
+	color: #ffffff;
+	padding: 10px 25px;
+	border-radius: 5px;
+	text-decoration: none;
+	font-size: 15px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	transition: all 0.3s ease;
+	border: 2px solid #EE9B14;
+	cursor: pointer;
+	display: inline-block;
+	box-shadow: 0 2px 5px rgba(238, 155, 20, 0.3);
+}
+
+.login-btn:hover {
+	background: linear-gradient(135deg, #d88a10 0%, #c77d0f 100%);
+	border-color: #d88a10;
+	transform: translateY(-3px);
+	box-shadow: 0 4px 12px rgba(238, 155, 20, 0.5);
+}
+
+.login-btn::after {
+	display: none;
+}
+
+/* Header Content */
+.header-content {
+	position: relative;
+	z-index: 10;
+	text-align: center;
+	color: #ffffff;
+	max-width: 800px;
+	padding: 20px;
+}
+
+.header-content h1 {
+	font-family: 'Satisfy', cursive;
+	font-size: 80px;
+	margin-bottom: 20px;
+	color: #ffffff;
+	text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
+}
+
+.header-content p {
+	font-size: 24px;
+	margin-bottom: 30px;
+	letter-spacing: 2px;
+	text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+	.menu_list {
+		gap: 20px;
+	}
+
+	.list_item .link {
+		font-size: 14px;
+		padding: 7px 10px;
+	}
+
+	.login-btn {
+		font-size: 14px;
+		padding: 8px 20px;
+	}
+}
+
+@media (max-width: 992px) {
+	nav {
+		padding: 10px 0;
+	}
+
+	.menu_list {
+		gap: 15px;
+		padding: 8px 15px;
+	}
+
+	.list_item .link {
+		font-size: 13px;
+		padding: 6px 8px;
+	}
+
+	.login-btn {
+		font-size: 13px;
+		padding: 7px 18px;
+	}
+
+	.header-content h1 {
+		font-size: 60px;
+	}
+
+	.header-content p {
+		font-size: 20px;
+	}
+}
+
+@media (max-width: 768px) {
+	.menu_list {
+		gap: 10px;
+		padding: 5px 10px;
+	}
+
+	.list_item .link {
+		font-size: 12px;
+		padding: 5px 7px;
+	}
+
+	.login-btn {
+		font-size: 12px;
+		padding: 6px 15px;
+	}
+
+	.header-content h1 {
+		font-size: 45px;
+	}
+
+	.header-content p {
+		font-size: 18px;
+	}
+}
+
+@media (max-width: 576px) {
+	nav {
+		padding: 8px 0;
+	}
+
+	.menu_list {
+		gap: 8px;
+		padding: 5px;
+		font-size: 11px;
+	}
+
+	.list_item .link {
+		font-size: 10px;
+		padding: 4px 5px;
+		letter-spacing: 0.5px;
+	}
+
+	.login-btn {
+		font-size: 11px;
+		padding: 5px 12px;
+	}
+
+	.header-content h1 {
+		font-size: 35px;
+	}
+
+	.header-content p {
+		font-size: 16px;
+	}
+}

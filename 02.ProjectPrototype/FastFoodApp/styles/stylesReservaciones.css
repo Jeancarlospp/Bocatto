@@ -1,0 +1,550 @@
+/*Estilos generales*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 1.1rem;
+    background: #0F0F0F;
+    margin: auto;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+/* Reservaciones specific styles */
+header {
+    background-image: url('../images/home/reservaciones.jpg');
+}
+
+/* Sección de introducción */
+.intro-reservaciones {
+    background: linear-gradient(135deg, #14213D 0%, #1a2847 100%);
+    padding: 60px 20px;
+    text-align: center;
+    color: white;
+}
+
+.intro-content h2 {
+    font-family: 'Satisfy', cursive;
+    font-size: 48px;
+    color: #EE9B14;
+    margin-bottom: 20px;
+}
+
+.intro-content p {
+    font-size: 20px;
+    color: #e5e5e5;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Contenedor de ambientes */
+.ambientes-container {
+    max-width: 1400px;
+    margin: 60px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+/* Tarjeta de ambiente */
+.ambiente-card {
+    background: #1a1a1a;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.ambiente-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(238, 155, 20, 0.3);
+}
+
+.ambiente-image {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    overflow: hidden;
+}
+
+.ambiente-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.ambiente-card:hover .ambiente-image img {
+    transform: scale(1.1);
+}
+
+.ambiente-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(238, 155, 20, 0.95);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ambiente-badge.vip {
+    background: rgba(255, 215, 0, 0.95);
+    color: #14213D;
+}
+
+.ambiente-badge.familiar {
+    background: rgba(46, 196, 182, 0.95);
+}
+
+.ambiente-badge.lounge {
+    background: rgba(156, 39, 176, 0.95);
+}
+
+.ambiente-info {
+    padding: 25px;
+    color: white;
+}
+
+.ambiente-info h3 {
+    font-family: 'Satisfy', cursive;
+    font-size: 28px;
+    color: #EE9B14;
+    margin-bottom: 12px;
+}
+
+.ambiente-descripcion {
+    color: #b8b8b8;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    min-height: 50px;
+}
+
+.ambiente-caracteristicas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.ambiente-caracteristicas span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #e5e5e5;
+}
+
+.ambiente-caracteristicas i {
+    color: #2EC4B6;
+    font-size: 16px;
+}
+
+.ambiente-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.ambiente-rating i {
+    color: #FFD700;
+    font-size: 16px;
+}
+
+.rating-text {
+    color: #b8b8b8;
+    font-size: 14px;
+    margin-left: 8px;
+}
+
+.btn-reservar {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #EE9B14 0%, #fca311 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-reservar:hover {
+    background: linear-gradient(135deg, #fca311 0%, #EE9B14 100%);
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(238, 155, 20, 0.4);
+}
+
+/* Modal de Reserva */
+.modal-reserva {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+}
+
+.modal-reserva-content {
+    background: #1a1a1a;
+    margin: 3% auto;
+    padding: 0;
+    border-radius: 20px;
+    max-width: 1100px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    position: relative;
+    animation: slideDown 0.4s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close-reserva {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    color: #EE9B14;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.3s ease;
+}
+
+.close-reserva:hover {
+    color: #fca311;
+}
+
+.modal-reserva-content h2 {
+    font-family: 'Satisfy', cursive;
+    font-size: 36px;
+    color: #EE9B14;
+    padding: 30px;
+    margin: 0;
+    border-bottom: 2px solid #2a2a2a;
+}
+
+.modal-reserva-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+}
+
+.reserva-form-section {
+    padding: 40px;
+    border-right: 2px solid #2a2a2a;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    color: #EE9B14;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.form-group label i {
+    margin-right: 8px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    background: #2a2a2a;
+    border: 2px solid #3a3a3a;
+    border-radius: 8px;
+    color: white;
+    font-size: 15px;
+    font-family: 'Source Sans Pro', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #EE9B14;
+    background: #333;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.disponibilidad-info {
+    background: rgba(46, 196, 182, 0.1);
+    border-left: 4px solid #2EC4B6;
+    padding: 15px;
+    margin: 20px 0;
+    border-radius: 5px;
+    color: #2EC4B6;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.disponibilidad-info.no-disponible {
+    background: rgba(231, 76, 60, 0.1);
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.disponibilidad-info.disponible {
+    background: rgba(46, 196, 182, 0.1);
+    border-color: #2EC4B6;
+    color: #2EC4B6;
+}
+
+.btn-confirmar-reserva {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #EE9B14 0%, #fca311 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-confirmar-reserva:hover {
+    background: linear-gradient(135deg, #fca311 0%, #EE9B14 100%);
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(238, 155, 20, 0.5);
+}
+
+.btn-confirmar-reserva:disabled {
+    background: #555;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Sección de comentarios */
+.comentarios-section {
+    padding: 40px;
+    background: #151515;
+    overflow-y: auto;
+    max-height: 600px;
+}
+
+.comentarios-section h3 {
+    font-family: 'Satisfy', cursive;
+    font-size: 28px;
+    color: #EE9B14;
+    margin-bottom: 25px;
+}
+
+.comentarios-lista {
+    margin-bottom: 20px;
+}
+
+.comentario-item {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border-left: 4px solid #EE9B14;
+}
+
+.comentario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.comentario-usuario {
+    font-weight: bold;
+    color: #EE9B14;
+}
+
+.comentario-fecha {
+    font-size: 13px;
+    color: #888;
+}
+
+.comentario-rating {
+    margin-bottom: 10px;
+}
+
+.comentario-rating i {
+    color: #FFD700;
+    font-size: 14px;
+}
+
+.comentario-texto {
+    color: #b8b8b8;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.btn-comentar {
+    width: 100%;
+    padding: 15px;
+    background: #2a2a2a;
+    color: #EE9B14;
+    border: 2px solid #EE9B14;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-comentar:hover {
+    background: #EE9B14;
+    color: white;
+}
+
+/* Footer */
+footer {
+    background: #080f1b;
+    height: auto;
+    padding-top: 40px;
+    color: #fff;
+}
+
+.footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.footer-content h3 {
+    font-size: 3rem;
+    font-weight: 20px auto;
+    line-height: 25px;
+    font-size: 30px;
+    font-family: 'Satisfy', cursive;
+    margin-bottom: 30px;
+}
+
+.redes_sociales {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem 0 3rem 0;
+}
+
+.redes_sociales li {
+    margin: 0 20px;
+}
+
+.redes_sociales a i {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+a[href="https://www.facebook.com"] i:hover,
+i.fa-facebook:hover {
+    color: #3b5998;
+}
+
+a[href="https://www.instagram.com"] i:hover,
+i.fa-instagram:hover {
+    color: #d628b0;
+}
+
+a[href="https://www.twitter.com"] i:hover,
+i.fa-twitter:hover {
+    color: #00acee;
+}
+
+.derechos {
+    background: #000000;
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.derechos p {
+    font-size: 15px;
+    word-spacing: 2px;
+    text-transform: capitalize;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .modal-reserva-body {
+        grid-template-columns: 1fr;
+    }
+
+    .reserva-form-section {
+        border-right: none;
+        border-bottom: 2px solid #2a2a2a;
+    }
+}
+
+@media (max-width: 768px) {
+    .intro-content h2 {
+        font-size: 36px;
+    }
+
+    .intro-content p {
+        font-size: 16px;
+    }
+
+    .ambientes-container {
+        grid-template-columns: 1fr;
+        margin: 40px auto;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-reserva-content {
+        margin: 10% auto;
+        max-width: 95%;
+    }
+
+    .ambiente-caracteristicas {
+        grid-template-columns: 1fr;
+    }
+}

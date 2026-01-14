@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="Restaurante" />
+	<meta name="keywords" content="El mejor restaurante del país" />
+	<title>Bocatto Valley</title>
+	<link rel="stylesheet" type="text/css" href="../styles/header-menu.css">
+	<link rel="stylesheet" type="text/css" href="../styles/stylesMenu.css">
+	<link rel="stylesheet" type="text/css" href="../styles/login-modal.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+	<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+</head>
+
+<body>
+	<header>
+		<nav>
+			<ul class="menu_list" id="menu_list">
+				<li class="list_item"><a href="../index.html" class="link">Inicio</a></li>
+				<li class="list_item"><a href="menu.html" class="link">Menú</a></li>
+				<li class="list_item"><a href="#" class="link">Reservaciones</a></li>
+				<li class="list_item"><a href="ofertas.html" class="link">Ofertas</a></li>
+				<li class="list_item"><a href="#" class="link">Ubicaciones</a></li>
+				<li class="list_item"><a href="quienesSomos.html" class="link">Quiénes Somos</a></li>
+				<li class="list_item"><a href="#" class="link">Contáctenos</a></li>
+				<li class="list_item"><a href="#" class="link">Trabaja con Nosotros</a></li>
+				<li class="list_item"><a href="#" class="login-btn" id="loginBtn">Ingresar</a></li>
+			</ul>
+		</nav>
+
+		<div class="header-content">
+			<h1>Nuestro Menú</h1>
+			<p>Sabores que Enamoran</p>
+		</div>
+		
+	</header>
+
+	<!-- Login Modal -->
+	<div id="loginModal" class="login-modal">
+		<div class="login-modal-content">
+			<span class="close-modal" id="closeModal">&times;</span>
+			<h2>Iniciar Sesión</h2>
+			<div class="login-option google-login">
+				<i class="fa fa-google"></i>
+				<span>Continuar con Google</span>
+			</div>
+			<div class="login-option facebook-login">
+				<i class="fa fa-facebook"></i>
+				<span>Continuar con Facebook</span>
+			</div>
+			<div class="login-option email-login">
+				<i class="fa fa-envelope"></i>
+				<span>Continuar con Correo Electrónico</span>
+			</div>
+		</div>
+	</div>
+
+	<br>
+	<div class="contenedor">
+		<h1>Nuestro Menú</h1>
+		<div class="contenedor-platos">
+			<ul class="tipo-plato">
+				<li class="tipo-item tipo-item_activado" data-categoria="Todo">Todo</li>
+				<li class="tipo-item" data-categoria="Entradas">Entradas o Snacks</li>
+				<li class="tipo-item" data-categoria="Platos Principales">Platos Principales</li>
+				<li class="tipo-item" data-categoria="Combos">Combos o Especialidades</li>
+				<li class="tipo-item" data-categoria="Postres">Postres</li>
+				<li class="tipo-item" data-categoria="Bebidas">Bebidas</li>
+			</ul>
+			<div class="lista-platos">
+				<!-- Entradas o Snacks -->
+				<div class="item" data-categoria="Entradas" data-descripcion="Deliciosas alitas de pollo crujientes con salsa BBQ y aderezo ranch">
+					<img src="../images/platos/Entradas_Snacks/snack1.jpg" alt="alitas">
+					<a href="#">Alitas BBQ (6 piezas)</a>
+					<a href="#">$7.50</a>
+				</div>
+				<div class="item" data-categoria="Entradas" data-descripcion="Nachos caseros con queso cheddar, jalapeños, guacamole y crema agria">
+					<img src="../images/platos/Entradas_Snacks/snack2.jpg" alt="nachos">
+					<a href="#">Nachos Supreme</a>
+					<a href="#">$6.75</a>
+				</div>
+
+				<!-- Platos Principales -->
+				<div class="item" data-categoria="Platos Principales" data-descripcion="Jugosa hamburguesa de carne angus con queso cheddar, lechuga, tomate y papas fritas">
+					<img src="../images/platos/Platos_Principales/principal1.jpg" alt="hamburguesa">
+					<a href="#">Hamburguesa Angus Premium</a>
+					<a href="#">$12.50</a>
+				</div>
+				<div class="item" data-categoria="Platos Principales" data-descripcion="Piernas de pollo marinado a la parrilla pilaf y vegetales salteados">
+					<img src="../images/platos/Platos_Principales/principal2.jpg" alt="pollo">
+					<a href="#">Pollo a la Parrilla</a>
+					<a href="#">$11.25</a>
+				</div>
+
+				<!-- Combos o Especialidades -->
+				<div class="item" data-categoria="Combos" data-descripcion="Hamburguesa doble con queso, papas fritas grandes y bebida de 500ml">
+					<img src="../images/platos/Combos_Especialidades/combo1.jpg" alt="combo1">
+					<a href="#">Combo Doble Deluxe</a>
+					<a href="#">$15.90</a>
+				</div>
+				<div class="item" data-categoria="Combos" data-descripcion="Pollo crispy, papas cajún, ensalada coleslaw y bebida refrescante">
+					<img src="../images/platos/Combos_Especialidades/combo2.jpg" alt="combo2">
+					<a href="#">Combo Crispy Chicken</a>
+					<a href="#">$14.50</a>
+				</div>
+
+				<!-- Postres -->
+				<div class="item" data-categoria="Postres" data-descripcion="Cremoso cheesecake de vainilla con coulis de frutos rojos">
+					<img src="../images/platos/postres/postre5.jpg" alt="cheesecake">
+					<a href="#">Cheesecake de Frutos Rojos</a>
+					<a href="#">$5.25</a>
+				</div>
+				<div class="item" data-categoria="Postres" data-descripcion="Brownie tibio con helado de vainilla y salsa de chocolate caliente">
+					<img src="../images/platos/postres/postre6.jpg" alt="brownie">
+					<a href="#">Brownie con Helado</a>
+					<a href="#">$4.75</a>
+				</div>
+
+				<!-- Bebidas -->
+				<div class="item" data-categoria="Bebidas" data-descripcion="Refrescante limonada natural con hierbas frescas y miel">
+					<img src="../images/platos/bebidas/bebida1.jpg" alt="limonada">
+					<a href="#">Limonada de Hierbas</a>
+					<a href="#">$3.50</a>
+				</div>
+				<div class="item" data-categoria="Bebidas" data-descripcion="Cerveza artesanal rubia con notas cítricas y amargor equilibrado">
+					<img src="../images/platos/bebidas/bebida2.jpg" alt="cerveza">
+					<a href="#">Cerveza Artesanal Rubia</a>
+					<a href="#">$4.25</a>
+				</div>
+			</div>
+		</div>
+	</div>
+    <!-- Modal para detalle del plato -->
+    <div id="modalPlato" class="modal" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-nombre">
+            <span class="close" id="modal-close" title="Cerrar">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image-section">
+                    <img id="modal-img" src="" alt="">
+                </div>
+                <div class="modal-info-section">
+                    <div class="modal-details">
+                        <h2 id="modal-nombre">Nombre Plato</h2>
+                        <p id="modal-descripcion">Descripción / contenido del plato</p>
+                        <p id="modal-precio" class="precio">$0.00</p>
+
+                        <!-- Sección de Extras -->
+                        <div class="extras-section">
+                            <h3>Extras disponibles</h3>
+                            <div class="extras-list">
+                                <div class="extra-item">
+                                    <input type="checkbox" id="extra-queso" data-precio="1.50">
+                                    <label for="extra-queso">Queso extra <span class="extra-precio">+$1.50</span></label>
+                                </div>
+                                <div class="extra-item">
+                                    <input type="checkbox" id="extra-tocino" data-precio="2.00">
+                                    <label for="extra-tocino">Tocino <span class="extra-precio">+$2.00</span></label>
+                                </div>
+                                <div class="extra-item">
+                                    <input type="checkbox" id="extra-aguacate" data-precio="1.75">
+                                    <label for="extra-aguacate">Aguacate <span class="extra-precio">+$1.75</span></label>
+                                </div>
+                                <div class="extra-item">
+                                    <input type="checkbox" id="extra-papas" data-precio="2.50">
+                                    <label for="extra-papas">Papas fritas <span class="extra-precio">+$2.50</span></label>
+                                </div>
+                                <div class="extra-item">
+                                    <input type="checkbox" id="extra-bebida" data-precio="2.25">
+                                    <label for="extra-bebida">Bebida refrescante <span class="extra-precio">+$2.25</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <label for="modal-comentarios">Comentarios (opcional)</label>
+                        <textarea id="modal-comentarios" rows="3" placeholder="P. ej. sin sal, sin cebolla..."></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="precio-total-section">
+                            <div class="precio-breakdown">
+                                <span class="precio-base">Precio base: <span id="precio-base-valor">$0.00</span></span>
+                                <span class="precio-extras">Extras: <span id="precio-extras-valor">$0.00</span></span>
+                                <span class="precio-total">Total: <span id="precio-total-valor">$0.00</span></span>
+                            </div>
+                        </div>
+                        <div class="cantidad-control">
+                            <label for="modal-cantidad">Cantidad</label>
+                            <input id="modal-cantidad" type="number" min="1" value="1">
+                        </div>
+                        <button id="modal-agregar">Agregar al Carrito</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<script src="../js/filtro-platos.js"></script>
+	<script src="../js/modal-plato.js"></script>
+	<footer>
+		<div class="footer-content">
+			<h3>Síguenos en nuestras redes sociales</h3>
+			<ul class="redes_sociales">
+				<li><a href="https://www.facebook.com"><i class="fa fa-facebook"></i></a></li>
+				<li><a href="https://www.instagram.com"><i class="fa fa-instagram"></i></a></li>
+				<li><a href="https://www.twitter.com"><i class="fa fa-twitter"></i></a></li>
+			</ul>
+		</div>
+		<div class="derechos">
+			<p>reCAPTCHA y Google protegen este sitio</p>
+			<p>copyright &copy;2025 Bocatto Valley. Inc</p>
+		</div>
+	</footer>
+	<script src="../js/menu.js"></script>
+	<script src="../js/login-modal.js"></script>
+</body>
+
+</html>

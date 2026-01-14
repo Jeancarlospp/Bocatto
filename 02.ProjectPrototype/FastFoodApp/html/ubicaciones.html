@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="Restaurante" />
+	<meta name="keywords" content="El mejor restaurante del país" />
+	<title>Bocatto Valley</title>
+	<link rel="stylesheet" type="text/css" href="../styles/header-menu.css">
+	<link rel="stylesheet" type="text/css" href="../styles/stylesUbicaciones.css">
+	<link rel="stylesheet" type="text/css" href="../styles/login-modal.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+	<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+</head>
+
+<body>
+	<header>
+		<nav>
+			<ul class="menu_list" id="menu_list">
+				<li class="list_item"><a href="../index.html" class="link">Inicio</a></li>
+				<li class="list_item"><a href="menu.html" class="link">Menú</a></li>
+				<li class="list_item"><a href="reservaciones.html" class="link">Reservaciones</a></li>
+				<li class="list_item"><a href="ofertas.html" class="link">Ofertas</a></li>
+				<li class="list_item"><a href="ubicaciones.html" class="link">Ubicaciones</a></li>
+				<li class="list_item"><a href="quienesSomos.html" class="link">Quiénes Somos</a></li>
+				<li class="list_item"><a href="contactenos.html" class="link">Contáctenos</a></li>
+				<li class="list_item"><a href="trabajaConNosotros.html" class="link">Trabaja con Nosotros</a></li>
+				<li class="list_item"><a href="#" class="login-btn" id="loginBtn">Ingresar</a></li>
+			</ul>
+		</nav>
+
+		<div class="header-content">
+			<h1>Ubicaciones</h1>
+			<p>Encuéntranos Fácilmente</p>
+		</div>
+	</header>
+
+	<!-- Login Modal -->
+	<div id="loginModal" class="login-modal">
+		<div class="login-modal-content">
+			<span class="close-modal" id="closeModal">&times;</span>
+			<h2>Iniciar Sesión</h2>
+			<div class="login-option google-login">
+				<i class="fa fa-google"></i>
+				<span>Continuar con Google</span>
+			</div>
+			<div class="login-option facebook-login">
+				<i class="fa fa-facebook"></i>
+				<span>Continuar con Facebook</span>
+			</div>
+			<div class="login-option email-login">
+				<i class="fa fa-envelope"></i>
+				<span>Continuar con Correo Electrónico</span>
+			</div>
+		</div>
+	</div>
+
+	<h1>Ubicaciones</h1>
+	<section class="contenedor_ubicaciones">
+		<div class="texto_ubicaciones">
+			<h2 class="titulo_ubicaciones">La Parada Puerto Santa Ana</h2>
+			<p>Restaurante 9, edificio Riverfront II local 5 y 9</p>
+			<h2 class="titulo_ubicaciones">La Parada Guayarte</h2>
+			<p>Restaurante Plaza Guayarte, Av Carlos Julio Arosemena</p>
+			<h2 class="titulo_ubicaciones">La Parada Samborondón</h2>
+			<p>Av Samborondón</p>
+		</div>
+		<iframe
+			src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d127585.11102560056!2d-79.9557809563689!3d-2.140374651150466!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1smami%20t!5e0!3m2!1ses!2sec!4v1626627577764!5m2!1ses!2sec"
+			width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" class="mapa"></iframe>
+	</section>
+	<footer>
+		<div class="footer-content">
+			<h3>Síguenos en nuestras redes sociales</h3>
+			<ul class="redes_sociales">
+				<li><a href="https://www.facebook.com"><i class="fa fa-facebook"></i></a></li>
+				<li><a href="https://www.instagram.com"><i class="fa fa-instagram"></i></a></li>
+				<li><a href="https://www.twitter.com"><i class="fa fa-twitter"></i></a></li>
+			</ul>
+		</div>
+		<div class="derechos">
+			<p>reCAPTCHA y Google protegen este sitio</p>
+			<p>copyright &copy;2025 Bocatto Valley. Inc</p>
+		</div>
+	</footer>
+	<script src="../js/menu.js"></script>
+	<script src="../js/login-modal.js"></script>
+</body>
+
+</html>
