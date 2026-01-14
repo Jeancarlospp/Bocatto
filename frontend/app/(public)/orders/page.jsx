@@ -178,9 +178,21 @@ export default function OrdersPage() {
                       <span className="text-gray-300">{order.customerNotes}</span>
                     </div>
                   )}
-                  <div className="flex justify-between items-center text-lg font-bold pt-2">
-                    <span className="text-white">Total:</span>
-                    <span className="text-orange-500">${order.totalPrice.toFixed(2)}</span>
+                  
+                  {/* Pricing Details */}
+                  <div className="space-y-2 pt-2">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-400">Subtotal:</span>
+                      <span className="text-gray-300">${(order.items.reduce((sum, item) => sum + item.subtotal, 0)).toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-400">IVA (15%):</span>
+                      <span className="text-gray-300">${(order.items.reduce((sum, item) => sum + item.subtotal, 0) * 0.15).toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-lg font-bold pt-2 border-t border-neutral-600">
+                      <span className="text-white">Total:</span>
+                      <span className="text-orange-500">${(order.items.reduce((sum, item) => sum + item.subtotal, 0) * 1.15).toFixed(2)}</span>
+                    </div>
                   </div>
                 </div>
               </div>

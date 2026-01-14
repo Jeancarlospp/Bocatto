@@ -70,6 +70,18 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     min: 1
   },
+  subtotal: {
+    type: Number,
+    min: 0
+  },
+  ivaRate: {
+    type: Number,
+    default: 0.15 // 15% IVA Ecuador
+  },
+  ivaAmount: {
+    type: Number,
+    min: 0
+  },
   totalPrice: {
     type: Number,
     min: 0
@@ -145,7 +157,13 @@ orderSchema.virtual('formattedOrderNumber').get(function() {
 orderSchema.pre('save', function(next) {
   if (this.items && this.items.length > 0) {
     this.totalItems = this.items.reduce((sum, item) => sum + item.quantity, 0);
-    this.totalPrice = this.items.reduce((sum, item) => sum + item.subtotal, 0);
+    // Calculate subtotal (sum of all items before tax)
+    this.subtotal = this.items.reduce((sum, item) => sum + item.subtotal, 0);
+    // Calculate IVA (default 12%)
+    const rate = this.ivaRate || 0.12;
+    this.ivaAmount = parseFloat((this.subtotal * rate).toFixed(2));
+    // Calculate total with IVA
+    this.totalPrice = parseFloat((this.subtotal + this.ivaAmount).toFixed(2));
   }
   next();
 });

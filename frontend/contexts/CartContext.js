@@ -75,12 +75,19 @@ export function CartProvider({ children }) {
     const filteredItems = quantity === 0 ? updatedItems.filter(item => item._id !== itemId) : updatedItems;
     
     const newTotalItems = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
-    const newTotalPrice = filteredItems.reduce((sum, item) => sum + item.subtotal, 0);
+    const newSubtotal = filteredItems.reduce((sum, item) => sum + item.subtotal, 0);
+    // Siempre usar 15% de IVA
+    const IVA_RATE = 0.15;
+    const newIvaAmount = parseFloat((newSubtotal * IVA_RATE).toFixed(2));
+    const newTotalPrice = parseFloat((newSubtotal + newIvaAmount).toFixed(2));
     
     setCart({
       ...cart,
       items: filteredItems,
       totalItems: newTotalItems,
+      subtotal: newSubtotal,
+      ivaRate: IVA_RATE,
+      ivaAmount: newIvaAmount,
       totalPrice: newTotalPrice
     });
     

@@ -36,7 +36,12 @@ export default function CartDropdown({ cart, onUpdateQuantity, onRemoveItem, onC
 
   const totalItems = cart?.totalItems || 0;
   const items = cart?.items || [];
-  const totalPrice = cart?.totalPrice || 0;
+  // Calcular subtotal desde items para asegurar valor correcto
+  const subtotal = cart?.items?.reduce((sum, item) => sum + item.subtotal, 0) || 0;
+  // Siempre usar 15% de IVA
+  const IVA_RATE = 0.15;
+  const ivaAmount = parseFloat((subtotal * IVA_RATE).toFixed(2));
+  const totalPrice = parseFloat((subtotal + ivaAmount).toFixed(2));
 
   const handleQuantityChange = (itemId, newQuantity) => {
     if (newQuantity < 0) return;
@@ -256,9 +261,21 @@ export default function CartDropdown({ cart, onUpdateQuantity, onRemoveItem, onC
           {/* Footer */}
           {items.length > 0 && (
             <div className="p-4 border-t border-neutral-700 bg-neutral-800">
+              {/* Subtotal */}
+              <div className="flex justify-between items-center mb-2 text-sm">
+                <span className="text-gray-400">Subtotal:</span>
+                <span className="text-gray-300">${subtotal.toFixed(2)}</span>
+              </div>
+              
+              {/* IVA 15% */}
+              <div className="flex justify-between items-center mb-2 text-sm">
+                <span className="text-gray-400">IVA (15%):</span>
+                <span className="text-gray-300">${(subtotal * 0.15).toFixed(2)}</span>
+              </div>
+              
               {/* Total */}
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-gray-300 font-semibold">Total:</span>
+              <div className="flex justify-between items-center mb-4 pt-2 border-t border-neutral-600">
+                <span className="text-white font-semibold">Total:</span>
                 <span className="text-2xl font-bold text-orange-500">${totalPrice.toFixed(2)}</span>
               </div>
 
@@ -361,7 +378,18 @@ function CheckoutModal({ cart, onClose, onSuccess }) {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between text-gray-300">
                 <span>{cart?.totalItems || 0} items</span>
-                <span className="font-bold text-orange-500">${cart?.totalPrice?.toFixed(2) || '0.00'}</span>
+              </div>
+              <div className="flex justify-between text-gray-400">
+                <span>Subtotal:</span>
+                <span>${(cart?.items?.reduce((sum, item) => sum + item.subtotal, 0) || 0).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-gray-400">
+                <span>IVA (15%):</span>
+                <span>${((cart?.items?.reduce((sum, item) => sum + item.subtotal, 0) || 0) * 0.15).toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-white font-bold pt-2 border-t border-neutral-600">
+                <span>Total:</span>
+                <span className="text-orange-500">${((cart?.items?.reduce((sum, item) => sum + item.subtotal, 0) || 0) * 1.15).toFixed(2)}</span>
               </div>
             </div>
           </div>
