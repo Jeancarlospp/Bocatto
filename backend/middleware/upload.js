@@ -243,5 +243,70 @@ export const deleteOfferImage = async (imageUrl) => {
   }
 };
 
+/**
+ * ========================================
+ * LOCATIONS UPLOAD MIDDLEWARE
+ * ========================================
+ */
+
+/**
+ * Cloudinary Storage for Locations
+ * - Uploads to: bocatto/locations/ folder
+ */
+const locationStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'bocatto/locations',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [
+      { width: 1200, height: 800, crop: 'limit' },
+      { quality: 'auto' },
+      { fetch_format: 'auto' }
+    ]
+  }
+});
+
+/**
+ * Multer upload middleware for Locations
+ * - Single location image
+ * - Max 5MB
+ */
+export const uploadLocationImage = multer({
+  storage: locationStorage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB max
+  }
+}).single('image');
+
+/**
+ * Helper to delete location image from Cloudinary
+ */
+export const deleteLocationImage = async (imageUrl) => {
+  if (!imageUrl) return;
+  
+  try {
+    let publicId;
+    
+    if (imageUrl.includes('cloudinary.com')) {
+      const parts = imageUrl.split('/');
+      const uploadIndex = parts.indexOf('upload');
+      if (uploadIndex !== -1 && uploadIndex + 2 < parts.length) {
+        const pathParts = parts.slice(uploadIndex + 2);
+        publicId = pathParts.join('/').split('.')[0];
+      }
+    } else {
+      publicId = imageUrl;
+    }
+    
+    if (publicId) {
+      await cloudinary.uploader.destroy(publicId);
+      console.log(`Location image deleted from Cloudinary: ${publicId}`);
+    }
+  } catch (error) {
+    console.error('Error deleting location image from Cloudinary:', error);
+  }
+};
+
 // Export cloudinary instance for direct use if needed
 export { cloudinary };

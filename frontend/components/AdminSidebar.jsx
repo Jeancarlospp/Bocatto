@@ -52,6 +52,12 @@ export default function AdminSidebar({ onLogout }) {
       ]
     },
     {
+      section: 'Restaurante',
+      items: [
+        { label: 'Sucursales', href: '/admin/locations'}
+      ]
+    },
+    {
       section: 'Administración',
       items: [
         { label: 'Usuarios Admin', href: '/admin/admins'},
