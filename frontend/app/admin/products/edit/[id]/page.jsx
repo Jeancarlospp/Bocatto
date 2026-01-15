@@ -4,6 +4,18 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { fetchProductById, updateProduct } from '@/lib/api';
 
+// Categorías de fallback por si la API falla
+const FALLBACK_CATEGORIES = [
+  'Entradas y Snacks',
+  'Platos Fuertes',
+  'Postres',
+  'Bebidas',
+  'Ensaladas',
+  'Hamburguesas',
+  'Pizzas',
+  'Pastas'
+];
+
 export default function EditProductPage() {
   const router = useRouter();
   const params = useParams();
@@ -13,6 +25,7 @@ export default function EditProductPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -29,16 +42,24 @@ export default function EditProductPage() {
   const [imagePreview, setImagePreview] = useState(null);
   const [currentImage, setCurrentImage] = useState('');
 
-  const categories = [
-    'Entradas y Snacks',
-    'Platos Fuertes',
-    'Postres',
-    'Bebidas',
-    'Ensaladas',
-    'Hamburguesas',
-    'Pizzas',
-    'Pastas'
-  ];
+  // Cargar categorías desde la API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories?activeOnly=true`);
+        const data = await response.json();
+        
+        if (data.success && data.data.length > 0) {
+          setCategories(data.data.map(cat => cat.name));
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+        // Mantiene las categorías de fallback
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const loadProductData = async () => {

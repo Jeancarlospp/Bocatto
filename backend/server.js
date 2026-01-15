@@ -14,6 +14,7 @@ import debugRoutes from './routes/debugRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -58,6 +59,7 @@ app.use('/areas', areaRoutes);
 app.use('/offers', offerRoutes);
 app.use('/reservations', reservationRoutes);
 app.use('/locations', locationRoutes);
+app.use('/categories', categoryRoutes);
 app.use('/debug', debugRoutes);
 
 // Manejo de rutas no encontradas
