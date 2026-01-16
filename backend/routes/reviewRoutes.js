@@ -26,6 +26,19 @@ const router = express.Router();
  * Admin routes: Approve, reject, respond to reviews
  */
 
+// ==================== ADMIN ROUTES (must be before /:id routes) ====================
+
+// GET pending reviews (admin only)
+router.get('/pending', authenticateToken, isAdmin, getPendingReviews);
+
+// ==================== PROTECTED ROUTES (Authenticated Users) ====================
+
+// GET my reviews (must be before /:id)
+router.get('/my-reviews', authenticateToken, getMyReviews);
+
+// CREATE new review
+router.post('/', authenticateToken, createReview);
+
 // ==================== PUBLIC ROUTES ====================
 
 // GET reviews for a product (only approved)
@@ -37,27 +50,14 @@ router.get('/order/:orderId', getOrderReviews);
 // GET reviews for a reservation (only approved)
 router.get('/reservation/:reservationId', getReservationReviews);
 
-// GET review by ID
+// GET review by ID (must be LAST among GET routes with path params)
 router.get('/:id', getReviewById);
-
-// ==================== PROTECTED ROUTES (Authenticated Users) ====================
-
-// CREATE new review
-router.post('/', authenticateToken, createReview);
-
-// GET my reviews
-router.get('/my-reviews', authenticateToken, getMyReviews);
 
 // UPDATE my review
 router.put('/:id', authenticateToken, updateReview);
 
 // DELETE my review
 router.delete('/:id', authenticateToken, deleteReview);
-
-// ==================== ADMIN ROUTES ====================
-
-// GET pending reviews (admin only)
-router.get('/pending', authenticateToken, isAdmin, getPendingReviews);
 
 // APPROVE review (admin only)
 router.patch('/:id/approve', authenticateToken, isAdmin, approveReview);
