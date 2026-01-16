@@ -730,7 +730,11 @@ export async function createOrder(orderData) {
   try {
     // Include sessionId from localStorage
     const sessionId = localStorage.getItem('cartSessionId');
-    
+
+    console.log('=== CREATE ORDER DEBUG (Frontend) ===');
+    console.log('SessionId from localStorage:', sessionId);
+    console.log('Order data:', orderData);
+
     const response = await fetch(`${API_URL}/api/orders`, {
       method: 'POST',
       headers: {

@@ -47,36 +47,54 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    // Find active cart for user by userId OR sessionId
-    // This handles cases where user just logged in and cart isn't linked yet
-    const cartQuery = {
+    // Find active cart - try multiple strategies
+    console.log('Looking for cart with userId:', userId, 'sessionId:', sessionId);
+
+    let cart = null;
+
+    // Strategy 1: Find by userId first
+    cart = await Cart.findOne({
       status: 'active',
-      $or: [
-        { user: userId }
-      ]
-    };
+      user: userId
+    }).populate('items.product');
 
-    // Add sessionId to query if provided
-    if (sessionId) {
-      cartQuery.$or.push({ sessionId });
+    console.log('Strategy 1 (by userId):', cart ? 'Found' : 'Not found');
+
+    // Strategy 2: If not found by userId, try by sessionId
+    if (!cart && sessionId) {
+      cart = await Cart.findOne({
+        status: 'active',
+        sessionId: sessionId
+      }).populate('items.product');
+
+      console.log('Strategy 2 (by sessionId):', cart ? 'Found' : 'Not found');
+
+      // Link cart to user if found by sessionId
+      if (cart && !cart.user) {
+        console.log('Linking cart to user');
+        cart.user = userId;
+        await cart.save();
+      }
     }
 
-    console.log('Cart Query:', JSON.stringify(cartQuery, null, 2));
+    // Strategy 3: If still not found, try finding any cart with this sessionId regardless of user
+    if (!cart && sessionId) {
+      cart = await Cart.findOne({
+        status: 'active',
+        sessionId: sessionId,
+        $or: [{ user: null }, { user: { $exists: false } }, { user: userId }]
+      }).populate('items.product');
 
-    let cart = await Cart.findOne(cartQuery).populate('items.product');
+      console.log('Strategy 3 (sessionId flexible):', cart ? 'Found' : 'Not found');
 
-    console.log('Cart found:', cart ? 'Yes' : 'No');
+      if (cart && cart.user !== userId) {
+        cart.user = userId;
+        await cart.save();
+      }
+    }
+
     if (cart) {
-      console.log('Cart items count:', cart.items.length);
-      console.log('Cart user:', cart.user);
-      console.log('Cart sessionId:', cart.sessionId);
-    }
-
-    // If cart found by sessionId but no user, link it to this user
-    if (cart && !cart.user && userId) {
-      console.log('Linking cart to user');
-      cart.user = userId;
-      await cart.save();
+      console.log('Cart found - items:', cart.items.length, 'user:', cart.user, 'sessionId:', cart.sessionId);
     }
 
     if (!cart || cart.items.length === 0) {
