@@ -207,27 +207,30 @@ export default function AdminReservationsPage() {
       </div>
 
       {/* Timeline Toggle */}
-      <div className="mb-6 flex items-center justify-between bg-white rounded-lg shadow p-4">
+      <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg shadow p-6 border-l-4 border-orange-600">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-1">
-            Vista de Disponibilidad
+          <h2 className="text-xl font-bold text-gray-900 mb-1">
+            📅 Vista de Disponibilidad de Ambientes
           </h2>
-          <p className="text-sm text-gray-600">
-            Visualiza qué ambientes están ocupados por fecha/hora
+          <p className="text-sm font-medium text-gray-800">
+            Visualiza en tiempo real qué ambientes están reservados por fecha y hora
           </p>
         </div>
-        <div className="flex items-center space-x-4">
-          <input
-            type="date"
-            value={timelineDate}
-            onChange={(e) => setTimelineDate(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
+        <div className="flex items-center space-x-4 mt-4 md:mt-0">
+          <div>
+            <label className="block text-xs font-semibold text-gray-900 mb-1">Seleccionar Fecha:</label>
+            <input
+              type="date"
+              value={timelineDate}
+              onChange={(e) => setTimelineDate(e.target.value)}
+              className="px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-gray-900 font-medium"
+            />
+          </div>
           <button
             onClick={() => setShowTimeline(!showTimeline)}
-            className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition"
+            className="px-6 py-2 bg-orange-600 text-white font-semibold rounded-md hover:bg-orange-700 transition shadow-md mt-5"
           >
-            {showTimeline ? 'Ocultar Timeline' : 'Mostrar Timeline'}
+            {showTimeline ? '🔼 Ocultar Timeline' : '🔽 Mostrar Timeline'}
           </button>
         </div>
       </div>
@@ -258,74 +261,78 @@ export default function AdminReservationsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Status Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-900 mb-2">
               Estado
             </label>
             <select
               value={filters.status}
               onChange={(e) => handleFilterChange('status', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-gray-900"
             >
-              <option value="">Todos los estados</option>
-              <option value="pending">Pendiente</option>
-              <option value="paid">Pagada</option>
-              <option value="cancelled">Cancelada</option>
-              <option value="expired">Expirada</option>
+              <option value="" className="text-gray-900">Todos los estados</option>
+              <option value="pending" className="text-gray-900">Pendiente</option>
+              <option value="paid" className="text-gray-900">Pagada</option>
+              <option value="cancelled" className="text-gray-900">Cancelada</option>
+              <option value="expired" className="text-gray-900">Expirada</option>
             </select>
           </div>
 
           {/* Area Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-900 mb-2">
               Ambiente
             </label>
             <select
               value={filters.areaId}
               onChange={(e) => handleFilterChange('areaId', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-gray-900"
             >
-              <option value="">Todos los ambientes</option>
-              {areas && areas.length > 0 && areas.map(area => (
-                <option key={area._id} value={area._id}>
-                  {area.name} (Cap: {area.capacity})
-                </option>
-              ))}
+              <option value="" className="text-gray-900">Todos los ambientes</option>
+              {areas && areas.length > 0 ? (
+                areas.map(area => (
+                  <option key={area._id} value={area._id} className="text-gray-900">
+                    {area.name} (Cap: {area.capacity})
+                  </option>
+                ))
+              ) : (
+                <option disabled className="text-gray-500">Cargando ambientes...</option>
+              )}
             </select>
           </div>
 
           {/* Start Date Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-900 mb-2">
               Fecha inicio
             </label>
             <input
               type="date"
               value={filters.startDate}
               onChange={(e) => handleFilterChange('startDate', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-gray-900"
             />
           </div>
 
           {/* End Date Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-900 mb-2">
               Fecha fin
             </label>
             <input
               type="date"
               value={filters.endDate}
               onChange={(e) => handleFilterChange('endDate', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-gray-900"
             />
           </div>
         </div>
       </div>
 
       {/* Reservations Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Reservaciones ({reservations.length})
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-gray-200">
+        <div className="px-6 py-4 border-b-2 border-gray-300 bg-gradient-to-r from-gray-50 to-gray-100">
+          <h2 className="text-xl font-bold text-gray-900">
+            📋 Reservaciones ({reservations.length})
           </h2>
         </div>
 
@@ -370,81 +377,83 @@ export default function AdminReservationsPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y-2 divide-gray-300">
+              <thead className="bg-gradient-to-r from-gray-100 to-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                     Cliente
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                     Ambiente
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                     Fecha y Hora
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                     Invitados
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                     Precio
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                     Estado
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                     Creada
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-900 uppercase tracking-wider">
                     Acciones
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y-2 divide-gray-200">
                 {reservations && reservations.length > 0 && reservations.map((reservation) => (
-                  <tr key={reservation._id} className="hover:bg-gray-50">
+                  <tr key={reservation._id} className="hover:bg-orange-50 transition">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-bold text-gray-900">
                           {reservation.user?.firstName} {reservation.user?.lastName}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm font-medium text-gray-700">
                           {reservation.user?.email}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">
+                      <div className="text-sm font-bold text-gray-900">
                         {reservation.area?.name || 'N/A'}
                       </div>
-                      <div className="text-xs text-gray-500">
-                        Cap: {reservation.area?.capacity || 'N/A'}
+                      <div className="text-xs font-semibold text-gray-700">
+                        Capacidad: {reservation.area?.capacity || 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-900">
-                        <div className="font-medium">Inicio:</div>
-                        <div>{formatDateTime(reservation.startTime)}</div>
+                        <div className="font-bold">🕐 Inicio:</div>
+                        <div className="font-semibold text-gray-800">{formatDateTime(reservation.startTime)}</div>
                       </div>
-                      <div className="text-sm text-gray-900 mt-1">
-                        <div className="font-medium">Fin:</div>
-                        <div>{formatDateTime(reservation.endTime)}</div>
+                      <div className="text-sm text-gray-900 mt-2">
+                        <div className="font-bold">🕐 Fin:</div>
+                        <div className="font-semibold text-gray-800">{formatDateTime(reservation.endTime)}</div>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {reservation.guestCount}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-semibold text-gray-900">
+                      <div className="text-sm font-bold text-gray-900">
+                        👥 {reservation.guestCount}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-bold text-green-700">
                         ${reservation.totalPrice.toFixed(2)}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs font-semibold text-gray-700">
                         {reservation.paymentMethodSimulated}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(reservation.status)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-800">
                       {formatDate(reservation.createdAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -452,7 +461,7 @@ export default function AdminReservationsPage() {
                         <button
                           onClick={() => handleCancelReservation(reservation._id)}
                           disabled={actionLoading === reservation._id}
-                          className="text-red-600 hover:text-red-900 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="text-red-600 hover:text-red-900 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {actionLoading === reservation._id ? (
                             <span className="flex items-center">
@@ -467,7 +476,7 @@ export default function AdminReservationsPage() {
                           )}
                         </button>
                       ) : (
-                        <span className="text-gray-400">No disponible</span>
+                        <span className="text-gray-400 font-semibold">No disponible</span>
                       )}
                     </td>
                   </tr>
@@ -480,19 +489,19 @@ export default function AdminReservationsPage() {
 
       {/* Notes Section - Show if any reservation has notes */}
       {reservations && reservations.length > 0 && reservations.some(r => r.notes) && (
-        <div className="mt-6 bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Notas de Reservaciones
+        <div className="mt-6 bg-white rounded-lg shadow-lg p-6 border-l-4 border-blue-600">
+          <h3 className="text-lg font-bold text-gray-900 mb-4">
+            📝 Notas de Reservaciones
           </h3>
           <div className="space-y-3">
             {reservations
               .filter(r => r.notes)
               .map(reservation => (
-                <div key={reservation._id} className="border-l-4 border-orange-500 pl-4 py-2">
-                  <div className="text-sm font-medium text-gray-900">
+                <div key={reservation._id} className="border-l-4 border-orange-500 pl-4 py-3 bg-orange-50 rounded">
+                  <div className="text-sm font-bold text-gray-900">
                     {reservation.user?.firstName} {reservation.user?.lastName} - {reservation.area?.name}
                   </div>
-                  <div className="text-sm text-gray-600 mt-1">
+                  <div className="text-sm font-medium text-gray-800 mt-1">
                     {reservation.notes}
                   </div>
                 </div>
