@@ -764,7 +764,7 @@ export async function getMyOrders(params = {}) {
   try {
     const queryParams = new URLSearchParams(params).toString();
     const url = queryParams ? `${API_URL}/api/orders/my-orders?${queryParams}` : `${API_URL}/api/orders/my-orders`;
-    
+
     const response = await fetch(url, {
       credentials: 'include'
     });
@@ -778,6 +778,37 @@ export async function getMyOrders(params = {}) {
     return data;
   } catch (error) {
     console.error('Get My Orders Error:', error);
+    throw error;
+  }
+}
+
+// ========================================
+// COUPON API FUNCTIONS
+// ========================================
+
+/**
+ * Validate a coupon code
+ * @param {string} code - Coupon code
+ * @param {number} cartTotal - Cart subtotal
+ * @returns {Promise<Object>} Validation result with discount info
+ */
+export async function validateCoupon(code, cartTotal) {
+  try {
+    const response = await fetch(`${API_URL}/coupons/validate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ code, cartTotal })
+    });
+
+    const data = await response.json();
+
+    // Return data even if not successful (to show error message)
+    return data;
+  } catch (error) {
+    console.error('Validate Coupon Error:', error);
     throw error;
   }
 }

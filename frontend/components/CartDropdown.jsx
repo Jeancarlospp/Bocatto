@@ -327,6 +327,55 @@ function CheckoutModal({ cart, onClose, onSuccess }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
 
+  // Coupon states
+  const [couponCode, setCouponCode] = useState('');
+  const [couponData, setCouponData] = useState(null);
+  const [couponError, setCouponError] = useState('');
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+
+  // Calculate subtotal
+  const subtotal = cart?.items?.reduce((sum, item) => sum + item.subtotal, 0) || 0;
+  const couponDiscount = couponData?.data?.discount || 0;
+  const subtotalAfterDiscount = subtotal - couponDiscount;
+  const ivaAmount = subtotalAfterDiscount * 0.15;
+  const totalPrice = subtotalAfterDiscount + ivaAmount;
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError('Ingresa un código de cupón');
+      return;
+    }
+
+    setIsValidatingCoupon(true);
+    setCouponError('');
+    setCouponData(null);
+
+    try {
+      const { validateCoupon } = await import('@/lib/api');
+      const result = await validateCoupon(couponCode.trim(), subtotal);
+
+      if (result.success && result.valid) {
+        setCouponData(result);
+        setCouponError('');
+      } else {
+        setCouponError(result.message || 'Cupón inválido');
+        setCouponData(null);
+      }
+    } catch (error) {
+      console.error('Coupon validation error:', error);
+      setCouponError('Error al validar el cupón');
+      setCouponData(null);
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponCode('');
+    setCouponData(null);
+    setCouponError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsProcessing(true);
@@ -334,11 +383,12 @@ function CheckoutModal({ cart, onClose, onSuccess }) {
 
     try {
       const { createOrder } = await import('@/lib/api');
-      
+
       await createOrder({
         deliveryType,
         paymentMethod,
-        customerNotes: customerNotes.trim()
+        customerNotes: customerNotes.trim(),
+        couponCode: couponData?.data?.code || null
       });
 
       alert('¡Orden creada exitosamente!');
@@ -381,17 +431,76 @@ function CheckoutModal({ cart, onClose, onSuccess }) {
               </div>
               <div className="flex justify-between text-gray-400">
                 <span>Subtotal:</span>
-                <span>${(cart?.items?.reduce((sum, item) => sum + item.subtotal, 0) || 0).toFixed(2)}</span>
+                <span>${subtotal.toFixed(2)}</span>
               </div>
+
+              {/* Coupon Discount */}
+              {couponData && (
+                <div className="flex justify-between text-green-400">
+                  <span>Descuento ({couponData.data.code}):</span>
+                  <span>-${couponDiscount.toFixed(2)}</span>
+                </div>
+              )}
+
               <div className="flex justify-between text-gray-400">
                 <span>IVA (15%):</span>
-                <span>${((cart?.items?.reduce((sum, item) => sum + item.subtotal, 0) || 0) * 0.15).toFixed(2)}</span>
+                <span>${ivaAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-white font-bold pt-2 border-t border-neutral-600">
                 <span>Total:</span>
-                <span className="text-orange-500">${((cart?.items?.reduce((sum, item) => sum + item.subtotal, 0) || 0) * 1.15).toFixed(2)}</span>
+                <span className="text-orange-500">${totalPrice.toFixed(2)}</span>
               </div>
             </div>
+          </div>
+
+          {/* Coupon Code */}
+          <div>
+            <label className="block text-white font-semibold mb-2">Cupón de Descuento</label>
+            {couponData ? (
+              // Coupon applied successfully
+              <div className="bg-green-900/30 border border-green-500 rounded-lg p-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <p className="text-green-400 font-semibold">{couponData.data.code}</p>
+                    <p className="text-green-300 text-xs">{couponData.data.description}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleRemoveCoupon}
+                  className="text-red-400 hover:text-red-300 p-1"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              // Coupon input
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                  placeholder="Ingresa tu código"
+                  className="flex-1 px-4 py-3 bg-neutral-700 border border-neutral-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 uppercase"
+                />
+                <button
+                  type="button"
+                  onClick={handleApplyCoupon}
+                  disabled={isValidatingCoupon}
+                  className="px-4 py-3 bg-orange-600 hover:bg-orange-700 disabled:bg-neutral-600 text-white font-semibold rounded-lg transition"
+                >
+                  {isValidatingCoupon ? '...' : 'Aplicar'}
+                </button>
+              </div>
+            )}
+            {couponError && (
+              <p className="text-red-400 text-sm mt-2">{couponError}</p>
+            )}
           </div>
 
           {/* Delivery Type */}
