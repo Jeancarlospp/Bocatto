@@ -258,7 +258,7 @@ export default function CategoriesManagement() {
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">Gestión de Categorías</h2>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-800 font-medium mt-2">
             Administra las categorías del menú del restaurante
           </p>
         </div>
@@ -309,7 +309,7 @@ export default function CategoriesManagement() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Icon Selector */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-900 mb-1">
                 Icono
               </label>
               <div className="relative">
@@ -341,7 +341,7 @@ export default function CategoriesManagement() {
 
             {/* Display Order */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-900 mb-1">
                 Orden de visualización
               </label>
               <input
@@ -350,16 +350,16 @@ export default function CategoriesManagement() {
                 value={formData.displayOrder}
                 onChange={handleInputChange}
                 min="0"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="0"
               />
-              <p className="text-xs text-gray-500 mt-1">Menor número = aparece primero</p>
+              <p className="text-xs text-gray-800 font-medium mt-1">Menor número = aparece primero</p>
             </div>
           </div>
 
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-900 mb-1">
               Nombre de la Categoría <span className="text-red-500">*</span>
             </label>
             <input
@@ -367,7 +367,7 @@ export default function CategoriesManagement() {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               placeholder="Ej: Platos Fuertes"
               required
               maxLength="50"
@@ -376,7 +376,7 @@ export default function CategoriesManagement() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-900 mb-1">
               Descripción
             </label>
             <input
@@ -384,7 +384,7 @@ export default function CategoriesManagement() {
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               placeholder="Descripción breve de la categoría"
               maxLength="200"
             />

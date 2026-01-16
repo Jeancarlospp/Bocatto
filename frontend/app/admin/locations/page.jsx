@@ -269,7 +269,7 @@ export default function LocationsManagement() {
       {/* Header */}
       <div>
         <h2 className="text-3xl font-bold text-gray-800">Gestión de Sucursales</h2>
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-800 font-medium mt-2">
           Administra las ubicaciones de los restaurantes Bocatto
         </p>
       </div>
@@ -290,7 +290,7 @@ export default function LocationsManagement() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-900 mb-1">
                 Nombre de la Sucursal <span className="text-red-500">*</span>
               </label>
               <input
@@ -298,7 +298,7 @@ export default function LocationsManagement() {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="Ej: Bocatto Centro Histórico"
                 required
               />
@@ -306,7 +306,7 @@ export default function LocationsManagement() {
 
             {/* City */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-900 mb-1">
                 Ciudad <span className="text-red-500">*</span>
               </label>
               <input
@@ -314,7 +314,7 @@ export default function LocationsManagement() {
                 name="city"
                 value={formData.city}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="Ej: Quito"
                 required
               />
@@ -323,7 +323,7 @@ export default function LocationsManagement() {
 
           {/* Address */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-900 mb-1">
               Dirección <span className="text-red-500">*</span>
             </label>
             <input
@@ -331,7 +331,7 @@ export default function LocationsManagement() {
               name="address"
               value={formData.address}
               onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               placeholder="Ej: Av. Amazonas N24-155 y Colón"
               required
             />
@@ -340,7 +340,7 @@ export default function LocationsManagement() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Phone */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-900 mb-1">
                 Teléfono <span className="text-red-500">*</span>
               </label>
               <input
@@ -348,7 +348,7 @@ export default function LocationsManagement() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="Ej: +593 2 123 4567"
                 required
               />
@@ -356,7 +356,7 @@ export default function LocationsManagement() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-900 mb-1">
                 Email
               </label>
               <input
@@ -364,7 +364,7 @@ export default function LocationsManagement() {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="Ej: centro@bocatto.com"
               />
             </div>
@@ -373,7 +373,7 @@ export default function LocationsManagement() {
           {/* Coordinates */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-900 mb-1">
                 Latitud <span className="text-red-500">*</span>
               </label>
               <input
@@ -382,13 +382,13 @@ export default function LocationsManagement() {
                 name="lat"
                 value={formData.lat}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="Ej: -0.1807"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-900 mb-1">
                 Longitud <span className="text-red-500">*</span>
               </label>
               <input
@@ -397,7 +397,7 @@ export default function LocationsManagement() {
                 name="lng"
                 value={formData.lng}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="Ej: -78.4678"
                 required
               />
@@ -406,7 +406,7 @@ export default function LocationsManagement() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-900 mb-1">
               Descripción
             </label>
             <textarea
@@ -414,7 +414,7 @@ export default function LocationsManagement() {
               value={formData.description}
               onChange={handleInputChange}
               rows="3"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               placeholder="Describe esta ubicación..."
               maxLength="500"
             />
@@ -422,18 +422,18 @@ export default function LocationsManagement() {
 
           {/* Opening Hours */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-900 mb-2">
               Horarios de Atención
             </label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {DAYS_OF_WEEK.map(day => (
                 <div key={day.key} className="flex items-center gap-2">
-                  <label className="w-24 text-sm text-gray-600">{day.label}:</label>
+                  <label className="w-24 text-sm text-gray-900 font-medium">{day.label}:</label>
                   <input
                     type="text"
                     value={formData.openingHours[day.key]}
                     onChange={(e) => handleHoursChange(day.key, e.target.value)}
-                    className="flex-1 px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="flex-1 px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                     placeholder="09:00 - 22:00"
                   />
                 </div>
@@ -451,23 +451,23 @@ export default function LocationsManagement() {
               onChange={handleInputChange}
               className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
             />
-            <label htmlFor="isFlagship" className="text-sm font-medium text-gray-700">
+            <label htmlFor="isFlagship" className="text-sm font-bold text-gray-900">
               Marcar como sucursal principal (Flagship)
             </label>
           </div>
 
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-900 mb-1">
               Imagen de la Sucursal
             </label>
             <input
               type="file"
               accept="image/jpeg,image/jpg,image/png,image/webp"
               onChange={handleImageChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-800 font-medium mt-1">
               Formatos: JPEG, PNG, WEBP. Máx: 5MB
             </p>
           </div>

@@ -185,7 +185,7 @@ export default function AdminReservationsPage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Gestión de Reservaciones
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-800 font-medium">
           Administra todas las reservaciones del sistema
         </p>
       </div>
@@ -333,7 +333,7 @@ export default function AdminReservationsPage() {
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <p className="text-gray-600">No se encontraron reservaciones</p>
+            <p className="text-gray-800 font-medium">No se encontraron reservaciones</p>
             {(filters.status || filters.areaId || filters.startDate || filters.endDate) && (
               <button
                 onClick={clearFilters}

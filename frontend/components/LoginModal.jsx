@@ -224,7 +224,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-bold text-gray-900 mb-1">
                 Correo Electrónico
               </label>
               <input
@@ -234,13 +234,13 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="admin@bocatto.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-bold text-gray-900 mb-1">
                 Contraseña
               </label>
               <input
@@ -250,7 +250,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="••••••••"
               />
             </div>
@@ -308,7 +308,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
             {clientView === 'login' && (
               <form onSubmit={handleClientLogin} className="space-y-4">
                 <div>
-                  <label htmlFor="client-email" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="client-email" className="block text-sm font-bold text-gray-900 mb-1">
                     Correo Electrónico
                   </label>
                   <input
@@ -318,13 +318,13 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                     placeholder="tu@email.com"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="client-password" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="client-password" className="block text-sm font-bold text-gray-900 mb-1">
                     Contraseña
                   </label>
                   <input
@@ -334,7 +334,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                     placeholder="••••••••"
                   />
                 </div>
@@ -361,7 +361,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                 <button
                   type="button"
                   onClick={handleGoogleLogin}
-                  className="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition"
+                  className="w-full bg-white border border-gray-300 text-gray-900 font-semibold py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -391,7 +391,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
               <form onSubmit={handleClientRegister} className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="firstName" className="block text-sm font-bold text-gray-900 mb-1">
                       Nombre <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -401,13 +401,13 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                       placeholder="Juan"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="lastName" className="block text-sm font-bold text-gray-900 mb-1">
                       Apellido <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -417,14 +417,14 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                       placeholder="Pérez"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="register-email" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="register-email" className="block text-sm font-bold text-gray-900 mb-1">
                     Correo Electrónico <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -434,13 +434,13 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                     placeholder="tu@email.com"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="register-password" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="register-password" className="block text-sm font-bold text-gray-900 mb-1">
                     Contraseña <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -451,13 +451,13 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     onChange={handleInputChange}
                     required
                     minLength={6}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                     placeholder="Mínimo 6 caracteres"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="phone" className="block text-sm font-bold text-gray-900 mb-1">
                     Teléfono (opcional)
                   </label>
                   <input
@@ -466,13 +466,13 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                     placeholder="+593 999 999 999"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="address" className="block text-sm font-bold text-gray-900 mb-1">
                     Dirección (opcional)
                   </label>
                   <input
@@ -481,7 +481,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                     placeholder="Av. Principal 123"
                   />
                 </div>

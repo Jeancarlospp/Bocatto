@@ -114,7 +114,7 @@ export default function AdminReviewsPage() {
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">Gestion de Reseñas</h2>
-          <p className="text-gray-500 mt-1">Modera y responde a las reseñas de los clientes</p>
+          <p className="text-gray-800 font-medium mt-1">Modera y responde a las reseñas de los clientes</p>
         </div>
         <button
           onClick={fetchReviews}
@@ -349,7 +349,7 @@ function RespondModal({ review, onClose, onSubmit, isLoading }) {
         {/* Response Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-900 mb-2">
               Tu respuesta
             </label>
             <textarea
@@ -359,9 +359,9 @@ function RespondModal({ review, onClose, onSubmit, isLoading }) {
               rows={4}
               maxLength={500}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none bg-white text-gray-900"
             />
-            <p className="text-gray-400 text-xs mt-1 text-right">{responseText.length}/500</p>
+            <p className="text-gray-800 font-medium text-xs mt-1 text-right">{responseText.length}/500</p>
           </div>
 
           <div className="flex gap-3">

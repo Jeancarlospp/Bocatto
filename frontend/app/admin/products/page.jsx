@@ -82,7 +82,7 @@ export default function ProductsPage() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">Gestión de Productos</h2>
-          <p className="text-gray-600 mt-1">Administra el menú del restaurante</p>
+          <p className="text-gray-800 font-medium mt-1">Administra el menú del restaurante</p>
         </div>
         <Link
           href="/admin/products/create"
@@ -118,7 +118,7 @@ export default function ProductsPage() {
         <div className="bg-white p-12 rounded-lg shadow-sm border border-gray-200 text-center">
           <div className="text-6xl mb-4">📦</div>
           <h3 className="text-xl font-semibold text-gray-800 mb-2">No hay productos</h3>
-          <p className="text-gray-600 mb-6">Comienza agregando tu primer producto al menú</p>
+          <p className="text-gray-800 font-medium mb-6">Comienza agregando tu primer producto al menú</p>
           <Link
             href="/admin/products/create"
             className="inline-block px-6 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-medium"

@@ -233,15 +233,15 @@ export default function AreasManagement() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-3xl font-bold text-gray-800">Gestión de Ambientes</h2>
-        <p className="text-gray-600 mt-2">
+        <h2 className="text-3xl font-bold text-gray-900">Gestión de Ambientes</h2>
+        <p className="text-gray-800 mt-2 font-medium">
           Administra los espacios disponibles para reservaciones
         </p>
       </div>
 
       {/* Form Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">
+        <h3 className="text-xl font-bold text-gray-900 mb-4">
           {editingArea ? 'Editar Ambiente' : 'Agregar Nuevo Ambiente'}
         </h3>
 
@@ -255,7 +255,7 @@ export default function AreasManagement() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-900 mb-1">
                 Nombre del Ambiente <span className="text-red-500">*</span>
               </label>
               <input
@@ -263,7 +263,7 @@ export default function AreasManagement() {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                 placeholder="Ej: Terraza Principal"
                 required
               />
@@ -272,7 +272,7 @@ export default function AreasManagement() {
             {/* Capacity */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-bold text-gray-900 mb-1">
                   Capacidad Mín. <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -281,12 +281,12 @@ export default function AreasManagement() {
                   value={formData.minCapacity}
                   onChange={handleInputChange}
                   min="1"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-bold text-gray-900 mb-1">
                   Capacidad Máx. <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -295,7 +295,7 @@ export default function AreasManagement() {
                   value={formData.maxCapacity}
                   onChange={handleInputChange}
                   min="1"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                   required
                 />
               </div>
@@ -304,7 +304,7 @@ export default function AreasManagement() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-900 mb-1">
               Descripción <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -312,7 +312,7 @@ export default function AreasManagement() {
               value={formData.description}
               onChange={handleInputChange}
               rows="3"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               placeholder="Describe el ambiente..."
               required
             />
@@ -320,7 +320,7 @@ export default function AreasManagement() {
 
           {/* Features */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-900 mb-1">
               Características (1-4) <span className="text-red-500">*</span>
             </label>
             <div className="space-y-2">
@@ -330,7 +330,7 @@ export default function AreasManagement() {
                     type="text"
                     value={feature}
                     onChange={(e) => handleFeatureChange(index, e.target.value)}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                     placeholder={`Característica ${index + 1}`}
                   />
                   {formData.features.length > 1 && (
@@ -349,7 +349,7 @@ export default function AreasManagement() {
               <button
                 type="button"
                 onClick={addFeature}
-                className="mt-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                className="mt-2 px-4 py-2 bg-gray-100 text-gray-900 font-bold rounded-lg hover:bg-gray-200 transition"
               >
                 + Agregar Característica
               </button>
@@ -358,14 +358,14 @@ export default function AreasManagement() {
 
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-900 mb-1">
               Imagen del Ambiente
             </label>
             <input
               type="file"
               accept="image/*"
               onChange={handleImageChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
             />
             {imagePreview && (
               <div className="mt-3">
@@ -391,7 +391,7 @@ export default function AreasManagement() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                className="px-6 py-2 bg-gray-200 text-gray-900 font-bold rounded-lg hover:bg-gray-300 transition"
               >
                 Cancelar
               </button>

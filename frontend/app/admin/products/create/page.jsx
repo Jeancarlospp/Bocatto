@@ -180,7 +180,7 @@ export default function CreateProductPage() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
         <h2 className="text-3xl font-bold text-gray-800">Crear Nuevo Producto</h2>
-        <p className="text-gray-600 mt-2">Complete el formulario para agregar un producto al menú</p>
+        <p className="text-gray-800 font-medium mt-2">Complete el formulario para agregar un producto al menú</p>
       </div>
 
       {error && (
@@ -193,7 +193,7 @@ export default function CreateProductPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Product Name */}
           <div className="md:col-span-2">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="name" className="block text-sm font-bold text-gray-900 mb-2">
               Nombre del Producto <span className="text-red-500">*</span>
             </label>
             <input
@@ -202,7 +202,7 @@ export default function CreateProductPage() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               placeholder="Ej: Alitas BBQ Clásicas"
               required
             />
@@ -210,7 +210,7 @@ export default function CreateProductPage() {
 
           {/* Description */}
           <div className="md:col-span-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="description" className="block text-sm font-bold text-gray-900 mb-2">
               Descripción <span className="text-red-500">*</span>
             </label>
             <textarea
@@ -219,7 +219,7 @@ export default function CreateProductPage() {
               value={formData.description}
               onChange={handleChange}
               rows="3"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               placeholder="Descripción detallada del producto"
               required
             />
@@ -227,7 +227,7 @@ export default function CreateProductPage() {
 
           {/* Price */}
           <div>
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="price" className="block text-sm font-bold text-gray-900 mb-2">
               Precio ($) <span className="text-red-500">*</span>
             </label>
             <input
@@ -238,7 +238,7 @@ export default function CreateProductPage() {
               onChange={handleChange}
               step="0.01"
               min="0"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               placeholder="0.00"
               required
             />
@@ -246,7 +246,7 @@ export default function CreateProductPage() {
 
           {/* Stock */}
           <div>
-            <label htmlFor="currentStock" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="currentStock" className="block text-sm font-bold text-gray-900 mb-2">
               Stock Disponible
             </label>
             <input
@@ -256,14 +256,14 @@ export default function CreateProductPage() {
               value={formData.currentStock}
               onChange={handleChange}
               min="0"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               placeholder="0"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="category" className="block text-sm font-bold text-gray-900 mb-2">
               Categoría <span className="text-red-500">*</span>
             </label>
             <select
@@ -271,7 +271,7 @@ export default function CreateProductPage() {
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               required
             >
               <option value="">Seleccionar categoría</option>
@@ -285,7 +285,7 @@ export default function CreateProductPage() {
 
           {/* Subcategory */}
           <div>
-            <label htmlFor="subcategory" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="subcategory" className="block text-sm font-bold text-gray-900 mb-2">
               Subcategoría
             </label>
             <input
@@ -294,14 +294,14 @@ export default function CreateProductPage() {
               name="subcategory"
               value={formData.subcategory}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               placeholder="Ej: Alitas, Nachos, etc."
             />
           </div>
 
           {/* Image Upload */}
           <div className="md:col-span-2">
-            <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="image" className="block text-sm font-bold text-gray-900 mb-2">
               Imagen del Producto <span className="text-red-500">*</span>
             </label>
             <div className="flex items-center gap-4">
@@ -311,10 +311,10 @@ export default function CreateProductPage() {
                     <svg className="w-12 h-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-900 font-medium">
                       {imageFile ? imageFile.name : 'Haz clic para seleccionar una imagen'}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-800 font-medium mt-1">
                       PNG, JPG, WEBP hasta 5MB
                     </p>
                   </div>
@@ -345,7 +345,7 @@ export default function CreateProductPage() {
 
           {/* Ingredients */}
           <div className="md:col-span-2">
-            <label htmlFor="ingredients" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="ingredients" className="block text-sm font-bold text-gray-900 mb-2">
               Ingredientes
             </label>
             <input
@@ -354,10 +354,10 @@ export default function CreateProductPage() {
               name="ingredients"
               value={formData.ingredients}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
               placeholder="Separados por comas: pollo, salsa BBQ, especias"
             />
-            <p className="text-sm text-gray-500 mt-1">Ingrese los ingredientes separados por comas</p>
+            <p className="text-sm text-gray-800 font-medium mt-1">Ingrese los ingredientes separados por comas</p>
           </div>
 
           {/* Available */}
@@ -370,7 +370,7 @@ export default function CreateProductPage() {
                 onChange={handleChange}
                 className="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
               />
-              <span className="ml-2 text-sm font-medium text-gray-700">
+              <span className="ml-2 text-sm font-bold text-gray-900">
                 Producto disponible para venta
               </span>
             </label>

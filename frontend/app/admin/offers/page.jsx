@@ -281,7 +281,7 @@ export default function OffersManagement() {
           {/* Basic Info */}
           <div>
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Nombre de la Oferta *
               </label>
               <input
@@ -290,13 +290,13 @@ export default function OffersManagement() {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-white text-gray-900"
                 placeholder="Ej: Combo Lunes Familiar"
               />
             </div>
 
             <div className="mb-6">
-              <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="image" className="block text-sm font-bold text-gray-900 mb-2">
                 Imagen de la Oferta
               </label>
               <div className="flex items-center gap-4">
@@ -306,10 +306,10 @@ export default function OffersManagement() {
                       <svg className="w-12 h-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                       </svg>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-900 font-medium">
                         {formData.image ? formData.image.name : 'Haz clic para seleccionar una imagen'}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-800 font-medium mt-1">
                         PNG, JPG, WEBP hasta 5MB
                       </p>
                     </div>
@@ -339,7 +339,7 @@ export default function OffersManagement() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-900 mb-2">
               Descripción *
             </label>
             <textarea
@@ -348,14 +348,14 @@ export default function OffersManagement() {
               onChange={handleInputChange}
               required
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-white text-gray-900"
               placeholder="Describe los productos incluidos en la oferta..."
             />
           </div>
 
           {/* Items in Combo */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-900 mb-2">
               Productos del Combo *
             </label>
             {formData.items.map((item, index) => (
@@ -365,14 +365,14 @@ export default function OffersManagement() {
                   min="1"
                   value={item.quantity}
                   onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
-                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
+                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-white text-gray-900"
                   placeholder="Cant."
                 />
                 <input
                   type="text"
                   value={item.name}
                   onChange={(e) => handleItemChange(index, 'name', e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-white text-gray-900"
                   placeholder="Nombre del producto"
                   required
                 />
@@ -399,7 +399,7 @@ export default function OffersManagement() {
           {/* Pricing */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Precio Original *
               </label>
               <input
@@ -409,13 +409,13 @@ export default function OffersManagement() {
                 value={formData.originalPrice}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-white text-gray-900"
                 placeholder="0.00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Precio de Oferta *
               </label>
               <input
@@ -425,13 +425,13 @@ export default function OffersManagement() {
                 value={formData.offerPrice}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-white text-gray-900"
                 placeholder="0.00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Descuento
               </label>
               <div className="px-3 py-2 bg-gray-100 rounded-lg text-gray-700">
@@ -464,7 +464,7 @@ export default function OffersManagement() {
           {/* Date Range */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Fecha de Inicio *
               </label>
               <input
@@ -473,12 +473,12 @@ export default function OffersManagement() {
                 value={formData.startDate}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-white text-gray-900"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Fecha de Fin *
               </label>
               <input
@@ -487,7 +487,7 @@ export default function OffersManagement() {
                 value={formData.endDate}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-white text-gray-900"
               />
             </div>
           </div>
@@ -497,7 +497,7 @@ export default function OffersManagement() {
           {/* Badge Customization */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Texto del Badge
               </label>
               <input
@@ -505,20 +505,20 @@ export default function OffersManagement() {
                 name="badge.text"
                 value={formData.badge.text}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-white text-gray-900"
                 placeholder="Ej: ¡Oferta!"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Color del Badge
               </label>
               <select
                 name="badge.color"
                 value={formData.badge.color}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-white text-gray-900"
               >
                 {colorOptions.map(color => (
                   <option key={color.value} value={color.value} className="text-gray-900">
@@ -529,14 +529,14 @@ export default function OffersManagement() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-bold text-gray-900 mb-2">
                 Icono
               </label>
               <select
                 name="badge.icon"
                 value={formData.badge.icon}
                 onChange={handleInputChange}
-                className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-gray-900"
+                className="w-24 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-white text-gray-900"
               >
                 {iconOptions.map(icon => (
                   <option key={icon} value={icon} className="text-gray-900">

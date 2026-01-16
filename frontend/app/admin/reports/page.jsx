@@ -551,7 +551,7 @@ export default function ReportsPage() {
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-800">Reportes</h2>
-        <p className="text-gray-600 mt-1">Genera reportes y documentos del sistema</p>
+        <p className="text-gray-800 font-medium mt-1">Genera reportes y documentos del sistema</p>
       </div>
 
       {/* Messages */}
