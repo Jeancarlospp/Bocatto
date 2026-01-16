@@ -26,41 +26,41 @@ export default function AdminReviewsPage() {
       setReviews(response.data || []);
     } catch (err) {
       console.error('Error fetching reviews:', err);
-      setError(err.message || 'Error al cargar las resenas');
+      setError(err.message || 'Error al cargar las reseñas');
     } finally {
       setLoading(false);
     }
   };
 
   const handleApprove = async (reviewId) => {
-    if (!window.confirm('Aprobar esta resena? Sera visible publicamente.')) return;
+    if (!window.confirm('Aprobar esta reseña? Sera visible publicamente.')) return;
 
     setActionLoading(reviewId);
     try {
       await approveReview(reviewId);
       // Remove from list since it's no longer pending
       setReviews(reviews.filter(r => r._id !== reviewId && r.id !== reviewId));
-      alert('Resena aprobada exitosamente');
+      alert('Reseña aprobada exitosamente');
     } catch (err) {
       console.error('Error approving review:', err);
-      alert(err.message || 'Error al aprobar la resena');
+      alert(err.message || 'Error al aprobar la reseña');
     } finally {
       setActionLoading(null);
     }
   };
 
   const handleReject = async (reviewId) => {
-    if (!window.confirm('Rechazar esta resena? No sera visible publicamente.')) return;
+    if (!window.confirm('Rechazar esta reseña? No sera visible publicamente.')) return;
 
     setActionLoading(reviewId);
     try {
       await rejectReview(reviewId);
       // Remove from list
       setReviews(reviews.filter(r => r._id !== reviewId && r.id !== reviewId));
-      alert('Resena rechazada');
+      alert('Reseña rechazada');
     } catch (err) {
       console.error('Error rejecting review:', err);
-      alert(err.message || 'Error al rechazar la resena');
+      alert(err.message || 'Error al rechazar la reseña');
     } finally {
       setActionLoading(null);
     }
@@ -81,7 +81,7 @@ export default function AdminReviewsPage() {
       alert('Respuesta enviada exitosamente');
     } catch (err) {
       console.error('Error responding to review:', err);
-      alert(err.message || 'Error al responder la resena');
+      alert(err.message || 'Error al responder la reseña');
     } finally {
       setActionLoading(null);
     }
@@ -113,8 +113,8 @@ export default function AdminReviewsPage() {
       {/* Header */}
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800">Gestion de Resenas</h2>
-          <p className="text-gray-500 mt-1">Modera y responde a las resenas de los clientes</p>
+          <h2 className="text-3xl font-bold text-gray-800">Gestion de Reseñas</h2>
+          <p className="text-gray-500 mt-1">Modera y responde a las reseñas de los clientes</p>
         </div>
         <button
           onClick={fetchReviews}
@@ -185,7 +185,7 @@ export default function AdminReviewsPage() {
       {loading ? (
         <div className="text-center py-16">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
-          <p className="text-gray-500 mt-4">Cargando resenas...</p>
+          <p className="text-gray-500 mt-4">Cargando reseñas...</p>
         </div>
       ) : error ? (
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
@@ -200,8 +200,8 @@ export default function AdminReviewsPage() {
       ) : reviews.length === 0 ? (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
           <div className="text-6xl mb-4">🎉</div>
-          <h3 className="text-xl font-semibold text-gray-800 mb-2">No hay resenas pendientes</h3>
-          <p className="text-gray-500">Todas las resenas han sido moderadas</p>
+          <h3 className="text-xl font-semibold text-gray-800 mb-2">No hay reseñas pendientes</h3>
+          <p className="text-gray-500">Todas las reseñas han sido moderadas</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -325,7 +325,7 @@ function RespondModal({ review, onClose, onSubmit, isLoading }) {
       <div className="bg-white rounded-xl max-w-lg w-full shadow-xl">
         {/* Header */}
         <div className="border-b border-gray-200 p-6 flex justify-between items-center">
-          <h3 className="text-xl font-bold text-gray-800">Responder Resena</h3>
+          <h3 className="text-xl font-bold text-gray-800">Responder Reseña</h3>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition"

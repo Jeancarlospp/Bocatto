@@ -34,7 +34,7 @@ export default function AdminSidebar({ onLogout }) {
       section: 'Clientes',
       items: [
         { label: 'Lista de Clientes', href: '/admin/clients'},
-        { label: 'Resenas', href: '/admin/reviews' }
+        { label: 'Reseñas', href: '/admin/reviews' }
       ]
     },
     {
