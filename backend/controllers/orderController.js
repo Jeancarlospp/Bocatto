@@ -48,53 +48,106 @@ export const createOrder = async (req, res) => {
     }
 
     // Find active cart - try multiple strategies
+    console.log('=== CART SEARCH STRATEGIES ===');
     console.log('Looking for cart with userId:', userId, 'sessionId:', sessionId);
 
     let cart = null;
 
-    // Strategy 1: Find by userId first
-    cart = await Cart.findOne({
+    // First, let's see all active carts for this user/session for debugging
+    const allCarts = await Cart.find({
       status: 'active',
-      user: userId
+      $or: [
+        { user: userId },
+        { sessionId: sessionId }
+      ]
     }).populate('items.product');
 
-    console.log('Strategy 1 (by userId):', cart ? 'Found' : 'Not found');
+    console.log('All active carts found:', allCarts.length);
+    allCarts.forEach((c, i) => {
+      console.log(`  Cart ${i + 1}: items=${c.items.length}, user=${c.user}, sessionId=${c.sessionId}`);
+    });
 
-    // Strategy 2: If not found by userId, try by sessionId
-    if (!cart && sessionId) {
+    // Strategy 1: Find cart with items by sessionId first
+    if (sessionId) {
       cart = await Cart.findOne({
         status: 'active',
-        sessionId: sessionId
+        sessionId: sessionId,
+        'items.0': { $exists: true } // Must have items
       }).populate('items.product');
 
-      console.log('Strategy 2 (by sessionId):', cart ? 'Found' : 'Not found');
+      console.log('Strategy 1 (by sessionId with items):', cart ? `Found with ${cart.items.length} items` : 'Not found');
 
-      // Link cart to user if found by sessionId
-      if (cart && !cart.user) {
+      // Link cart to user if found
+      if (cart && cart.user !== userId) {
         console.log('Linking cart to user');
         cart.user = userId;
         await cart.save();
       }
     }
 
-    // Strategy 3: If still not found, try finding any cart with this sessionId regardless of user
-    if (!cart && sessionId) {
-      cart = await Cart.findOne({
+    // Strategy 2: If not found, try by userId with items
+    if (!cart && userId) {
+      const cartByUser = await Cart.findOne({
         status: 'active',
-        sessionId: sessionId,
-        $or: [{ user: null }, { user: { $exists: false } }, { user: userId }]
+        user: userId,
+        'items.0': { $exists: true } // Only if has items
       }).populate('items.product');
 
-      console.log('Strategy 3 (sessionId flexible):', cart ? 'Found' : 'Not found');
+      console.log('Strategy 2 (by userId with items):', cartByUser ? `Found with ${cartByUser.items.length} items` : 'Not found');
 
-      if (cart && cart.user !== userId) {
+      if (cartByUser && cartByUser.items.length > 0) {
+        cart = cartByUser;
+        // Update sessionId to match frontend
+        if (sessionId && cart.sessionId !== sessionId) {
+          console.log('Updating cart sessionId from', cart.sessionId, 'to', sessionId);
+          cart.sessionId = sessionId;
+          await cart.save();
+        }
+      }
+    }
+
+    // Strategy 3: Find ANY active cart with items (regardless of user/session match)
+    if (!cart) {
+      const anyCart = await Cart.findOne({
+        status: 'active',
+        $or: [
+          { user: userId },
+          { sessionId: sessionId }
+        ],
+        'items.0': { $exists: true }
+      }).populate('items.product');
+
+      console.log('Strategy 3 (any cart with items):', anyCart ? `Found with ${anyCart.items.length} items` : 'Not found');
+
+      if (anyCart) {
+        cart = anyCart;
+        // Update both user and sessionId
         cart.user = userId;
+        if (sessionId) cart.sessionId = sessionId;
         await cart.save();
       }
     }
 
+    // Clean up empty carts for this user/session
     if (cart) {
-      console.log('Cart found - items:', cart.items.length, 'user:', cart.user, 'sessionId:', cart.sessionId);
+      const emptyCartsDeleted = await Cart.deleteMany({
+        status: 'active',
+        _id: { $ne: cart._id },
+        $or: [
+          { user: userId },
+          { sessionId: sessionId }
+        ],
+        'items.0': { $exists: false } // Empty carts only
+      });
+      if (emptyCartsDeleted.deletedCount > 0) {
+        console.log('Cleaned up', emptyCartsDeleted.deletedCount, 'empty cart(s)');
+      }
+    }
+
+    if (cart) {
+      console.log('Final cart - items:', cart.items.length, 'user:', cart.user, 'sessionId:', cart.sessionId);
+    } else {
+      console.log('No cart found with items');
     }
 
     if (!cart || cart.items.length === 0) {

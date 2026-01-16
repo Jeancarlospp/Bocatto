@@ -183,15 +183,24 @@ export default function OrdersPage() {
                   <div className="space-y-2 pt-2">
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-400">Subtotal:</span>
-                      <span className="text-gray-300">${(order.items.reduce((sum, item) => sum + item.subtotal, 0)).toFixed(2)}</span>
+                      <span className="text-gray-300">${(order.subtotalBeforeDiscount || order.subtotal || order.items.reduce((sum, item) => sum + item.subtotal, 0)).toFixed(2)}</span>
                     </div>
+
+                    {/* Coupon Discount */}
+                    {order.couponCode && order.couponDiscount > 0 && (
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-green-400">Cupón ({order.couponCode}):</span>
+                        <span className="text-green-400">-${order.couponDiscount.toFixed(2)}</span>
+                      </div>
+                    )}
+
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-400">IVA (15%):</span>
-                      <span className="text-gray-300">${(order.items.reduce((sum, item) => sum + item.subtotal, 0) * 0.15).toFixed(2)}</span>
+                      <span className="text-gray-300">${(order.ivaAmount || (order.subtotal * 0.15)).toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between items-center text-lg font-bold pt-2 border-t border-neutral-600">
                       <span className="text-white">Total:</span>
-                      <span className="text-orange-500">${(order.items.reduce((sum, item) => sum + item.subtotal, 0) * 1.15).toFixed(2)}</span>
+                      <span className="text-orange-500">${(order.totalPrice || (order.subtotal * 1.15)).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
