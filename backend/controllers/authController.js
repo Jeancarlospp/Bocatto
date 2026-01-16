@@ -1,5 +1,8 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import Menu from '../models/Menu.js';
+import Reservation from '../models/Reservation.js';
+import Order from '../models/Order.js';
 
 /**
  * Admin login controller
@@ -492,6 +495,85 @@ export const getUserById = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Error al obtener el usuario.'
+    });
+  }
+};
+
+/**
+ * Get dashboard statistics
+ * GET /api/auth/admin/dashboard-stats
+ * Protected: Admin only
+ */
+export const getDashboardStats = async (req, res) => {
+  try {
+    console.log('📊 Fetching dashboard statistics...');
+
+    // Get total products count
+    const totalProducts = await Menu.countDocuments();
+    console.log('📦 Total products:', totalProducts);
+
+    // Get total reservations count (all statuses)
+    const totalReservations = await Reservation.countDocuments();
+    console.log('📅 Total reservations:', totalReservations);
+
+    // Get total clients count (users with role 'client')
+    const totalClients = await User.countDocuments({ role: 'client' });
+    console.log('👥 Total clients:', totalClients);
+
+    // Get today's orders count
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const ordersToday = await Order.countDocuments({
+      createdAt: {
+        $gte: today,
+        $lt: tomorrow
+      }
+    });
+    console.log('🛒 Orders today:', ordersToday);
+
+    // Additional useful stats
+    const activeReservations = await Reservation.countDocuments({
+      status: { $in: ['pending', 'paid'] },
+      startTime: { $gte: new Date() }
+    });
+
+    const revenueToday = await Order.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: today, $lt: tomorrow },
+          status: { $nin: ['cancelled'] }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: '$totalPrice' }
+        }
+      }
+    ]);
+
+    console.log('✅ Dashboard stats calculated successfully');
+
+    return res.status(200).json({
+      success: true,
+      stats: {
+        totalProducts,
+        totalReservations,
+        totalClients,
+        ordersToday,
+        activeReservations,
+        revenueToday: revenueToday.length > 0 ? revenueToday[0].total : 0
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Get dashboard stats error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener estadísticas del dashboard'
     });
   }
 };

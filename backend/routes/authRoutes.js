@@ -7,7 +7,8 @@ import {
   clientLogin,
   clientLogout,
   verifyClientSession,
-  getUserById
+  getUserById,
+  getDashboardStats
 } from '../controllers/authController.js';
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 
@@ -34,6 +35,11 @@ router.post('/admin/logout', authenticateToken, adminLogout);
 // GET /api/auth/admin/verify
 // Requires valid JWT token + admin role
 router.get('/admin/verify', authenticateToken, isAdmin, verifySession);
+
+// Get dashboard statistics - Protected route (Admin only)
+// GET /api/auth/admin/dashboard-stats
+// Requires valid JWT token + admin role
+router.get('/admin/dashboard-stats', authenticateToken, isAdmin, getDashboardStats);
 
 /**
  * ========================================

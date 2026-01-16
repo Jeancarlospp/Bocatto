@@ -1056,3 +1056,31 @@ export async function respondToReview(id, responseText) {
     throw error;
   }
 }
+
+// ========================================
+// DASHBOARD API FUNCTIONS
+// ========================================
+
+/**
+ * Get dashboard statistics
+ * @returns {Promise<Object>} Dashboard stats
+ */
+export async function getDashboardStats() {
+  try {
+    const response = await fetch(`${API_URL}/api/auth/admin/dashboard-stats`, {
+      credentials: 'include',
+      cache: 'no-store'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al obtener estadísticas');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get Dashboard Stats Error:', error);
+    throw error;
+  }
+}
