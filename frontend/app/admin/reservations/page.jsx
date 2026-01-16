@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { getAllReservations, adminCancelReservation, getAreas } from '@/lib/api';
-import AreaAvailabilityTimeline from '@/components/AreaAvailabilityTimeline';
 
 export default function AdminReservationsPage() {
   const [reservations, setReservations] = useState([]);
@@ -10,8 +9,6 @@ export default function AdminReservationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
-  const [showTimeline, setShowTimeline] = useState(false);
-  const [timelineDate, setTimelineDate] = useState(new Date().toISOString().split('T')[0]);
 
   // Filters
   const [filters, setFilters] = useState({
@@ -33,12 +30,17 @@ export default function AdminReservationsPage() {
 
   const loadAreas = async () => {
     try {
+      console.log('🔍 Cargando áreas...');
       const data = await getAreas();
+      console.log('📦 Respuesta de áreas:', data);
       if (data.success) {
-        setAreas(data.areas);
+        setAreas(data.data || []); // El backend retorna 'data' no 'areas'
+        console.log('✅ Áreas cargadas:', data.data);
+      } else {
+        console.error('❌ Error en respuesta:', data);
       }
     } catch (err) {
-      console.error('Error loading areas:', err);
+      console.error('❌ Error loading areas:', err);
     }
   };
 
@@ -54,16 +56,22 @@ export default function AdminReservationsPage() {
       if (filters.startDate) queryFilters.startDate = filters.startDate;
       if (filters.endDate) queryFilters.endDate = filters.endDate;
 
+      console.log('🔍 Cargando reservaciones con filtros:', queryFilters);
+
       const data = await getAllReservations(queryFilters);
       
+      console.log('📦 Respuesta de reservaciones:', data);
+
       if (data.success) {
         setReservations(data.reservations);
+        console.log('✅ Reservaciones cargadas:', data.reservations.length);
       } else {
         setError(data.message || 'Error al cargar reservaciones');
+        console.error('❌ Error en respuesta:', data);
       }
     } catch (err) {
-      console.error('Error loading reservations:', err);
-      setError('Error al cargar las reservaciones');
+      console.error('❌ Error loading reservations:', err);
+      setError('Error al cargar las reservaciones: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -206,46 +214,6 @@ export default function AdminReservationsPage() {
         </div>
       </div>
 
-      {/* Timeline Toggle */}
-      <div className="mb-6 flex flex-col md:flex-row items-start md:items-center justify-between bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg shadow p-6 border-l-4 border-orange-600">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-1">
-            📅 Vista de Disponibilidad de Ambientes
-          </h2>
-          <p className="text-sm font-medium text-gray-800">
-            Visualiza en tiempo real qué ambientes están reservados por fecha y hora
-          </p>
-        </div>
-        <div className="flex items-center space-x-4 mt-4 md:mt-0">
-          <div>
-            <label className="block text-xs font-semibold text-gray-900 mb-1">Seleccionar Fecha:</label>
-            <input
-              type="date"
-              value={timelineDate}
-              onChange={(e) => setTimelineDate(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-gray-900 font-medium"
-            />
-          </div>
-          <button
-            onClick={() => setShowTimeline(!showTimeline)}
-            className="px-6 py-2 bg-orange-600 text-white font-semibold rounded-md hover:bg-orange-700 transition shadow-md mt-5"
-          >
-            {showTimeline ? '🔼 Ocultar Timeline' : '🔽 Mostrar Timeline'}
-          </button>
-        </div>
-      </div>
-
-      {/* Timeline View */}
-      {showTimeline && (
-        <div className="mb-6">
-          <AreaAvailabilityTimeline
-            reservations={reservations}
-            areas={areas}
-            selectedDate={timelineDate}
-          />
-        </div>
-      )}
-
       {/* Filters */}
       <div className="bg-white rounded-lg shadow p-4 mb-6">
         <div className="flex items-center justify-between mb-4">
@@ -291,7 +259,7 @@ export default function AdminReservationsPage() {
               {areas && areas.length > 0 ? (
                 areas.map(area => (
                   <option key={area._id} value={area._id} className="text-gray-900">
-                    {area.name} (Cap: {area.capacity})
+                    {area.name} (Cap: {area.minCapacity}-{area.maxCapacity})
                   </option>
                 ))
               ) : (
@@ -424,7 +392,9 @@ export default function AdminReservationsPage() {
                         {reservation.area?.name || 'N/A'}
                       </div>
                       <div className="text-xs font-semibold text-gray-700">
-                        Capacidad: {reservation.area?.capacity || 'N/A'}
+                        Capacidad: {reservation.area?.minCapacity && reservation.area?.maxCapacity 
+                          ? `${reservation.area.minCapacity}-${reservation.area.maxCapacity}` 
+                          : 'N/A'}
                       </div>
                     </td>
                     <td className="px-6 py-4">

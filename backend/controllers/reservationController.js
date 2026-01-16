@@ -583,6 +583,8 @@ export const getAllReservations = async (req, res) => {
   try {
     const { status, areaId, startDate, endDate } = req.query;
 
+    console.log('📋 Get all reservations - Query params:', req.query);
+
     const query = {};
 
     // Filter by status
@@ -590,9 +592,28 @@ export const getAllReservations = async (req, res) => {
       query.status = status;
     }
 
-    // Filter by area
+    // Filter by area - areaId can be MongoDB _id or numeric id
     if (areaId) {
-      query.area = areaId;
+      // Try to find the area to get its numeric id
+      const area = await Area.findById(areaId).select('id');
+      if (area) {
+        query.area = area.id;
+        console.log('🔍 Filtering by area numeric id:', area.id);
+      } else {
+        // If not found by _id, maybe it's already a numeric id
+        if (!isNaN(areaId)) {
+          query.area = parseInt(areaId);
+          console.log('🔍 Filtering by area numeric id (direct):', parseInt(areaId));
+        } else {
+          console.log('⚠️ Area not found with id:', areaId);
+          // Return empty result if area doesn't exist
+          return res.status(200).json({
+            success: true,
+            count: 0,
+            reservations: []
+          });
+        }
+      }
     }
 
     // Filter by date range
@@ -606,8 +627,12 @@ export const getAllReservations = async (req, res) => {
       }
     }
 
+    console.log('🔎 Final query:', JSON.stringify(query, null, 2));
+
     const reservations = await Reservation.find(query)
       .sort({ startTime: -1 });
+
+    console.log('✅ Found reservations:', reservations.length);
 
     // Manually populate area and user details
     const populatedReservations = await populateReservations(reservations);
