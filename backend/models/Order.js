@@ -129,6 +129,23 @@ const orderSchema = new mongoose.Schema({
   cancellationReason: {
     type: String,
     trim: true
+  },
+  // Coupon fields
+  couponCode: {
+    type: String,
+    trim: true,
+    uppercase: true,
+    default: null
+  },
+  couponDiscount: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  subtotalBeforeDiscount: {
+    type: Number,
+    min: 0,
+    default: null
   }
 }, {
   timestamps: true
@@ -157,11 +174,28 @@ orderSchema.virtual('formattedOrderNumber').get(function() {
 orderSchema.pre('save', function(next) {
   if (this.items && this.items.length > 0) {
     this.totalItems = this.items.reduce((sum, item) => sum + item.quantity, 0);
-    // Calculate subtotal (sum of all items before tax)
-    this.subtotal = this.items.reduce((sum, item) => sum + item.subtotal, 0);
-    // Calculate IVA (default 12%)
-    const rate = this.ivaRate || 0.12;
+
+    // Calculate subtotal before discount (sum of all items)
+    const itemsSubtotal = this.items.reduce((sum, item) => sum + item.subtotal, 0);
+
+    // Store original subtotal if coupon is applied
+    if (this.couponDiscount > 0 && !this.subtotalBeforeDiscount) {
+      this.subtotalBeforeDiscount = itemsSubtotal;
+    }
+
+    // Calculate subtotal after discount
+    const discountAmount = this.couponDiscount || 0;
+    this.subtotal = parseFloat((itemsSubtotal - discountAmount).toFixed(2));
+
+    // Ensure subtotal doesn't go negative
+    if (this.subtotal < 0) {
+      this.subtotal = 0;
+    }
+
+    // Calculate IVA on subtotal after discount
+    const rate = this.ivaRate || 0.15;
     this.ivaAmount = parseFloat((this.subtotal * rate).toFixed(2));
+
     // Calculate total with IVA
     this.totalPrice = parseFloat((this.subtotal + this.ivaAmount).toFixed(2));
   }

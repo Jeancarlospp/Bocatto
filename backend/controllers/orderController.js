@@ -1,16 +1,18 @@
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import Product from '../models/Menu.js';
+import Coupon from '../models/Coupon.js';
+import CouponUsage from '../models/CouponUsage.js';
 
 /**
  * Create new order from cart (checkout)
  * POST /api/orders
- * Body: { deliveryType, paymentMethod, customerNotes? }
+ * Body: { deliveryType, paymentMethod, customerNotes?, couponCode? }
  * Protected: Requires authentication
  */
 export const createOrder = async (req, res) => {
   try {
-    const { deliveryType, paymentMethod, customerNotes, sessionId } = req.body;
+    const { deliveryType, paymentMethod, customerNotes, sessionId, couponCode } = req.body;
     const userId = req.user.id;
 
     console.log('=== CREATE ORDER DEBUG ===');
@@ -112,7 +114,7 @@ export const createOrder = async (req, res) => {
 
     // Create order from cart
     console.log('Creating order with items:', cart.items.length);
-    
+
     const orderItems = cart.items.map(item => {
       console.log('Processing item:', {
         name: item.name,
@@ -122,7 +124,7 @@ export const createOrder = async (req, res) => {
         price: item.price,
         subtotal: item.subtotal
       });
-      
+
       return {
         product: item.product || item.productId,
         productId: item.productId,
@@ -134,6 +136,49 @@ export const createOrder = async (req, res) => {
       };
     });
 
+    // Calculate cart subtotal for coupon validation
+    const cartSubtotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
+
+    // Validate and apply coupon if provided
+    let couponDiscount = 0;
+    let validatedCoupon = null;
+
+    if (couponCode) {
+      console.log('Validating coupon:', couponCode);
+
+      // Find coupon
+      validatedCoupon = await Coupon.findByCode(couponCode);
+
+      if (!validatedCoupon) {
+        return res.status(400).json({
+          success: false,
+          message: 'Cupón no encontrado o no está activo'
+        });
+      }
+
+      // Check if coupon can be used
+      const canBeUsed = validatedCoupon.canBeUsed(cartSubtotal);
+      if (!canBeUsed.valid) {
+        return res.status(400).json({
+          success: false,
+          message: canBeUsed.message
+        });
+      }
+
+      // Check user's usage of this coupon
+      const userUsageCount = await CouponUsage.getUserUsageCount(validatedCoupon.id, userId);
+      if (userUsageCount >= validatedCoupon.usagePerUser) {
+        return res.status(400).json({
+          success: false,
+          message: 'Ya has usado este cupón el máximo de veces permitido'
+        });
+      }
+
+      // Calculate discount
+      couponDiscount = validatedCoupon.calculateDiscount(cartSubtotal);
+      console.log('Coupon discount calculated:', couponDiscount);
+    }
+
     const order = new Order({
       user: userId,
       sessionId: cart.sessionId,
@@ -141,12 +186,36 @@ export const createOrder = async (req, res) => {
       deliveryType,
       paymentMethod,
       customerNotes: customerNotes || '',
-      estimatedReadyTime: new Date(Date.now() + 30 * 60 * 1000) // 30 minutes from now
+      estimatedReadyTime: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes from now
+      // Coupon fields
+      couponCode: validatedCoupon ? validatedCoupon.code : null,
+      couponDiscount: couponDiscount
     });
 
     console.log('Order object created, attempting to save...');
     await order.save();
     console.log('Order saved successfully:', order.orderNumber);
+
+    // If coupon was used, update usage count and create usage record
+    if (validatedCoupon) {
+      // Increment coupon usage count
+      validatedCoupon.usageCount += 1;
+      await validatedCoupon.save();
+
+      // Create coupon usage record
+      await CouponUsage.create({
+        coupon: validatedCoupon.id,
+        couponCode: validatedCoupon.code,
+        user: userId,
+        order: order.orderNumber,
+        discountType: validatedCoupon.discountType,
+        discountValue: validatedCoupon.discountValue,
+        discountApplied: couponDiscount,
+        orderSubtotal: cartSubtotal
+      });
+
+      console.log('Coupon usage recorded');
+    }
 
     // Mark cart as completed and link to order
     cart.status = 'completed';
