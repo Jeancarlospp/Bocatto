@@ -730,7 +730,11 @@ export async function createOrder(orderData) {
   try {
     // Include sessionId from localStorage
     const sessionId = localStorage.getItem('cartSessionId');
-    
+
+    console.log('=== CREATE ORDER DEBUG (Frontend) ===');
+    console.log('SessionId from localStorage:', sessionId);
+    console.log('Order data:', orderData);
+
     const response = await fetch(`${API_URL}/api/orders`, {
       method: 'POST',
       headers: {
@@ -764,7 +768,7 @@ export async function getMyOrders(params = {}) {
   try {
     const queryParams = new URLSearchParams(params).toString();
     const url = queryParams ? `${API_URL}/api/orders/my-orders?${queryParams}` : `${API_URL}/api/orders/my-orders`;
-    
+
     const response = await fetch(url, {
       credentials: 'include'
     });
@@ -778,6 +782,277 @@ export async function getMyOrders(params = {}) {
     return data;
   } catch (error) {
     console.error('Get My Orders Error:', error);
+    throw error;
+  }
+}
+
+// ========================================
+// COUPON API FUNCTIONS
+// ========================================
+
+/**
+ * Validate a coupon code
+ * @param {string} code - Coupon code
+ * @param {number} cartTotal - Cart subtotal
+ * @returns {Promise<Object>} Validation result with discount info
+ */
+export async function validateCoupon(code, cartTotal) {
+  try {
+    const response = await fetch(`${API_URL}/coupons/validate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ code, cartTotal })
+    });
+
+    const data = await response.json();
+
+    // Return data even if not successful (to show error message)
+    return data;
+  } catch (error) {
+    console.error('Validate Coupon Error:', error);
+    throw error;
+  }
+}
+
+// ========================================
+// REVIEW API FUNCTIONS
+// ========================================
+
+/**
+ * Create a new review
+ * @param {Object} reviewData - { type, targetId, stars, title?, comment }
+ * @returns {Promise<Object>} Created review data
+ */
+export async function createReview(reviewData) {
+  try {
+    const response = await fetch(`${API_URL}/reviews`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(reviewData)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al crear la reseña');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Create Review Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get reviews for a product
+ * @param {number} productId - Product ID
+ * @returns {Promise<Object>} Reviews data with average rating
+ */
+export async function getProductReviews(productId) {
+  try {
+    const response = await fetch(`${API_URL}/reviews/product/${productId}`, {
+      cache: 'no-store'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al obtener reseñas');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get Product Reviews Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get my reviews (authenticated user)
+ * @returns {Promise<Object>} User's reviews
+ */
+export async function getMyReviews() {
+  try {
+    const response = await fetch(`${API_URL}/reviews/my-reviews`, {
+      credentials: 'include',
+      cache: 'no-store'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al obtener tus reseñas');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get My Reviews Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update a review
+ * @param {string} id - Review ID
+ * @param {Object} reviewData - { stars?, title?, comment? }
+ * @returns {Promise<Object>} Updated review data
+ */
+export async function updateReview(id, reviewData) {
+  try {
+    const response = await fetch(`${API_URL}/reviews/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(reviewData)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al actualizar la reseña');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Update Review Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a review
+ * @param {string} id - Review ID
+ * @returns {Promise<Object>} Deletion confirmation
+ */
+export async function deleteReview(id) {
+  try {
+    const response = await fetch(`${API_URL}/reviews/${id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al eliminar la reseña');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Delete Review Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get pending reviews (admin only)
+ * @returns {Promise<Object>} Pending reviews
+ */
+export async function getPendingReviews() {
+  try {
+    const response = await fetch(`${API_URL}/reviews/pending`, {
+      credentials: 'include',
+      cache: 'no-store'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al obtener reseñas pendientes');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get Pending Reviews Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Approve a review (admin only)
+ * @param {string} id - Review ID
+ * @returns {Promise<Object>} Approved review
+ */
+export async function approveReview(id) {
+  try {
+    const response = await fetch(`${API_URL}/reviews/${id}/approve`, {
+      method: 'PATCH',
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al aprobar la reseña');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Approve Review Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Reject a review (admin only)
+ * @param {string} id - Review ID
+ * @returns {Promise<Object>} Rejected review
+ */
+export async function rejectReview(id) {
+  try {
+    const response = await fetch(`${API_URL}/reviews/${id}/reject`, {
+      method: 'PATCH',
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al rechazar la reseña');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Reject Review Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Respond to a review (admin only)
+ * @param {string} id - Review ID
+ * @param {string} responseText - Admin response
+ * @returns {Promise<Object>} Updated review with response
+ */
+export async function respondToReview(id, responseText) {
+  try {
+    const response = await fetch(`${API_URL}/reviews/${id}/respond`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ response: responseText })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al responder la reseña');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Respond to Review Error:', error);
     throw error;
   }
 }
