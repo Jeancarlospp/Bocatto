@@ -2,7 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import passport from 'passport';
 import { connectDB } from './config/database.js';
+import configurePassport from './config/passport.js';
 
 // Importar rutas
 import menuRoutes from './routes/menuRoutes.js';
@@ -31,14 +34,32 @@ app.use(cors({
     "https://bocatto-git-main-jeancarlos-projects-8f89f917.vercel.app", 
     "https://bocatto-nu.vercel.app", 
     'http://localhost:3000',
-    'http://127.0.0.1:5500'
-  ],
+    'http://127.0.0.1:5500',
+    process.env.FRONTEND_URL
+  ].filter(Boolean),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Session configuration (required for Passport OAuth flow)
+app.use(session({
+  secret: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'bocatto-session-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Initialize Passport
+configurePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Conectar a MongoDB
 connectDB();

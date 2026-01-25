@@ -13,9 +13,24 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [googleAuthStatus, setGoogleAuthStatus] = useState(null);
 
-  // Check authentication status on mount
+  // Check authentication status on mount and handle Google OAuth callback
   useEffect(() => {
+    // Handle Google OAuth callback
+    const urlParams = new URLSearchParams(window.location.search);
+    const googleAuth = urlParams.get('google_auth');
+    const error = urlParams.get('error');
+
+    if (googleAuth === 'success') {
+      setGoogleAuthStatus('success');
+      // Clean URL without reloading
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (error) {
+      setGoogleAuthStatus(error);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     checkAuth();
   }, []);
 
@@ -46,6 +61,21 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  /**
+   * Initiate Google OAuth login
+   * Redirects to backend which handles the OAuth flow
+   */
+  const loginWithGoogle = () => {
+    window.location.href = `${API_URL}/api/auth/google`;
+  };
+
+  /**
+   * Clear Google auth status after it's been shown
+   */
+  const clearGoogleAuthStatus = () => {
+    setGoogleAuthStatus(null);
   };
 
   /**
@@ -147,7 +177,10 @@ export function AuthProvider({ children }) {
     login,
     register,
     logout,
-    refreshUser
+    refreshUser,
+    loginWithGoogle,
+    googleAuthStatus,
+    clearGoogleAuthStatus
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -85,6 +85,11 @@ const userSchema = new mongoose.Schema({
   lastLogin: {
     type: Date
   },
+  // Profile picture URL (from Google OAuth)
+  profilePicture: {
+    type: String,
+    trim: true
+  },
   allergies: [{
     allergen: {
       type: String,

@@ -1,4 +1,5 @@
 import express from 'express';
+import passport from 'passport';
 import { 
   adminLogin, 
   adminLogout, 
@@ -8,7 +9,9 @@ import {
   clientLogout,
   verifyClientSession,
   getUserById,
-  getDashboardStats
+  getDashboardStats,
+  googleAuthCallback,
+  googleAuthFailure
 } from '../controllers/authController.js';
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 
@@ -79,5 +82,37 @@ router.get('/client/verify', authenticateToken, verifyClientSession);
 // GET /api/auth/users/:id
 // Protected route - requires authentication
 router.get('/users/:id', authenticateToken, getUserById);
+
+/**
+ * ========================================
+ * GOOGLE OAUTH ROUTES (Clients Only)
+ * Base path: /api/auth
+ * ========================================
+ */
+
+// Initiate Google OAuth login flow
+// GET /api/auth/google
+// Redirects to Google's OAuth consent screen
+router.get('/google', 
+  passport.authenticate('google', { 
+    scope: ['profile', 'email'],
+    prompt: 'select_account' // Always show account selector
+  })
+);
+
+// Google OAuth callback
+// GET /api/auth/google/callback
+// Google redirects here after user authorizes
+router.get('/google/callback',
+  passport.authenticate('google', { 
+    failureRedirect: '/api/auth/google/failure',
+    session: false // We use JWT, not sessions for auth
+  }),
+  googleAuthCallback
+);
+
+// Google OAuth failure handler
+// GET /api/auth/google/failure
+router.get('/google/failure', googleAuthFailure);
 
 export default router;

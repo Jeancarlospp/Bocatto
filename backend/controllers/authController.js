@@ -577,3 +577,71 @@ export const getDashboardStats = async (req, res) => {
     });
   }
 };
+
+/**
+ * ========================================
+ * GOOGLE OAUTH CONTROLLERS
+ * ========================================
+ */
+
+/**
+ * Google OAuth callback handler
+ * Called after successful Google authentication
+ * GET /api/auth/google/callback
+ */
+export const googleAuthCallback = async (req, res) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      console.error('Google OAuth: No user returned from strategy');
+      return res.redirect(`${process.env.FRONTEND_URL}?error=google_auth_failed`);
+    }
+
+    // Check if user is active
+    if (!user.isActive) {
+      console.error('Google OAuth: User account is inactive');
+      return res.redirect(`${process.env.FRONTEND_URL}?error=account_inactive`);
+    }
+
+    // Generate JWT token for the user
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        role: user.role
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '24h'
+      }
+    );
+
+    // Set HTTP-only cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
+    console.log(`✅ Google OAuth successful for user: ${user.email}`);
+
+    // Redirect to frontend with success indicator
+    return res.redirect(`${process.env.FRONTEND_URL}?google_auth=success`);
+
+  } catch (error) {
+    console.error('Google OAuth callback error:', error);
+    return res.redirect(`${process.env.FRONTEND_URL}?error=google_auth_error`);
+  }
+};
+
+/**
+ * Handle Google OAuth authentication failure
+ * GET /api/auth/google/failure
+ */
+export const googleAuthFailure = (req, res) => {
+  console.error('Google OAuth authentication failed');
+  return res.redirect(`${process.env.FRONTEND_URL}?error=google_auth_failed`);
+};
+

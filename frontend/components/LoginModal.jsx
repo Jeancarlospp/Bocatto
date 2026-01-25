@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const router = useRouter();
-  const { login, register } = useAuth();
+  const { login, register, loginWithGoogle, googleAuthStatus, clearGoogleAuthStatus } = useAuth();
   const [activeTab, setActiveTab] = useState('admin'); // 'admin' or 'client'
   const [clientView, setClientView] = useState('login'); // 'login' or 'register' for client tab
   const [formData, setFormData] = useState({
@@ -19,6 +19,26 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  // Handle Google OAuth status from URL redirect
+  useEffect(() => {
+    if (googleAuthStatus === 'success') {
+      clearGoogleAuthStatus();
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
+    } else if (googleAuthStatus && googleAuthStatus !== 'success') {
+      // Handle Google auth errors
+      const errorMessages = {
+        'google_auth_failed': 'Error al iniciar sesión con Google. Intenta nuevamente.',
+        'account_inactive': 'Tu cuenta está inactiva. Contacta con soporte.',
+        'google_auth_error': 'Error durante la autenticación. Intenta nuevamente.'
+      };
+      setError(errorMessages[googleAuthStatus] || 'Error desconocido con Google OAuth.');
+      clearGoogleAuthStatus();
+    }
+  }, [googleAuthStatus, clearGoogleAuthStatus, onLoginSuccess]);
 
   // Close modal and reset form
   const handleClose = () => {
@@ -153,17 +173,12 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     }
   };
 
-  // Handle Google OAuth login (placeholder for future implementation)
+  // Handle Google OAuth login
   const handleGoogleLogin = () => {
-    console.log('Google OAuth login - Future implementation');
-    // TODO: Implement Google OAuth flow
-    // Steps for future implementation:
-    // 1. Create Google OAuth credentials in Google Cloud Console
-    // 2. Configure OAuth consent screen
-    // 3. Implement backend endpoint: GET /api/auth/google
-    // 4. Implement backend callback: GET /api/auth/google/callback
-    // 5. Frontend redirects to: window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`;
-    alert('Inicio de sesión con Google estará disponible próximamente');
+    setGoogleLoading(true);
+    setError('');
+    // Redirect to backend OAuth endpoint
+    loginWithGoogle();
   };
 
   if (!isOpen) return null;
@@ -357,31 +372,44 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   </div>
                 </div>
 
-                {/* Google Login Button - Placeholder */}
+                {/* Google Login Button */}
                 <button
                   type="button"
                   onClick={handleGoogleLogin}
-                  className="w-full bg-white border border-gray-300 text-gray-900 font-semibold py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition"
+                  disabled={googleLoading}
+                  className="w-full bg-white border border-gray-300 text-gray-900 font-semibold py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path
-                      fill="#4285F4"
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                    />
-                    <path
-                      fill="#EA4335"
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                    />
-                  </svg>
-                  Google (Próximamente)
+                  {googleLoading ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Conectando...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                          fill="#4285F4"
+                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                        />
+                        <path
+                          fill="#EA4335"
+                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                        />
+                      </svg>
+                      Continuar con Google
+                    </>
+                  )}
                 </button>
               </form>
             )}
@@ -504,31 +532,44 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
                   </div>
                 </div>
 
-                {/* Google Register Button - Placeholder */}
+                {/* Google Register Button */}
                 <button
                   type="button"
                   onClick={handleGoogleLogin}
-                  className="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition"
+                  disabled={googleLoading}
+                  className="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path
-                      fill="#4285F4"
-                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                    />
-                    <path
-                      fill="#EA4335"
-                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                    />
-                  </svg>
-                  Google (Próximamente)
+                  {googleLoading ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Conectando...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                          fill="#4285F4"
+                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                        />
+                        <path
+                          fill="#EA4335"
+                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                        />
+                      </svg>
+                      Registrarse con Google
+                    </>
+                  )}
                 </button>
               </form>
             )}
