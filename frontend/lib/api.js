@@ -1057,6 +1057,61 @@ export async function respondToReview(id, responseText) {
   }
 }
 
+/**
+ * Get all approved reviews (public page)
+ * @param {Object} filters - { type?, stars?, limit?, page? }
+ * @returns {Promise<Object>} Approved reviews with user names
+ */
+export async function getApprovedReviews(filters = {}) {
+  try {
+    const queryParams = new URLSearchParams();
+    if (filters.type) queryParams.append('type', filters.type);
+    if (filters.stars) queryParams.append('stars', filters.stars);
+    if (filters.limit) queryParams.append('limit', filters.limit);
+    if (filters.page) queryParams.append('page', filters.page);
+
+    const url = `${API_URL}/reviews/approved${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+
+    const response = await fetch(url, {
+      cache: 'no-store'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al obtener las reseñas');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get Approved Reviews Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get review statistics (public)
+ * @returns {Promise<Object>} Review stats (average, total, distribution)
+ */
+export async function getReviewStats() {
+  try {
+    const response = await fetch(`${API_URL}/reviews/stats`, {
+      cache: 'no-store'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al obtener estadísticas');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get Review Stats Error:', error);
+    throw error;
+  }
+}
+
 // ========================================
 // DASHBOARD API FUNCTIONS
 // ========================================

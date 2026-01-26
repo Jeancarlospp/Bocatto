@@ -11,7 +11,9 @@ import {
   deleteReview,
   approveReview,
   rejectReview,
-  respondToReview
+  respondToReview,
+  getAllApprovedReviews,
+  getReviewStats
 } from '../controllers/reviewController.js';
 import { authenticateToken, isAdmin } from '../middleware/auth.js';
 
@@ -40,6 +42,12 @@ router.get('/my-reviews', authenticateToken, getMyReviews);
 router.post('/', authenticateToken, createReview);
 
 // ==================== PUBLIC ROUTES ====================
+
+// GET all approved reviews (for public page)
+router.get('/approved', getAllApprovedReviews);
+
+// GET review statistics
+router.get('/stats', getReviewStats);
 
 // GET reviews for a product (only approved)
 router.get('/product/:productId', getProductReviews);

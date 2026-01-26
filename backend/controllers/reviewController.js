@@ -2,6 +2,7 @@ import Review from '../models/Review.js';
 import Order from '../models/Order.js';
 import Reservation from '../models/Reservation.js';
 import Product from '../models/Menu.js';
+import User from '../models/User.js';
 
 /**
  * Create new review
@@ -618,6 +619,193 @@ export const respondToReview = async (req, res) => {
     return res.status(400).json({
       success: false,
       message: error.message || 'Error al responder la reseña'
+    });
+  }
+};
+
+/**
+ * Get all approved reviews (for public page)
+ * GET /reviews/approved
+ * Public
+ */
+export const getAllApprovedReviews = async (req, res) => {
+  try {
+    const { type, stars, limit = 50, page = 1 } = req.query;
+
+    // Build query
+    const query = {
+      isApproved: true,
+      isVisible: true
+    };
+
+    // Filter by type if provided
+    if (type && ['product', 'order', 'reservation'].includes(type)) {
+      query.type = type;
+    }
+
+    // Filter by stars if provided
+    if (stars) {
+      const starsNum = parseInt(stars);
+      if (starsNum >= 1 && starsNum <= 5) {
+        query.stars = starsNum;
+      }
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // Get reviews sorted by most recent
+    const reviews = await Review.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    // Get total count for pagination
+    const total = await Review.countDocuments(query);
+
+    // Get user info for each review
+    const userIds = [...new Set(reviews.map(r => r.user))];
+    const users = await User.find({ id: { $in: userIds } }).select('id firstName lastName');
+
+    const userMap = {};
+    users.forEach(u => {
+      userMap[u.id] = {
+        firstName: u.firstName,
+        lastInitial: u.lastName ? u.lastName.charAt(0) + '.' : ''
+      };
+    });
+
+    // Add user info to reviews
+    const reviewsWithUsers = reviews.map(review => {
+      const reviewObj = review.toObject();
+      const userInfo = userMap[review.user];
+      reviewObj.userName = userInfo
+        ? `${userInfo.firstName} ${userInfo.lastInitial}`
+        : 'Usuario';
+      return reviewObj;
+    });
+
+    return res.status(200).json({
+      success: true,
+      count: reviews.length,
+      total,
+      page: parseInt(page),
+      totalPages: Math.ceil(total / parseInt(limit)),
+      data: reviewsWithUsers
+    });
+
+  } catch (error) {
+    console.error('Get all approved reviews error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener las reseñas'
+    });
+  }
+};
+
+/**
+ * Get general review statistics
+ * GET /reviews/stats
+ * Public
+ */
+export const getReviewStats = async (req, res) => {
+  try {
+    const stats = await Review.aggregate([
+      {
+        $match: {
+          isApproved: true,
+          isVisible: true
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalReviews: { $sum: 1 },
+          averageRating: { $avg: '$stars' },
+          fiveStars: { $sum: { $cond: [{ $eq: ['$stars', 5] }, 1, 0] } },
+          fourStars: { $sum: { $cond: [{ $eq: ['$stars', 4] }, 1, 0] } },
+          threeStars: { $sum: { $cond: [{ $eq: ['$stars', 3] }, 1, 0] } },
+          twoStars: { $sum: { $cond: [{ $eq: ['$stars', 2] }, 1, 0] } },
+          oneStar: { $sum: { $cond: [{ $eq: ['$stars', 1] }, 1, 0] } }
+        }
+      }
+    ]);
+
+    // Count by type
+    const typeStats = await Review.aggregate([
+      {
+        $match: {
+          isApproved: true,
+          isVisible: true
+        }
+      },
+      {
+        $group: {
+          _id: '$type',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const typeCountMap = {};
+    typeStats.forEach(t => {
+      typeCountMap[t._id] = t.count;
+    });
+
+    if (stats.length === 0) {
+      return res.status(200).json({
+        success: true,
+        data: {
+          totalReviews: 0,
+          averageRating: 0,
+          recommendationRate: 0,
+          distribution: {
+            fiveStars: 0,
+            fourStars: 0,
+            threeStars: 0,
+            twoStars: 0,
+            oneStar: 0
+          },
+          byType: {
+            product: 0,
+            order: 0,
+            reservation: 0
+          }
+        }
+      });
+    }
+
+    const result = stats[0];
+    const positiveReviews = result.fiveStars + result.fourStars;
+    const recommendationRate = result.totalReviews > 0
+      ? Math.round((positiveReviews / result.totalReviews) * 100)
+      : 0;
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        totalReviews: result.totalReviews,
+        averageRating: Math.round(result.averageRating * 10) / 10,
+        recommendationRate,
+        distribution: {
+          fiveStars: result.fiveStars,
+          fourStars: result.fourStars,
+          threeStars: result.threeStars,
+          twoStars: result.twoStars,
+          oneStar: result.oneStar
+        },
+        byType: {
+          product: typeCountMap.product || 0,
+          order: typeCountMap.order || 0,
+          reservation: typeCountMap.reservation || 0
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Get review stats error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error al obtener las estadísticas'
     });
   }
 };

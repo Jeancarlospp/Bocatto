@@ -60,6 +60,11 @@ export default function Header() {
                 </Link>
               </li>
               <li>
+                <Link href="/resenas" className="text-white hover:text-orange-500 transition">
+                  Reseñas
+                </Link>
+              </li>
+              <li>
                 <Link href="/locations" className="text-white hover:text-orange-500 transition">
                   Ubicaciones
                 </Link>
