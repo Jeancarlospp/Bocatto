@@ -155,7 +155,6 @@ export default function CouponsManagement() {
         setError(data.message || 'Error al eliminar el cupón');
       }
     } catch (err) {
-      console.error('Delete error:', err);
       alert(err.message || 'Error al eliminar el cupón');
     }
   };
