@@ -817,6 +817,138 @@ export async function validateCoupon(code, cartTotal) {
   }
 }
 
+/**
+ * Get all coupons (admin)
+ * @returns {Promise<Object>} Coupons list
+ */
+export async function getAllCoupons() {
+  try {
+    const response = await fetch(`${API_URL}/coupons`, {
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al obtener los cupones');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get All Coupons Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Create a new coupon (admin)
+ * @param {Object} couponData - Coupon data
+ * @returns {Promise<Object>} Created coupon
+ */
+export async function createCoupon(couponData) {
+  try {
+    const response = await fetch(`${API_URL}/coupons`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(couponData)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al crear el cupón');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Create Coupon Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update a coupon (admin)
+ * @param {string} id - Coupon ID
+ * @param {Object} couponData - Updated coupon data
+ * @returns {Promise<Object>} Updated coupon
+ */
+export async function updateCoupon(id, couponData) {
+  try {
+    const response = await fetch(`${API_URL}/coupons/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(couponData)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al actualizar el cupón');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Update Coupon Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Delete a coupon (admin)
+ * @param {string} id - Coupon ID
+ * @returns {Promise<Object>} Deletion result
+ */
+export async function deleteCoupon(id) {
+  try {
+    const response = await fetch(`${API_URL}/coupons/${id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al eliminar el cupón');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Delete Coupon Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Toggle coupon active status (admin)
+ * @param {string} id - Coupon ID
+ * @returns {Promise<Object>} Updated coupon
+ */
+export async function toggleCoupon(id) {
+  try {
+    const response = await fetch(`${API_URL}/coupons/${id}/toggle`, {
+      method: 'PATCH',
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al cambiar el estado del cupón');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Toggle Coupon Error:', error);
+    throw error;
+  }
+}
+
 // ========================================
 // REVIEW API FUNCTIONS
 // ========================================

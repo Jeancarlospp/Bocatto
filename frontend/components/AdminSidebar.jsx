@@ -48,6 +48,7 @@ export default function AdminSidebar({ onLogout }) {
       section: 'Marketing',
       items: [
         { label: 'Ofertas', href: '/admin/offers'},
+        { label: 'Cupones', href: '/admin/coupons'},
         { label: 'Notificaciones', href: '/admin/notifications' }
       ]
     },

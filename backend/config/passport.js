@@ -25,12 +25,6 @@ const configurePassport = () => {
     }
   });
 
-  // Only configure Google OAuth if credentials are provided
-  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-    console.log('⚠️  Google OAuth no configurado (faltan GOOGLE_CLIENT_ID y/o GOOGLE_CLIENT_SECRET)');
-    return;
-  }
-
   // Google OAuth Strategy
   passport.use(
     new GoogleStrategy(
