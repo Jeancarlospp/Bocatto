@@ -282,6 +282,14 @@ export const deleteCoupon = async (req, res) => {
       });
     }
 
+    // Prevent deletion if coupon has been used
+    if (coupon.usageCount > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `No se puede eliminar este cupón porque ya fue usado ${coupon.usageCount} vez(es). Puedes desactivarlo en su lugar.`
+      });
+    }
+
     await Coupon.findByIdAndDelete(coupon._id);
 
     return res.status(200).json({
