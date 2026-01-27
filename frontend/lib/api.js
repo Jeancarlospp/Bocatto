@@ -786,6 +786,61 @@ export async function getMyOrders(params = {}) {
   }
 }
 
+/**
+ * Get all orders (admin)
+ * GET /api/orders
+ */
+export async function getAllOrders(params = {}) {
+  try {
+    const queryParams = new URLSearchParams(params).toString();
+    const url = queryParams ? `${API_URL}/api/orders?${queryParams}` : `${API_URL}/api/orders`;
+
+    const response = await fetch(url, {
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al obtener las órdenes');
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * Update order status (admin)
+ * PUT /api/orders/:id/status
+ */
+export async function updateOrderStatus(id, status, staffNotes) {
+  try {
+    const body = { status };
+    if (staffNotes) body.staffNotes = staffNotes;
+
+    const response = await fetch(`${API_URL}/api/orders/${id}/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al actualizar el estado');
+    }
+
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 // ========================================
 // COUPON API FUNCTIONS
 // ========================================
