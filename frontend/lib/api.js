@@ -919,7 +919,6 @@ export async function deleteCoupon(id) {
 
     return data;
   } catch (error) {
-    console.error('Delete Coupon Error:', error);
     throw error;
   }
 }
