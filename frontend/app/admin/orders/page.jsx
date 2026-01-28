@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getAllOrders, updateOrderStatus } from '@/lib/api';
 
 const STATUS_CONFIG = {
@@ -162,8 +162,8 @@ export default function OrdersManagement() {
                   const isExpanded = expandedOrder === order._id;
 
                   return (
-                    <>
-                      <tr key={order._id} className="hover:bg-gray-50 cursor-pointer" onClick={() => toggleExpand(order._id)}>
+                    <React.Fragment key={order._id}>
+                      <tr className="hover:bg-gray-50 cursor-pointer" onClick={() => toggleExpand(order._id)}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-bold text-gray-900">{order.orderNumber}</div>
                           <div className="text-xs text-gray-500">{order.items?.length || 0} producto(s)</div>
@@ -246,7 +246,7 @@ export default function OrdersManagement() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </React.Fragment>
                   );
                 })}
               </tbody>
