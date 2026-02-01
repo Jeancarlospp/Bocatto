@@ -70,10 +70,12 @@ export const createProduct = async (req, res) => {
 
     // Parse ingredients if sent as string
     if (typeof productData.ingredients === 'string') {
+      // Convert comma-separated string to array of objects
       productData.ingredients = productData.ingredients
         .split(',')
         .map(i => i.trim())
-        .filter(i => i);
+        .filter(i => i)
+        .map(name => ({ name, customizable: false }));
     }
 
     const product = await Product.create(productData);
@@ -188,13 +190,20 @@ export const updateProduct = async (req, res) => {
     if (currentStock !== undefined) product.currentStock = parseInt(currentStock);
     if (available !== undefined) product.available = available === 'true' || available === true;
 
-    // Parse ingredients if sent as string
+    // Parse ingredients - can be string or array
     if (ingredients) {
       if (typeof ingredients === 'string') {
-        product.ingredients = ingredients
-          .split(',')
-          .map(i => i.trim())
-          .filter(i => i);
+        // If it's JSON string, parse it
+        try {
+          product.ingredients = JSON.parse(ingredients);
+        } catch (e) {
+          // If not JSON, treat as comma-separated
+          product.ingredients = ingredients
+            .split(',')
+            .map(i => i.trim())
+            .filter(i => i)
+            .map(name => ({ name, customizable: false }));
+        }
       } else {
         product.ingredients = ingredients;
       }

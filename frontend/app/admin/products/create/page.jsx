@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import IngredientManager from '@/components/IngredientManager';
 
 // Categorías de fallback por si la API falla
 const FALLBACK_CATEGORIES = [
@@ -29,7 +30,7 @@ export default function CreateProductPage() {
     subcategory: '',
     currentStock: '0',
     available: true,
-    ingredients: ''
+    ingredients: []
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -145,9 +146,9 @@ export default function CreateProductPage() {
       formDataToSend.append('available', formData.available);
       
       // Process ingredients
-      if (formData.ingredients.trim()) {
-        formDataToSend.append('ingredients', formData.ingredients.trim());
-      }
+      if Send ingredients as JSON
+      if (formData.ingredients && formData.ingredients.length > 0) {
+        formDataToSend.append('ingredients', JSON.stringify(formData.ingredients
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/menu`, {
         method: 'POST',
@@ -346,23 +347,17 @@ export default function CreateProductPage() {
           {/* Ingredients */}
           <div className="md:col-span-2">
             <label htmlFor="ingredients" className="block text-sm font-bold text-gray-900 mb-2">
-              Ingredientes
+              Ingredientes Base (No Personalizables)
             </label>
             <input
               type="text"
-              id="ingredients"
-              name="ingredients"
-              value={formData.ingredients}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
-              placeholder="Separados por comas: pollo, salsa BBQ, especias"
-            />
-            <p className="text-sm text-gray-800 font-medium mt-1">Ingrese los ingredientes separados por comas</p>
-          </div>
-
-          {/* Available */}
-          <div className="md:col-span-2">
-            <label className="flex items-center cursor-pointer">
+              id="iclassName="block text-sm font-bold text-gray-900 mb-2">
+              Ingredientes del Producto
+            </label>
+            <IngredientManager
+              ingredients={formData.ingredients}
+              onChange={(updated) => setFormData(prev => ({ ...prev, ingredients: updated }))}
+            /
               <input
                 type="checkbox"
                 name="available"

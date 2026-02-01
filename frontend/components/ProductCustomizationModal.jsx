@@ -115,7 +115,14 @@ export default function ProductCustomizationModal({ product, isOpen, onClose, on
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {product.ingredients.map((ingredient, index) => {
-                  const isRemoved = removedIngredients.includes(ingredient);
+                  // Handle both object {name, customizable} and string formats
+                  const ingredientName = typeof ingredient === 'object' && ingredient.name ? ingredient.name : ingredient;
+                  const isCustomizable = typeof ingredient === 'object' ? ingredient.customizable : true;
+                  
+                  // Only show customizable ingredients
+                  if (!isCustomizable) return null;
+                  
+                  const isRemoved = removedIngredients.includes(ingredientName);
                   return (
                     <div
                       key={index}
@@ -124,10 +131,10 @@ export default function ProductCustomizationModal({ product, isOpen, onClose, on
                           ? 'bg-red-900/20 border-red-500/50'
                           : 'bg-neutral-700 border-neutral-600 hover:border-orange-500/50'
                       }`}
-                      onClick={() => handleIngredientToggle(ingredient)}
+                      onClick={() => handleIngredientToggle(ingredientName)}
                     >
                       <span className={`font-medium ${isRemoved ? 'text-red-400 line-through' : 'text-white'}`}>
-                        {ingredient}
+                        {ingredientName}
                       </span>
                       
                       {/* Toggle Switch */}

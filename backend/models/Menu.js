@@ -43,8 +43,15 @@ const productSchema = new mongoose.Schema({
     trim: true
   },
   ingredients: [{
-    type: String,
-    trim: true
+    name: {
+      type: String,
+      trim: true,
+      required: true
+    },
+    customizable: {
+      type: Boolean,
+      default: false
+    }
   }],
   creationDate: {
     type: Date,

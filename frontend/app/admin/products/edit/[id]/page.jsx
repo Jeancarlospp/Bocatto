@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { fetchProductById, updateProduct } from '@/lib/api';
+import IngredientManager from '@/components/IngredientManager';
 
 // Categorías de fallback por si la API falla
 const FALLBACK_CATEGORIES = [
@@ -35,7 +36,7 @@ export default function EditProductPage() {
     subcategory: '',
     currentStock: '0',
     available: true,
-    ingredients: ''
+    ingredients: []
   });
   
   const [imageFile, setImageFile] = useState(null);
@@ -75,6 +76,28 @@ export default function EditProductPage() {
         if (response.success && response.data) {
           const product = response.data;
           
+          // Parse ingredients correctly
+          let parsedIngredients = [];
+          if (Array.isArray(product.ingredients)) {
+            // Check if items are already objects with name/customizable
+            if (product.ingredients.length > 0 && typeof product.ingredients[0] === 'object' && product.ingredients[0].name) {
+              parsedIngredients = product.ingredients;
+            } else {
+              // Convert string array to object array
+              parsedIngredients = product.ingredients.map(ing => ({
+                name: typeof ing === 'string' ? ing : String(ing),
+                customizable: false
+              }));
+            }
+          } else if (typeof product.ingredients === 'string' && product.ingredients.trim()) {
+            // Legacy format: comma-separated string
+            parsedIngredients = product.ingredients
+              .split(',')
+              .map(i => i.trim())
+              .filter(i => i)
+              .map(name => ({ name, customizable: false }));
+          }
+          
           // Set form data with product information
           setFormData({
             name: product.name || '',
@@ -84,9 +107,7 @@ export default function EditProductPage() {
             subcategory: product.subcategory || '',
             currentStock: product.currentStock?.toString() || '0',
             available: product.available !== undefined ? product.available : true,
-            ingredients: Array.isArray(product.ingredients) 
-              ? product.ingredients.join(', ') 
-              : product.ingredients || ''
+            ingredients: parsedIngredients
           });
           
           // Set current image URL
@@ -195,8 +216,9 @@ export default function EditProductPage() {
       formDataToSend.append('currentStock', parseInt(formData.currentStock) || 0);
       formDataToSend.append('available', formData.available);
       
-      if (formData.ingredients.trim()) {
-        formDataToSend.append('ingredients', formData.ingredients.trim());
+      // Send ingredients as JSON
+      if (formData.ingredients && formData.ingredients.length > 0) {
+        formDataToSend.append('ingredients', JSON.stringify(formData.ingredients));
       }
 
       const response = await updateProduct(productId, formDataToSend);
@@ -425,19 +447,13 @@ export default function EditProductPage() {
 
           {/* Ingredients */}
           <div className="md:col-span-2">
-            <label htmlFor="ingredients" className="block text-sm font-bold text-gray-900 mb-2">
-              Ingredientes
+            <label className="block text-sm font-bold text-gray-900 mb-2">
+              Ingredientes del Producto
             </label>
-            <input
-              type="text"
-              id="ingredients"
-              name="ingredients"
-              value={formData.ingredients}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
-              placeholder="Separados por comas: pollo, salsa BBQ, especias"
+            <IngredientManager
+              ingredients={formData.ingredients}
+              onChange={(updated) => setFormData(prev => ({ ...prev, ingredients: updated }))}
             />
-            <p className="text-sm text-gray-800 font-medium mt-1">Ingrese los ingredientes separados por comas</p>
           </div>
 
           {/* Available */}
