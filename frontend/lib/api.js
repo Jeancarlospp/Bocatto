@@ -1299,6 +1299,75 @@ export async function getReviewStats() {
 }
 
 // ========================================
+// CLIENT MANAGEMENT API FUNCTIONS (Admin)
+// ========================================
+
+/**
+ * Get all clients with pagination, search and filters (admin)
+ * @param {Object} params - { page, limit, search, status, sortBy, sortOrder }
+ * @returns {Promise<Object>} Clients list with pagination
+ */
+export async function getAllClients(params = {}) {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page);
+    if (params.limit) queryParams.append('limit', params.limit);
+    if (params.search) queryParams.append('search', params.search);
+    if (params.status) queryParams.append('status', params.status);
+    if (params.sortBy) queryParams.append('sortBy', params.sortBy);
+    if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+    const url = `${API_URL}/clients${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+
+    const response = await fetch(url, {
+      credentials: 'include',
+      cache: 'no-store'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al obtener los clientes');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Get All Clients Error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update client status (activate/deactivate)
+ * @param {string} id - Client ID
+ * @param {boolean} isActive - New status
+ * @returns {Promise<Object>} Updated client data
+ */
+export async function updateClientStatus(id, isActive) {
+  try {
+    const response = await fetch(`${API_URL}/clients/${id}/status`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({ isActive })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'Error al actualizar el estado del cliente');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Update Client Status Error:', error);
+    throw error;
+  }
+}
+
+// ========================================
 // DASHBOARD API FUNCTIONS
 // ========================================
 

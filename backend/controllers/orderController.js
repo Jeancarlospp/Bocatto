@@ -3,6 +3,7 @@ import Cart from '../models/Cart.js';
 import Product from '../models/Menu.js';
 import Coupon from '../models/Coupon.js';
 import CouponUsage from '../models/CouponUsage.js';
+import User from '../models/User.js';
 
 /**
  * Create new order from cart (checkout)
@@ -479,12 +480,27 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     order.status = status;
-    
+
     if (staffNotes) {
       order.staffNotes = staffNotes;
     }
 
     await order.save();
+
+    // Award loyalty points when order is delivered
+    if (status === 'delivered' && order.user) {
+      try {
+        const pointsEarned = Math.floor(order.totalPrice); // 1 point per $1
+        await User.findOneAndUpdate(
+          { id: order.user },
+          { $inc: { loyaltyPoints: pointsEarned } }
+        );
+        console.log(`Awarded ${pointsEarned} loyalty points to user ${order.user}`);
+      } catch (pointsError) {
+        console.error('Error awarding loyalty points:', pointsError);
+        // Don't fail the request if points fail
+      }
+    }
 
     return res.status(200).json({
       success: true,
