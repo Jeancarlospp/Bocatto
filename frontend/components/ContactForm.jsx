@@ -89,8 +89,8 @@ export default function ContactForm({ onSuccess, onError }) {
     setIsSubmitting(true);
 
     try {
-      // TODO: Replace with actual API endpoint in Part 2
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/contact`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://bocatto.onrender.com';
+      const response = await fetch(`${apiUrl}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

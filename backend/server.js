@@ -23,6 +23,7 @@ import reviewRoutes from './routes/reviewRoutes.js';
 import couponRoutes from './routes/couponRoutes.js';
 import clientRoutes from './routes/clientRoutes.js';
 import aboutRoutes from './routes/aboutRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -89,6 +90,7 @@ app.use('/reviews', reviewRoutes);
 app.use('/coupons', couponRoutes);
 app.use('/clients', clientRoutes);
 app.use('/api/about', aboutRoutes);
+app.use('/api/contact', contactRoutes);
 app.use('/debug', debugRoutes);
 
 // Manejo de rutas no encontradas
