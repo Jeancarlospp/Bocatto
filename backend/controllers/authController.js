@@ -323,6 +323,18 @@ export const clientLogin = async (req, res) => {
       });
     }
 
+    // Check if 2FA is enabled
+    if (user.twoFactorEnabled) {
+      // Don't complete login yet - require 2FA verification
+      return res.status(200).json({
+        success: true,
+        requiresTwoFactor: true,
+        tempUserId: user.id, // Temporary identifier for 2FA validation
+        message: 'Ingresa tu código de autenticación de dos factores.'
+      });
+    }
+
+    // No 2FA required - complete login
     // Update last login
     user.lastLogin = new Date();
     await user.save();
@@ -574,6 +586,99 @@ export const getDashboardStats = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Error al obtener estadísticas del dashboard'
+    });
+  }
+};
+
+/**
+ * Complete login after 2FA validation
+ * POST /api/auth/client/complete-login
+ * Body: { tempUserId, token } or { tempUserId, backupCode }
+ */
+export const completeClientLogin = async (req, res) => {
+  try {
+    const { tempUserId, token, backupCode } = req.body;
+
+    if (!tempUserId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Sesión inválida.'
+      });
+    }
+
+    // Validate 2FA token first
+    const validate2FAResponse = await fetch(`${process.env.API_URL || 'http://localhost:5000'}/api/auth/2fa/validate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ tempUserId, token, backupCode })
+    });
+
+    const validation = await validate2FAResponse.json();
+
+    if (!validation.success) {
+      return res.status(400).json({
+        success: false,
+        message: validation.message || 'Código 2FA inválido.'
+      });
+    }
+
+    // 2FA validated - complete login
+    const user = await User.findOne({ id: tempUserId });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado.'
+      });
+    }
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+
+    // Generate JWT token
+    const jwtToken = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        role: user.role
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: '24h'
+      }
+    );
+
+    // Set HTTP-only cookie
+    res.cookie('token', jwtToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    });
+
+    // Return success response
+    return res.status(200).json({
+      success: true,
+      message: 'Inicio de sesión exitoso.',
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        loyaltyPoints: user.loyaltyPoints,
+        twoFactorEnabled: user.twoFactorEnabled
+      }
+    });
+
+  } catch (error) {
+    console.error('Complete login error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error del servidor durante el inicio de sesión.'
     });
   }
 };

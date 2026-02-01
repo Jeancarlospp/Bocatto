@@ -8,6 +8,7 @@ import {
   clientLogin,
   clientLogout,
   verifyClientSession,
+  completeClientLogin,
   getUserById,
   getDashboardStats,
   googleAuthCallback,
@@ -60,6 +61,11 @@ router.post('/client/register', clientRegister);
 // POST /api/auth/client/login
 // Body: { email, password }
 router.post('/client/login', clientLogin);
+
+// Complete client login after 2FA validation - Public route
+// POST /api/auth/client/complete-login
+// Body: { tempUserId, token } or { tempUserId, backupCode }
+router.post('/client/complete-login', completeClientLogin);
 
 // Client logout - Protected route
 // POST /api/auth/client/logout

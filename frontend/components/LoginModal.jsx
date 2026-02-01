@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import TwoFactorVerification from './TwoFactorVerification';
 
 export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const router = useRouter();
@@ -20,6 +21,10 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+
+  // Estados para 2FA
+  const [showTwoFactor, setShowTwoFactor] = useState(false);
+  const [tempUserId, setTempUserId] = useState(null);
 
   // Handle Google OAuth status from URL redirect
   useEffect(() => {
@@ -52,6 +57,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
     });
     setError('');
     setClientView('login');
+    setShowTwoFactor(false);
+    setTempUserId(null);
     onClose();
   };
 
@@ -111,10 +118,17 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
-        handleClose();
-        // Trigger parent component callback if provided
-        if (onLoginSuccess) {
-          onLoginSuccess();
+        if (result.requiresTwoFactor && result.tempUserId) {
+          // Show 2FA verification
+          setTempUserId(result.tempUserId);
+          setShowTwoFactor(true);
+          setLoading(false);
+        } else {
+          // Login complete
+          handleClose();
+          if (onLoginSuccess) {
+            onLoginSuccess();
+          }
         }
       } else {
         setError(result.message);
@@ -123,8 +137,27 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       setError('Error de conexión. Intenta nuevamente.');
       console.error('Client login error:', err);
     } finally {
-      setLoading(false);
+      if (!showTwoFactor) {
+        setLoading(false);
+      }
     }
+  };
+
+  // Handle 2FA completion
+  const handle2FASuccess = (user) => {
+    setShowTwoFactor(false);
+    setTempUserId(null);
+    handleClose();
+    if (onLoginSuccess) {
+      onLoginSuccess();
+    }
+  };
+
+  // Handle 2FA cancellation
+  const handle2FACancel = () => {
+    setShowTwoFactor(false);
+    setTempUserId(null);
+    setLoading(false);
   };
 
   // Handle client registration
@@ -184,6 +217,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
   if (!isOpen) return null;
 
   return (
+    <>
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-md p-6 relative">
         {/* Close button */}
@@ -577,5 +611,15 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
         )}
       </div>
     </div>
+
+    {/* 2FA Verification Modal */}
+    {showTwoFactor && tempUserId && (
+      <TwoFactorVerification
+        tempUserId={tempUserId}
+        onSuccess={handle2FASuccess}
+        onCancel={handle2FACancel}
+      />
+    )}
+    </>
   );
 }

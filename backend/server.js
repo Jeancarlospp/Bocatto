@@ -10,6 +10,7 @@ import configurePassport from './config/passport.js';
 // Importar rutas
 import menuRoutes from './routes/menuRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import twoFactorRoutes from './routes/twoFactorRoutes.js';
 import areaRoutes from './routes/areaRoutes.js';
 import offerRoutes from './routes/offerRoutes.js';
 import reservationRoutes from './routes/reservationRoutes.js';
@@ -76,8 +77,7 @@ app.get('/', (req, res) => {
 
 // Rutas de la API
 app.use('/api/menu', menuRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/cart', cartRoutes);
+app.use('/api/auth', authRoutes);app.use('/api/auth/2fa', twoFactorRoutes);app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/areas', areaRoutes);
 app.use('/offers', offerRoutes);

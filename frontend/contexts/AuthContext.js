@@ -123,13 +123,56 @@ export function AuthProvider({ children }) {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        setUser(data.user);
-        return { success: true, message: data.message };
+        if (data.user) {
+          // Login completo sin 2FA
+          setUser(data.user);
+          return { success: true, message: data.message };
+        } else if (data.requiresTwoFactor && data.tempUserId) {
+          // Necesita verificación 2FA
+          return { 
+            success: true, 
+            requiresTwoFactor: true, 
+            tempUserId: data.tempUserId,
+            message: 'Se requiere verificación en dos pasos' 
+          };
+        }
       } else {
         return { success: false, message: data.message || 'Error en el inicio de sesión' };
       }
     } catch (error) {
       console.error('Login error:', error);
+      return { success: false, message: 'Error de conexión al servidor' };
+    }
+  };
+
+  /**
+   * Complete login with 2FA verification
+   */
+  const complete2FALogin = async (tempUserId, token = null, backupCode = null) => {
+    try {
+      const payload = { tempUserId };
+      if (token) payload.token = token;
+      if (backupCode) payload.backupCode = backupCode;
+
+      const response = await fetch(`${API_URL}/api/auth/client/complete-login`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setUser(data.user);
+        return { success: true, message: data.message };
+      } else {
+        return { success: false, message: data.message || 'Código inválido' };
+      }
+    } catch (error) {
+      console.error('2FA login completion error:', error);
       return { success: false, message: 'Error de conexión al servidor' };
     }
   };
@@ -175,6 +218,7 @@ export function AuthProvider({ children }) {
     loading,
     isAuthenticated: !!user,
     login,
+    complete2FALogin,
     register,
     logout,
     refreshUser,

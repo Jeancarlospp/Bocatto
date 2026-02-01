@@ -90,6 +90,28 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  // Two-Factor Authentication fields
+  twoFactorEnabled: {
+    type: Boolean,
+    default: false
+  },
+  twoFactorSecret: {
+    type: String,
+    // This will be encrypted before saving
+  },
+  twoFactorBackupCodes: [{
+    code: {
+      type: String,
+      required: true
+    },
+    used: {
+      type: Boolean,
+      default: false
+    },
+    usedAt: {
+      type: Date
+    }
+  }],
   allergies: [{
     allergen: {
       type: String,
