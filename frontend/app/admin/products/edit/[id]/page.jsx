@@ -65,10 +65,17 @@ export default function EditProductPage() {
     const loadProductData = async () => {
       try {
         setLoading(true);
+        setError('');
+        
+        console.log('Loading product with ID:', productId);
         const response = await fetchProductById(productId);
         
-        if (response.success) {
+        console.log('Product data received:', response);
+        
+        if (response.success && response.data) {
           const product = response.data;
+          
+          // Set form data with product information
           setFormData({
             name: product.name || '',
             description: product.description || '',
@@ -77,19 +84,31 @@ export default function EditProductPage() {
             subcategory: product.subcategory || '',
             currentStock: product.currentStock?.toString() || '0',
             available: product.available !== undefined ? product.available : true,
-            ingredients: product.ingredients ? product.ingredients.join(', ') : ''
+            ingredients: Array.isArray(product.ingredients) 
+              ? product.ingredients.join(', ') 
+              : product.ingredients || ''
           });
-          setCurrentImage(product.img || '');
+          
+          // Set current image URL
+          if (product.img) {
+            setCurrentImage(product.img);
+          }
+          
+          console.log('Product loaded successfully');
+        } else {
+          throw new Error('No se recibieron datos del producto');
         }
       } catch (err) {
         console.error('Error loading product:', err);
-        setError('Error al cargar el producto');
+        setError('Error al cargar el producto. Verifica que el producto existe.');
       } finally {
         setLoading(false);
       }
     };
 
-    loadProductData();
+    if (productId) {
+      loadProductData();
+    }
   }, [productId]);
 
 
@@ -202,8 +221,27 @@ export default function EditProductPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
+      <div className="flex flex-col justify-center items-center py-20">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mb-4"></div>
+        <p className="text-gray-600 font-medium">Cargando información del producto...</p>
+      </div>
+    );
+  }
+
+  if (error && !formData.name) {
+    return (
+      <div className="max-w-4xl mx-auto py-20">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-8 rounded-lg text-center">
+          <div className="text-5xl mb-4">⚠️</div>
+          <h3 className="text-xl font-bold mb-2">{error}</h3>
+          <p className="text-red-600 mb-4">No se pudo cargar el producto con ID: {productId}</p>
+          <button
+            onClick={() => router.push('/admin/products')}
+            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium"
+          >
+            Volver a Productos
+          </button>
+        </div>
       </div>
     );
   }

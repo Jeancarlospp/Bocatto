@@ -202,8 +202,8 @@ export default function ProductsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
-                        onClick={() => handleToggleAvailability(product._id, product.available)}
-                        disabled={togglingId === product._id}
+                        onClick={() => handleToggleAvailability(product.productId, product.available)}
+                        disabled={togglingId === product.productId}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
                           product.available ? 'bg-green-600' : 'bg-gray-400'
                         }`}
@@ -219,14 +219,14 @@ export default function ProductsPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex gap-2">
                         <button
-                          onClick={() => router.push(`/admin/products/edit/${product._id}`)}
+                          onClick={() => router.push(`/admin/products/edit/${product.productId}`)}
                           className="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded hover:scale-105 transition"
                           title="Editar producto"
                         >
                           ✏️ Editar
                         </button>
                         <button
-                          onClick={() => handleDelete(product._id, product.name)}
+                          onClick={() => handleDelete(product.productId, product.name)}
                           className="px-3 py-1 text-red-600 hover:bg-red-50 rounded hover:scale-105 transition"
                           title="Eliminar permanentemente"
                         >

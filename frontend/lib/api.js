@@ -57,18 +57,29 @@ export async function createProduct(productData) {
  */
 export async function fetchProductById(id) {
   try {
+    console.log('Fetching product with ID:', id);
     const response = await fetch(`${API_URL}/api/menu/${id}`, {
       cache: 'no-store',
+      credentials: 'include'
     });
     
+    console.log('Response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error(`HTTP Error! Status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP Error! Status: ${response.status}`);
     }
     
     const data = await response.json();
+    console.log('Product data:', data);
+    
+    if (!data.success) {
+      throw new Error(data.message || 'Error fetching product');
+    }
+    
     return data;
   } catch (error) {
-    console.error('API Error:', error);
+    console.error('API Error fetching product:', error);
     throw error;
   }
 }
