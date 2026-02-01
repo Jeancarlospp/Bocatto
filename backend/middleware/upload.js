@@ -310,3 +310,25 @@ export const deleteLocationImage = async (imageUrl) => {
 
 // Export cloudinary instance for direct use if needed
 export { cloudinary };
+
+/**
+ * General purpose upload middleware for any image
+ * Can be used with .single('image'), .array('images'), etc.
+ */
+const generalUpload = multer({
+  storage: new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'bocatto/general',
+      allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+      transformation: [
+        { width: 1200, height: 800, crop: 'limit' },
+        { quality: 'auto' },
+        { fetch_format: 'auto' }
+      ]
+    }
+  }),
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
+
+export default generalUpload;
