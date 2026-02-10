@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function ProductCustomizationModal({ product, isOpen, onClose, onAddToCart }) {
   const [quantity, setQuantity] = useState(1);
@@ -92,10 +93,13 @@ export default function ProductCustomizationModal({ product, isOpen, onClose, on
         {/* Product Image */}
         {product.img && (
           <div className="relative h-64 bg-neutral-700">
-            <img
+            <Image
               src={product.img}
               alt={product.name}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 672px"
+              priority
             />
           </div>
         )}
