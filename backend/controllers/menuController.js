@@ -70,12 +70,17 @@ export const createProduct = async (req, res) => {
 
     // Parse ingredients if sent as string
     if (typeof productData.ingredients === 'string') {
-      // Convert comma-separated string to array of objects
-      productData.ingredients = productData.ingredients
-        .split(',')
-        .map(i => i.trim())
-        .filter(i => i)
-        .map(name => ({ name, customizable: false }));
+      try {
+        // Try to parse as JSON first
+        productData.ingredients = JSON.parse(productData.ingredients);
+      } catch (e) {
+        // If not JSON, treat as comma-separated string
+        productData.ingredients = productData.ingredients
+          .split(',')
+          .map(i => i.trim())
+          .filter(i => i)
+          .map(name => ({ name, customizable: false }));
+      }
     }
 
     const product = await Product.create(productData);

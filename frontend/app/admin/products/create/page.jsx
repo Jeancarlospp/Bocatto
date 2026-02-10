@@ -145,10 +145,10 @@ export default function CreateProductPage() {
       formDataToSend.append('currentStock', parseInt(formData.currentStock) || 0);
       formDataToSend.append('available', formData.available);
       
-      // Process ingredients
-      if Send ingredients as JSON
+      // Send ingredients as JSON
       if (formData.ingredients && formData.ingredients.length > 0) {
-        formDataToSend.append('ingredients', JSON.stringify(formData.ingredients
+        formDataToSend.append('ingredients', JSON.stringify(formData.ingredients));
+      }
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/menu`, {
         method: 'POST',
@@ -346,18 +346,18 @@ export default function CreateProductPage() {
 
           {/* Ingredients */}
           <div className="md:col-span-2">
-            <label htmlFor="ingredients" className="block text-sm font-bold text-gray-900 mb-2">
-              Ingredientes Base (No Personalizables)
-            </label>
-            <input
-              type="text"
-              id="iclassName="block text-sm font-bold text-gray-900 mb-2">
+            <label className="block text-sm font-bold text-gray-900 mb-2">
               Ingredientes del Producto
             </label>
             <IngredientManager
               ingredients={formData.ingredients}
               onChange={(updated) => setFormData(prev => ({ ...prev, ingredients: updated }))}
-            /
+            />
+          </div>
+
+          {/* Available Checkbox */}
+          <div className="md:col-span-2">
+            <label className="flex items-center">
               <input
                 type="checkbox"
                 name="available"

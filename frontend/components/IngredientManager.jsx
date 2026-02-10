@@ -126,9 +126,9 @@ export default function IngredientManager({ ingredients = [], onChange }) {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm">
             <p className="font-semibold text-blue-900 mb-1">💡 ¿Cómo funciona?</p>
             <ul className="text-blue-800 space-y-1">
-              <li>• <strong>🔒 Fijo:</strong> Ingrediente base del producto, el cliente NO puede quitarlo</li>
-              <li>• <strong>✨ Personalizable:</strong> El cliente puede elegir si lo quiere o no</li>
-              <li>• Usa el toggle para cambiar entre fijo y personalizable</li>
+              <li>• <strong>🔒 Fijo (por defecto):</strong> Ingrediente base del producto, NO aparece en personalización del cliente</li>
+              <li>• <strong>✨ Personalizable:</strong> El cliente SÍ puede elegir si lo quiere o no en su orden</li>
+              <li>• Usa el toggle para permitir que el cliente personalice ese ingrediente</li>
             </ul>
           </div>
         </div>

@@ -113,49 +113,69 @@ export default function ProductCustomizationModal({ product, isOpen, onClose, on
               </h3>
               <p className="text-gray-400 text-sm mb-4">Selecciona los ingredientes que deseas remover</p>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {product.ingredients.map((ingredient, index) => {
-                  // Handle both object {name, customizable} and string formats
-                  const ingredientName = typeof ingredient === 'object' && ingredient.name ? ingredient.name : ingredient;
-                  const isCustomizable = typeof ingredient === 'object' ? ingredient.customizable : true;
-                  
-                  // Only show customizable ingredients
-                  if (!isCustomizable) return null;
-                  
-                  const isRemoved = removedIngredients.includes(ingredientName);
-                  return (
-                    <div
-                      key={index}
-                      className={`flex items-center justify-between p-3 rounded-lg border transition cursor-pointer ${
-                        isRemoved
-                          ? 'bg-red-900/20 border-red-500/50'
-                          : 'bg-neutral-700 border-neutral-600 hover:border-orange-500/50'
-                      }`}
-                      onClick={() => handleIngredientToggle(ingredientName)}
-                    >
-                      <span className={`font-medium ${isRemoved ? 'text-red-400 line-through' : 'text-white'}`}>
-                        {ingredientName}
-                      </span>
+              {product.ingredients.filter(ing => typeof ing === 'object' && ing.customizable === true).length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {product.ingredients
+                    .filter(ingredient => {
+                      // Solo mostrar ingredientes personalizables al cliente
+                      const isCustomizable = typeof ingredient === 'object' 
+                        ? ingredient.customizable === true 
+                        : false;
+                      return isCustomizable;
+                    })
+                    .map((ingredient, index) => {
+                      const ingredientName = typeof ingredient === 'object' && ingredient?.name 
+                        ? ingredient.name 
+                        : typeof ingredient === 'string' 
+                        ? ingredient 
+                        : '';
                       
-                      {/* Toggle Switch */}
-                      <button
-                        type="button"
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-neutral-800 ${
-                          isRemoved ? 'bg-red-600' : 'bg-green-600'
-                        }`}
-                        role="switch"
-                        aria-checked={!isRemoved}
-                      >
-                        <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                            isRemoved ? 'translate-x-1' : 'translate-x-6'
+                      if (!ingredientName) return null;
+                      
+                      const isRemoved = removedIngredients.includes(ingredientName);
+                      
+                      return (
+                        <div
+                          key={index}
+                          className={`flex items-center justify-between p-3 rounded-lg border transition cursor-pointer ${
+                            isRemoved
+                              ? 'bg-red-900/20 border-red-500/50'
+                              : 'bg-neutral-700 border-neutral-600 hover:border-orange-500/50'
                           }`}
-                        />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
+                          onClick={() => handleIngredientToggle(ingredientName)}
+                          title="Click para remover/agregar este ingrediente"
+                        >
+                          <span className={`font-medium ${
+                            isRemoved ? 'text-red-400 line-through' : 'text-white'
+                          }`}>
+                            {ingredientName}
+                          </span>
+                          
+                          {/* Toggle Switch */}
+                          <button
+                            type="button"
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-neutral-800 ${
+                              isRemoved ? 'bg-red-600' : 'bg-green-600'
+                            }`}
+                            role="switch"
+                            aria-checked={!isRemoved}
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                                isRemoved ? 'translate-x-1' : 'translate-x-6'
+                              }`}
+                            />
+                          </button>
+                        </div>
+                      );
+                    })}
+                </div>
+              ) : (
+                <div className="bg-neutral-700/50 border border-neutral-600 rounded-lg p-6 text-center">
+                  <p className="text-gray-400 mb-1">🍽️ Este producto no tiene ingredientes personalizables</p>
+                  <p className="text-xs text-gray-500">Se incluirán todos los ingredientes estándar del producto</p>
+                </div>
+              )}
             </div>
           )}
 

@@ -207,22 +207,22 @@ export default function MenuPage() {
                         <p className="text-xs text-gray-500 mb-2 font-semibold">Ingredientes:</p>
                         <div className="flex flex-wrap gap-2">
                           {item.ingredients.slice(0, 5).map((ingredient, idx) => {
-                            // Safely extract ingredient name
-                            let ingredientName = '';
-                            if (typeof ingredient === 'string') {
-                              ingredientName = ingredient;
-                            } else if (typeof ingredient === 'object' && ingredient !== null) {
-                              ingredientName = ingredient.name || String(ingredient);
-                            }
+                            const ingredientName = typeof ingredient === 'object' && ingredient?.name 
+                              ? ingredient.name 
+                              : typeof ingredient === 'string' 
+                              ? ingredient 
+                              : '';
                             
-                            return ingredientName ? (
+                            if (!ingredientName) return null;
+                            
+                            return (
                               <span 
                                 key={idx}
                                 className="px-2 py-1 bg-neutral-700 text-gray-300 text-xs rounded"
                               >
                                 {ingredientName}
                               </span>
-                            ) : null;
+                            );
                           })}
                           {item.ingredients.length > 5 && (
                             <span className="px-2 py-1 bg-neutral-700 text-gray-300 text-xs rounded">
