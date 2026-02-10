@@ -346,6 +346,7 @@ export default function CreateProductPage() {
 
           {/* Ingredients */}
           <div className="md:col-span-2">
+<<<<<<< HEAD
             <label className="block text-sm font-bold text-gray-900 mb-2">
               Ingredientes del Producto
             </label>
@@ -357,6 +358,20 @@ export default function CreateProductPage() {
 
           {/* Available Checkbox */}
           <div className="md:col-span-2">
+=======
+            <label htmlFor="ingredients" className="block text-sm font-bold text-gray-900 mb-2">
+              Ingredientes Base (No Personalizables)
+            </label>
+            <div>
+              <label className="block text-sm font-bold text-gray-900 mb-2">
+                Ingredientes del Producto
+              </label>
+              <IngredientManager
+                ingredients={formData.ingredients}
+                onChange={(updated) => setFormData(prev => ({ ...prev, ingredients: updated }))}
+              />
+            </div>
+>>>>>>> 0bd09aa138d276bff1e4037af713953589be7a62
             <label className="flex items-center">
               <input
                 type="checkbox"
