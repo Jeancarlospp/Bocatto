@@ -1,8 +1,10 @@
 import jwt from 'jsonwebtoken';
+import speakeasy from 'speakeasy';
 import User from '../models/User.js';
 import Menu from '../models/Menu.js';
 import Reservation from '../models/Reservation.js';
 import Order from '../models/Order.js';
+import { decrypt, hashBackupCode } from '../utils/encryption.js';
 
 /**
  * Admin login controller
@@ -606,25 +608,7 @@ export const completeClientLogin = async (req, res) => {
       });
     }
 
-    // Validate 2FA token first
-    const validate2FAResponse = await fetch(`${process.env.API_URL || 'http://localhost:5000'}/api/auth/2fa/validate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ tempUserId, token, backupCode })
-    });
-
-    const validation = await validate2FAResponse.json();
-
-    if (!validation.success) {
-      return res.status(400).json({
-        success: false,
-        message: validation.message || 'Código 2FA inválido.'
-      });
-    }
-
-    // 2FA validated - complete login
+    // Find user first
     const user = await User.findOne({ id: tempUserId });
 
     if (!user) {
@@ -634,6 +618,52 @@ export const completeClientLogin = async (req, res) => {
       });
     }
 
+    if (!user.twoFactorEnabled) {
+      return res.status(400).json({
+        success: false,
+        message: 'Configuración 2FA inválida.'
+      });
+    }
+
+    // Validate 2FA directly (no fetch to self)
+    let verified = false;
+
+    // Verify with TOTP token
+    if (token && token.length === 6) {
+      const secret = decrypt(user.twoFactorSecret);
+      if (secret) {
+        verified = speakeasy.totp.verify({
+          secret: secret,
+          encoding: 'base32',
+          token: token,
+          window: 2 // Allow 2 time steps before/after for clock skew
+        });
+      }
+    }
+
+    // Or verify with backup code
+    if (!verified && backupCode) {
+      const hashedCode = hashBackupCode(backupCode.replace('-', '').toUpperCase());
+      const matchingCode = user.twoFactorBackupCodes.find(
+        code => code.code === hashedCode && !code.used
+      );
+      
+      if (matchingCode) {
+        verified = true;
+        // Mark backup code as used
+        matchingCode.used = true;
+        matchingCode.usedAt = new Date();
+      }
+    }
+
+    if (!verified) {
+      return res.status(400).json({
+        success: false,
+        message: 'Código 2FA inválido.'
+      });
+    }
+
+    // 2FA validated - complete login
     // Update last login
     user.lastLogin = new Date();
     await user.save();
